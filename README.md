@@ -3,8 +3,6 @@
 
 ## AndroNix - Linux on Android
 
-**This is a fork of EXA Labs [AnLinux](https://github.com/EXALAB) Resource. AndroNix relies upon the shell scripts powered, developed and maintained by respected developers at EXA Labs. We give full kudo for there work for the Linux Community.**
-
 Andronix lets you install a Linux system on your Android Device without root. We found out that using Linux on Android is quite useful and lets you do many heavy tasks on your Android device.
 
   
