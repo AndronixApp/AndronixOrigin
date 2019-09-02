@@ -1,0 +1,6 @@
+echo "Killing VNC Server"
+echo -n "Enter port number which you want to kill (Example: 3): "
+read pt
+echo " "
+echo "Killing port $pt"
+vncserver -kill :$pt
