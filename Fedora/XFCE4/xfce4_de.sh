@@ -6,7 +6,7 @@ yum install tigervnc-server -y
 
 #Setup the necessary files
 mkdir ~/.vnc
-https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Fedora/XFCE4/xstartup -P ~/.vnc/
+wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Fedora/XFCE4/xstartup -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Fedora/LXDE/vncserver-start -P /usr/local/bin/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Fedora/LXDE/vncserver-stop -P /usr/local/bin/
 chmod +x ~/.vnc/xstartup
