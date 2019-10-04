@@ -10,7 +10,7 @@ echo ""
 echo "Changing some permissions, please be patient"
 echo ""
 echo ""
-chmod 755 -R /bin /home /mnt /run /srv /tmp /var /boot /etc /lin /opt /root /sbin /sys /usr
+chmod 755 -R /bin /home /mnt /run /srv /tmp /var /boot /etc /opt /root /sbin /sys /usr
 echo "IMPORTANT"
 echo ""
 echo ""
