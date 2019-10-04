@@ -22,4 +22,7 @@ echo "could not change the root directory (Function not implemented)"
 echo ""
 echo "Simply ignore it as it does not do anything harmful"
 echo ""
+echo "updating Arch packages"
+yes | LC_ALL=en_US.UTF-8 pacman -Suuyy 
+echo ""
 echo ""
