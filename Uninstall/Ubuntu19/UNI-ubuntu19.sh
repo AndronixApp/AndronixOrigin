@@ -12,5 +12,4 @@ rm -rf de-apt-mate.sh
 rm -rf de-apt-lxqt.sh
 rm -rf de-apt-lxde.sh
 rm -rf UNI-ubuntu.sh
-
 echo "Done"
