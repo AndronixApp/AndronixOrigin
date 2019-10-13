@@ -5,10 +5,10 @@ echo " "
 echo "Updating the system "
 echo " "
 echo " "
-sudo pacman -Syu --noconfirm
-sudo pacman -S lxqt xscreensaver --noconfirm 
-sudo pacman -S tigervnc --noconfirm
-sudo pacman -Syu --noconfirm
+pacman -Syu --noconfirm
+pacman -S lxqt xscreensaver --noconfirm 
+pacman -S tigervnc --noconfirm
+pacman -Syu --noconfirm
 
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/LXQT/xstartup   -P ~/.vnc/
