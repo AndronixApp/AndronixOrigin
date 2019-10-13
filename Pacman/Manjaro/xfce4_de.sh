@@ -5,10 +5,10 @@ echo " "
 echo "Updating the system "
 echo " "
 echo " "
-sudo pacman -Syu --noconfirm
-sudo pacman -S xfce4 xfce4-goodies manjaro-xfce-settings --noconfirm 
-sudo pacman -S tigervnc --noconfirm
-sudo pacman -Syu --noconfirm
+pacman -Syu --noconfirm
+pacman -S xfce4 xfce4-goodies manjaro-xfce-settings --noconfirm 
+pacman -S tigervnc --noconfirm
+pacman -Syu --noconfirm
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/XFCE/xstartup   -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-start -P /usr/local/bin/
