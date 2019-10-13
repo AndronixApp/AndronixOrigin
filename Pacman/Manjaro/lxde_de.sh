@@ -10,7 +10,7 @@ sudo pacman -S lxde --noconfirm
 sudo pacman -S tigervnc --noconfirm
 sudo pacman -Syu --noconfirm
 
-wget   -P ~/.vnc/
+wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/LXDE/xstartup   -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-start -P /usr/local/bin/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-stop -P /usr/local/bin/
 chmod +x ~/.vnc/xstartup
