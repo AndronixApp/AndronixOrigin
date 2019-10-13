@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #Get the necessary components
+apt-mark hold udisks2
 apt-get update
 apt-get install lxde-core lxterminal tightvncserver -y
 apt-get install xfe -y
