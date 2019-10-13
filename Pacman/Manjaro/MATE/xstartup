@@ -1,0 +1,7 @@
+#!/bin/sh
+unset SESSION_MANAGER
+export PULSE_SERVER=127.0.0.1
+xrdb $HOME/.Xresources
+exec /etc/X11/xinit/xinitrc
+vncserver -geometry 1024x768 -depth 16 -name remote-desktop :1
+mate-session &
