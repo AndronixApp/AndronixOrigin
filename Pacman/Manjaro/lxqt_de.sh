@@ -5,13 +5,10 @@ echo " "
 echo "Updating the system "
 echo " "
 echo " "
-pacman -Syu --noconfirm
+pacman -Suuyy --noconfirm
 pacman -S lxqt xscreensaver --noconfirm 
 pacman -S tigervnc --noconfirm
 pacman -S xorg --noconfirm
-pacman -Syu --noconfirm
-
-
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/LXQT/xstartup   -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-start -P /usr/local/bin/
@@ -29,7 +26,7 @@ echo "The VNC Server will be started at 127.0.0.1:5901"
 echo " "
 echo "You can connect to this address with a VNC Viewer you prefer"
 echo " "
-echo "Connect to this address will open a window with LXDE Desktop Environment"
+echo "Connect to this address will open a window with LXQT Desktop Environment"
 echo " "
 echo " "
 echo " "
