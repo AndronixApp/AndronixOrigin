@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #Get the necessary components
-yum groupinstall mate-desktop -y
+yum groupinstall mate-desktop -y --allowerasing
 yum install tigervnc-server -y
 
 #Setup the necessary files

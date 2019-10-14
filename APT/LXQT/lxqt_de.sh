@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #Get the necessary components
+apt-mark hold udisks2
 apt-get update
 apt-get install lxqt-core lxqt-config qterminal tightvncserver -y
 apt-get install xfe -y
