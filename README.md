@@ -10,7 +10,7 @@ This app lets you install various popular Linux distributions on your Android de
 
 > AndroNix may or may not work for your device. As Linux is not optimized for Android and there can be zillion hardware combinations devices, thereby making it impossible to debug for each and every device. 
 
-## **AndroNix 2.1 or above supports -**
+## **AndroNix 4.0 or above supports -**
 
 * **AndroNix Premium** - We have released AndroNix Premium with tons of features.  
   
@@ -60,6 +60,7 @@ Features:
   
 - No root permissions required.  
 - Distros we support:  
+* Manjaro
 * Ubuntu  
 * Kali Linux  
 * Debian  
@@ -67,7 +68,7 @@ Features:
 * Fedora  
 * Arch Linux  
   
-- Desktop environments we support:  
+- Desktop environments we support:
 * LXDE  
 * LXQT  
 * MATE  
@@ -90,7 +91,6 @@ Features:
 Twitter- https://twitter.com/AndronixApp  
 Telegram- https://t.me/AndronixApp
 Discord- https://discord.gg/jywhBH4 
-WhatsApp- https://chat.whatsapp.com/CYIWLuVoTIX0hW9tL2o0ta
 
 ## Credits 
 Termux- https://play.google.com/store/apps/details?id=com.termux  
