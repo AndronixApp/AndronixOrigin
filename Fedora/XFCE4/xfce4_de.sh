@@ -1,8 +1,9 @@
 #!/bin/bash
 
 #Get the necessary components
-yum groupinstall xfce-desktop-environment -y
-yum install tigervnc-server -y
+dnf groupinstall xfce -y
+dnf install tigervnc-server -y
+rm -rf /etc/xdg/autostart/xfce-polkit.desktop
 
 #Setup the necessary files
 mkdir ~/.vnc
