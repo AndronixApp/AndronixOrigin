@@ -5,6 +5,6 @@ rm -rf manjaro-fs
 rm -rf manjaro-binds
 rm -rf manjaro.sh
 rm -rf start-manjaro.sh
-rm -rf UNI-arch.sh
+rm -rf UNI-manjaro.sh
 
 echo "Done"
