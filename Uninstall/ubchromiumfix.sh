@@ -1,8 +1,8 @@
 #!/bin/bash
 echo "Removing distribution provided chromium packages and dependencies..."
 apt purge chromium* chromium-broswer* -qq && apt autoremove -qq
-ehco "Enabling PPA support..."
-apt update -qq && apt install software-properties-common --no-install recommends -qq
+echo "Enabling PPA support..."
+apt update -qq && apt install software-properties-common --no-install-recommends -qq
 echo " Adding chromium-team stable ppa"
 echo "deb http://ppa.launchpad.net/chromium-team/stable/ubuntu bionic main 
 deb-src http://ppa.launchpad.net/chromium-team/stable/ubuntu bionic main" >> /etc/apt/sources.list
