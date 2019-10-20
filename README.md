@@ -1,5 +1,4 @@
-
-![alt text](https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Artboard%20%E2%80%93%203.png?alt=media&token=f454c33f-6a4e-4a78-8be4-d84bb757036e)
+<img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/banner.png" height="715" width="805" />
 
 ## AndroNix - Linux on Android
 
@@ -40,16 +39,16 @@ This app lets you install various popular Linux distributions on your Android de
 AndroNix. It is the officially signed APK with the original keys so you can update it via Google Play Store.
 
 <p align="center">
-  <img src="https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Group%20246.png?alt=media&token=7419f3b6-acf2-4ff6-8a4a-656a89eebf49" height="450" width="281.6" />
-  <img src="https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Group%20247.png?alt=media&token=60bc36c6-583f-4010-ba70-89bb4804f9b8" height="450" width="281.6" /> 
-  <img src="https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Group%20248.png?alt=media&token=5fe847f2-a23a-40a4-a667-a8316e7d46aa" height="450" width="281.6"/>
+  <img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/ubuntu.png" height="450" width="253.0" />
+  <img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/manjaro.png" height="450" width="253.0" /> 
+  <img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/kali.png" height="450" width="253.0"/>
 </p>
 
 
 <p align="center">
-  <img src="https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Group%20249.png?alt=media&token=c3fc9018-6a29-482d-a7db-ac30273bb528" height="450" width="281.6" />
-  <img src="https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Group%20250.png?alt=media&token=61253d37-e1c2-40f6-b494-72b755c69a81" height="450" width="281.6" /> 
-  <img src="https://firebasestorage.googleapis.com/v0/b/andronix-techriz.appspot.com/o/Group%20251.png?alt=media&token=7f547be1-1e5e-4fa5-a0bd-8f71ad9d7fb0" height="450" width="281.6"/>
+ <img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/audio.png" height="450" width="253.0" />
+  <img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/softwares.png" height="450" width="253.0" /> 
+  <img src="https://github.com/Techriz/AndronixOrigin/blob/master/Assests/installations.png" height="450" width="253.0"/>
 </p>
 
 ## Some important things - 
