@@ -2,4 +2,4 @@
 unset SESSION_MANAGER
 export PULSE_SERVER=127.0.0.1
 xrdb $HOME/.Xresources
-startlxqt &
+dbus-launch startlxqt &

@@ -15,7 +15,7 @@ echo "IMPORTANT"
 echo ""
 echo ""
 echo "Removing some unused packages, reclaims about 650MB"
-yes | LC_ALL=en_US.UTF-8 pacman -Rncs linux-firmware systemd-sysvinit openresolv mdadm lvm2 reiserfsprogs usbutils
+yes | LC_ALL=en_US.UTF-8 pacman -Rncs linux-firmware systemd-sysvcompat openresolv mdadm lvm2 reiserfsprogs usbutils
 echo "If you are using Android 9 and above, you will encounter this error:"
 echo ""
 echo "could not change the root directory (Function not implemented)"
