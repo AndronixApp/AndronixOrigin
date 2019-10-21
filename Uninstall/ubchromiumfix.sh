@@ -1,6 +1,6 @@
 #!/bin/bash
 echo "Removing distribution provided chromium packages and dependencies..."
-apt purge chromium* chromium-broswer* -y -qq && apt autoremove -y -qq
+apt purge chromium* chromium-browser* -y -qq && apt autoremove -y -qq
 echo "Enabling PPA support..."
 apt update -qq && apt install software-properties-common gnupg --no-install-recommends -y -qq
 echo " Adding chromium-team stable ppa"
