@@ -1,0 +1,52 @@
+#!/bin/bash
+
+export USER=$(whoami)
+HEIGHT=0
+WIDTH=0
+CHOICE_HEIGHT=5
+BACKTITLE="AndroNix vncserver resolution selection"
+TITLE="vncserver-start"
+MENU="Choose one of the following options:"
+export PORT=1
+
+OPTIONS=(1 "Start vncserver with autodetect/dynamic resolution"
+         2 "Start vncserver with QHD resolution"
+         3 "Start vncserver with FHD resolution"
+         4 "Start vncserver with HD-ready resolution"
+         5 "Start vncserver with custom resolution and port")
+
+CHOICE=$(dialog --clear \
+                --backtitle "$BACKTITLE" \
+                --title "$TITLE" \
+                --menu "$MENU" \
+                $HEIGHT $WIDTH $CHOICE_HEIGHT \
+                "${OPTIONS[@]}" \
+                2>&1 >/dev/tty)
+
+clear
+case $CHOICE in
+        1)
+            echo "You chose dynamic resolution"
+            GEO="" vnc
+            ;;
+        2)
+            echo "You chose QHD resolution"
+            GEO="-geometry 2560x1440" vnc
+            ;;
+        3)
+            echo "You chose Full HD resolution"
+            GEO="-geometry 1920x1080" vnc
+            ;;
+        4)
+            echo "You chose HD-ready resolution"
+            GEO="-geometry 1280x720" vnc
+            ;;
+        5)
+            echo "You chose to manually provide a resolution/port"
+            echo "Input your custom resolution in format WIDTHxHEIGHT i.e 1920x1200"
+            read custom
+            echo "Input your custom port i.e 2"
+            read port
+            GEO="-geometry $custom" PORT=$port vnc 
+            ;;
+esac

@@ -1,0 +1,3 @@
+#!/bin/bash
+vncserver -localhost no -depth 24 -name remote-desktop "$GEO" :"$PORT"
+echo "VNC server started. The default password is the account password for $USER"
