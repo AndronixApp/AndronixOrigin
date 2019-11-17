@@ -6,7 +6,6 @@
 apt install sudo dialog -y
 #variables
 TMPDIR=/var/tmp
-USERGROUPS=""
 SWITCH=/usr/share/andronix/switchuser
 
 # Functions
@@ -30,7 +29,6 @@ create_oem_install() {
     /usr/bin/vncpasswd -f <<<"$ROOTPASSWORD"$'\n'"$ROOTPASSWORD" > /root/.vnc/passwd 
     msg "Adding user $USER..."
     useradd -m -G sudo -s /bin/bash -U $(cat $TMPDIR/user) 1> /dev/null 2>&1
-    usermod -aG $USERGROUPS $(cat $TMPDIR/user) 1> /dev/null 2>&1
     msg "Setting full name to $FULLNAME..."
     chfn -f "$FULLNAME" $(cat $TMPDIR/user) 1> /dev/null 2>&1
     msg "Setting password for $USER..."
@@ -56,11 +54,18 @@ USER=$(dialog --clear --title "Finish Andronix Install" \
 
 if [ ! -z "$USER" ]
 then
-USERGROUPS=$(dialog --clear --title "Finish Andronix Install" \
-    --inputbox "Enter additional groups for $USER in a comma seperated list: (empty if none)
-(default groups: sudo)" 8 50 \
+FULLNAME=$(dialog --clear --title "Finish Andronix Install" \
+    --inputbox "Enter Full Name for $USER:" 8 50 \
         3>&1 1>&2 2>&3 3>&- \
 	)
+fi
+
+if [ ! -z "$FULLNAME" ]
+then
+PASSWORD=$(dialog --clear --title "Finish Andronix Install" \
+    --insecure \
+    --passwordbox "Enter Password for $USER (at least 6 characters):" 8 50 \
+        3>&1 1>&2 2>&3 3>&- )
 else 
 	clear
 	msg "Configuration aborted. Restarting OEM script..."
@@ -68,23 +73,17 @@ else
 	#exit 1
 fi
 
-FULLNAME=$(dialog --clear --title "Finish Andronix Install" \
-    --inputbox "Enter Full Name for $USER:" 8 50 \
-        3>&1 1>&2 2>&3 3>&- \
-	)
-
-if [ ! -z "$FULLNAME" ]
+if [ ! -z "$PASSWORD" ]
 then
-PASSWORD=$(dialog --clear --title "Finish Andronix Install" \
-    --insecure \
-    --passwordbox "Enter Password for $USER (at least 6 characters):" 8 50 \
-        3>&1 1>&2 2>&3 3>&- \
-	)
-else 
-	clear
-	msg "Configuration aborted. Restarting OEM script..."
-	sleep 5 && exec bash /usr/share/andronix/firstrun
-	#exit 1
+LEN=${#PASSWORD}
+stat=1
+	if [[ "$LEN" -ge 6 ]]; then
+		stat=$?
+	else 
+		clear
+		msg "Password does not match minimum lenght of 6 characters. Restarting OEM script..."
+		sleep 5 && exec bash /usr/share/andronix/firstrun
+	fi
 fi
 
 if [ ! -z "$PASSWORD" ]
@@ -123,6 +122,19 @@ fi
 
 if [ ! -z "$ROOTPASSWORD" ]
 then
+LEN=${#ROOTPASSWORD}
+stat=1
+	if [[ "$LEN" -ge 6 ]]; then
+		stat=$?
+	else 
+		clear
+		msg "Password does not match minimum lenght of 6 characters. Restarting OEM script..."
+		sleep 5 && exec bash /usr/share/andronix/firstrun
+	fi
+fi
+
+if [ ! -z "$ROOTPASSWORD" ]
+then
 CONFIRMROOTPASSWORD=$(dialog --clear --title "Andronix Installer" \
 	--insecure --passwordbox "Confirm Root Password:" 8 50 \
         3>&1 1>&2 2>&3 3>&- \
@@ -146,7 +158,6 @@ then
 dialog --clear --title "Finish Andronix Install" \
     --yesno "Is the below information correct:
     Username = $USER
-    Additional usergroups = $USERGROUPS
     Full Name for $USER = $FULLNAME
     Password for $USER = $PASSWORD
     Password for root = $ROOTPASSWORD" 20 50 \
@@ -179,6 +190,6 @@ if [ -e /etc/ssh/sshd_config ]
 then
 	sed -i s/"PermitRootLogin yes"/"#PermitRootLogin prohibit-password"/g /etc/ssh/sshd_config
 fi
-msg "You can start using your newly installed Andronix - Andronix Edition..."
+msg "You can start using your newly installed Ubuntu - Andronix Edition..."
 # Replace the current activity with a new shell for the user
 exec su - $USER
