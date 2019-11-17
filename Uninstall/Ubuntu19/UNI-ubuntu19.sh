@@ -2,9 +2,9 @@
 
 echo "Starting to uninstall, please be patient..."
 
-chmod 777 -R ubuntu-19-fs
-rm -rf ubuntu-19-fs
-rm -rf ubuntu-19-binds
+chmod 777 -R ubuntu19-fs
+rm -rf ubuntu19-fs
+rm -rf ubuntu19-binds
 rm -rf ubuntu19.sh
 rm -rf start-ubuntu19.sh
 rm -rf de-apt-xfce4.sh
