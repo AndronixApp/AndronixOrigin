@@ -6,6 +6,8 @@ groupadd --gid 3003 permagrp
 groupadd --gid 9997 permagrp2
 groupadd --gid 50110 permagrp3
 groupadd --gid 99909997 permagrp4
+groupadd --gid 20195 permagrp5
+groupadd --gid 50195 permagrp6
 chmod 4755 /usr/bin/sudo
 /usr/share/andronix/firstrun
 
