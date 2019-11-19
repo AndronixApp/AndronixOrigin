@@ -5,7 +5,7 @@ sudo apt-mark hold udisks2
 sudo apt-get update
 sudo apt-get install xfce4 xfce4-terminal tigervnc-standalone-server tigervnc-commor dbus-x11 --no=install-recommends -y
 sudo apt-get clean
-mkdir /etc/skel/.vnc
+mkdir ~/.vnc
 echo "#!/bin/bash
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 export PULSE_SERVER=127.0.0.1
@@ -14,7 +14,7 @@ export XAUTHORITY
 LANG=en_US.UTF-8
 export LANG
 echo $$ > /tmp/xsession.pid
-dbus-launch --exit-with-session startxfce4 &" >> /etc/skel/.vnc/xstartup
+dbus-launch --exit-with-session startxfce4 &" >> ~/.vnc/xstartup
 echo " "
 echo "You can now start vncserver by running vncserver-start"
 echo " "
