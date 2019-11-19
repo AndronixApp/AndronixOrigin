@@ -78,7 +78,7 @@ Features:
   
 **NOTE:**  
   
-- Termux in required.  
+- Termux is required.  
   
 - Android version should be atleast 5.0  
   
