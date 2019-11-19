@@ -8,14 +8,6 @@ sudo apt-get install xfe -y
 sudo apt-get clean
 
 #Setup the necessary files
-mkdir ~/.vnc
-wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/APT/LXDE/xstartup -P ~/.vnc/
-wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/APT/LXDE/vncserver-start -P /usr/local/bin/
-wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/APT/LXDE/vncserver-stop -P /usr/local/bin/
-
-chmod +x ~/.vnc/xstartup
-chmod +x /usr/local/bin/vncserver-start
-chmod +x /usr/local/bin/vncserver-stop
 
 echo " "
 echo "You can now start vncserver by running vncserver-start"
@@ -38,8 +30,5 @@ echo "To Kill VNC Server just run vncserver-stop"
 echo " "
 echo " "
 echo " "
-
-echo "export DISPLAY=":1"" >> /etc/profile
-source /etc/profile
 
 vncserver-start
