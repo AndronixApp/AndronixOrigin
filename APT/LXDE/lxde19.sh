@@ -3,11 +3,21 @@
 #Get the necessary components
 sudo apt-mark hold udisks2
 sudo apt-get update
-sudo apt-get install lxde-core lxterminal tightvncserver -y
-sudo apt-get install xfe -y
+sudo apt-get install lxde-core lxterminal tigervnc-standalone-server tigervnc-commor dbus-x11 --no=install-recommends -y
 sudo apt-get clean
 
 #Setup the necessary files
+mkdir ~/.vnc
+echo "#!/bin/bash
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+export PULSE_SERVER=127.0.0.1
+XAUTHORITY=$HOME/.Xauthority
+export XAUTHORITY                                                         
+LANG=en_US.UTF-8
+export LANG
+echo $$ > /tmp/xsession.pid
+dbus-launch --exit-with-session startlxde &" >> ~/.vnc/xstartup
+
 
 echo " "
 echo "You can now start vncserver by running vncserver-start"
