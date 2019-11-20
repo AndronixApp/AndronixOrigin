@@ -2,7 +2,7 @@
 
 # suppress dmesg output while the script is running
 # echo 1 > /proc/sys/kernel/printk
-
+apt update
 apt install sudo dialog -y
 #variables
 TMPDIR=/var/tmp
