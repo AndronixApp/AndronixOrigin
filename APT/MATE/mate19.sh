@@ -7,7 +7,10 @@ sudo apt-get install mate-desktop-environment-core mate-terminal tightvncserver 
 sudo apt-get install xfe -y
 sudo apt-get clean
 
-
+mkdir ~/.vnc
+echo "#!/bin/bash
+xrdb $HOME/.Xresources
+mate-session &" >> ~/.vnc/xstartup
 echo " "
 echo "You can now start vncserver by running vncserver-start"
 echo " "
