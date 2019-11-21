@@ -1,85 +1,176 @@
 #!/data/data/com.termux/files/usr/bin/bash
-folder=alpine-fs
-url=https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/${archurl}/alpine-minirootfs-3.10.3-${archurl}.tar.gz?raw=true
-if [ -d "$folder" ]; then
-	first=1
-	echo "skipping downloading"
-fi
+pkg install wget pv proot tar pulseaudio -y
+#Variables we need. Script is modular, change below variables to install different distro's
+name="Alpine"
+distro=alpine
+folder=$distro-fs
 tarball="alpine-rootfs.tar.gz"
-if [ "$first" != 1 ];then
-	if [ ! -f $tarball ]; then
-		echo "Download Rootfs, this may take a while base on your internet speed."
-		case `dpkg --print-architecture` in
-		aarch64)
-			archurl="aarch64" ;;
-		arm)
-			archurl="armhf" ;;
-		amd64)
-			archurl="x86_64" ;;
-		x86_64)
-			archurl="x86_64" ;;	
-		i*86)
-			archurl="x86" ;;
-		x86)
-			archurl="x86" ;;
-		*)
-			echo "unknown architecture"; exit 1 ;;
-		esac
-		wget $url -O $tarball
-	fi
-	cur=`pwd`
-	mkdir -p "$folder"
-	cd "$folder"
-	echo "Decompressing Rootfs, please be patient."
-	proot --link2symlink tar -xf ${cur}/${tarball} --exclude='dev' 2> /dev/null||:
-	cd "$cur"
-fi
-mkdir -p alpine-binds
-bin=start-alpine.sh
-echo "writing launch script"
-cat > $bin <<- EOM
-#!/bin/bash
-cd \$(dirname \$0)
-## unset LD_PRELOAD in case termux-exec is installed
-unset LD_PRELOAD
-command="proot"
-command+=" --link2symlink"
-command+=" -0"
-command+=" -r $folder"
-if [ -n "\$(ls -A alpine-binds)" ]; then
-    for f in alpine-binds/* ;do
-      . \$f
-    done
-fi
-command+=" -b /dev"
-command+=" -b /proc"
-command+=" -b alpine-fs/root:/dev/shm"
-## uncomment the following line to have access to the home directory of termux
-#command+=" -b /data/data/com.termux/files/home:/root"
-## uncomment the following line to mount /sdcard directly to / 
-#command+=" -b /sdcard"
-command+=" -w /root"
-command+=" /usr/bin/env -i"
-command+=" HOME=/root"
-command+=" PATH=PATH=/bin:/usr/bin:/sbin:/usr/sbin"
-command+=" TERM=\$TERM"
-command+=" LANG=C.UTF-8"
-command+=" /bin/sh --login"
-com="\$@"
-if [ -z "\$1" ];then
-    exec \$command
-else
-    \$command -c "\$com"
-fi
-EOM
+echo " "
+echo " "
+echo "----------------------------------------------------------"
+echo "|  NOTE THAT ALL THE PREVIOUS ALPINE DATA WILL BE ERASED |"
+echo "----------------------------------------------------------"
+echo "If you want to keep your old $distro press Ctrl - c now!! "
+echo -n "5. "
+sleep 1
+echo -n "4. "
+sleep 1
+echo -n "3. "
+sleep 1
+echo -n "2. "
+sleep 1 
+echo -n "1. "
+sleep 1 
+echo "Removing $folder and $distro-binds"
+rm -rf $distro-binds $folder
+echo " "
+echo "Proceeding with installation"
+echo " "
+echo  "Allow the Storage permission to termux"
+echo " "
+sleep 2
+termux-setup-storage
+clear
 
-echo "fixing shebang of $bin"
-termux-fix-shebang $bin
-echo "making $bin executable"
-chmod +x $bin
-echo "removing image for some space"
-rm $tarball
-echo "Preparing additional component for the first time, please wait..."
-rm $folder/etc/resolv.conf
-echo nameserver 1.1.1.1 > $folder/etc/resolv.conf
-echo "You can now launch Alpine with the ./${bin} script"
+#Creating folders we need
+mkdir -p $distro-binds $folder
+
+#Performing a check for online or offline install
+[ -f $tarball ] && check=1
+if [ "$check" -eq "1" ] > /dev/null 2>&1; then
+	echo "Local $distro rootfs found, extracting"
+	echo ""
+	if [ -x "$(command -v neofetch)" ]; then
+		neofetch --ascii_distro Alpine -L
+	fi
+	echo ""
+	pv $tarball | proot --link2symlink tar -zxf - -C $folder || :
+else
+	case `dpkg --print-architecture` in
+	aarch64)
+		archurl="aarch64" ;;
+	arm)
+		archurl="armhf" ;;
+	amd64)
+		archurl="x86_64" ;;
+	x86_64)
+		archurl="x86_64" ;;	
+	i*86)
+		archurl="x86" ;;
+	x86)
+		archurl="x86" ;;
+	*)
+		echo "unknown architecture"; exit 1 ;;
+	esac
+	url=https://github.com/AndronixApp/AndronixOrigin/blob/master/Rootfs/Alpine/${archurl}/alpine-minirootfs-3.10.3-${archurl}.tar.gz?raw=true
+	echo "Downloading and extracting $name"
+	echo "Extraction happens in parallel"
+	echo ""
+	if [ -x "$(command -v neofetch)" ]; then
+		neofetch --ascii_distro Alpine -L
+	fi
+	echo ""
+	wget -qO- --tries=0 $url --show-progress --progress=bar:force:noscroll |proot --link2symlink tar -zxf - -C $folder --exclude='dev' || :
+fi
+
+bin=start-$distro.sh
+if [ -d $folder/var ];then
+	clear
+	echo "--------------------------------------------------------"
+	echo "|  Enabling Audio support in Termux and configuring it  |"
+	echo "--------------------------------------------------------"
+	if grep -q "anonymous" ~/../usr/etc/pulse/default.pa
+	then
+    		sed -i '/anonymous/d' ~/../usr/etc/pulse/default.pa
+    		echo "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1>" >> ~/../usr/etc/pulse/default.pa
+	else
+    		echo "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1>" >> ~/../usr/etc/pulse/default.pa
+	fi
+
+	if grep -q "exit-idle" ~/../usr/etc/pulse/daemon.conf
+	then
+    		sed -i '/exit-idle/d' ~/../usr/etc/pulse/daemon.conf
+    		echo "exit-idle-time = 180" >> ~/../usr/etc/pulse/daemon.conf
+	else
+    		echo "exit-idle-time = 180" >> ~/../usr/etc/pulse/daemon.conf
+	fi
+	echo "Done patching termux to enable audio playback"
+	echo ""
+	sleep 2
+	echo "---------------------------"
+	echo "|  Writing launch script  |"
+	echo "---------------------------"
+
+	cat > $bin <<- EOM
+	#!/data/data/com.termux/files/usr/bin/bash
+	cd \$(dirname \$0)
+	## unset LD_PRELOAD in case termux-exec is installed
+	pulseaudio -k >>/dev/null 2>&1
+	pulseaudio --start >>/dev/null 2>&1
+	unset LD_PRELOAD
+	command="proot"
+	command+=" --link2symlink"
+	command+=" -0"
+	command+=" -r $folder"
+	if [ -n "\$(ls -A $distro-binds)" ]; then
+    		for f in $distro-binds/* ;do
+      		. \$f
+    	done
+	fi
+	command+=" -b /dev"
+	command+=" -b /proc"
+	command+=" -b $folder/root:/dev/shm"
+	## uncomment the following line to have access to the home directory of termux
+	#command+=" -b /data/data/com.termux/files/home:/root"
+	## uncomment the following line to mount /sdcard directly to /
+	#command+=" -b /sdcard"
+	command+=" -w /root"
+	command+=" /usr/bin/env -i"
+	command+=" HOME=/root"
+	command+=" PATH=/bin:/usr/bin:/sbin:/usr/sbin"
+	command+=" TERM=\$TERM"
+	command+=" LANG=en_US.UTF-8"
+	command+=" LC_ALL=C"
+	command+=" LANGUAGE=en_US"
+	command+=" /bin/sh --login"
+	com="\$@"
+	if [ -z "\$1" ];then
+    		exec \$command
+	else
+    		\$command -c "\$com"
+	fi
+	EOM
+
+	echo "-------------------------------"
+	echo "|  Checking for file presence  |"
+	echo "-------------------------------"
+	echo ""
+
+	if test -f "$bin"; then
+    		echo "Boot script present"
+		chmod +x $bin
+		termux-fix-shebang $bin
+    		echo " "
+	fi
+
+	FD=$folder
+	if [ -d "$FD" ]; then
+  		echo "Boot container present"
+	  	echo " "
+	fi
+
+	UFD=$distro-binds
+	if [ -d "$UFD" ]; then
+  		echo "Sub-Boot container present"
+	  	echo " "
+	fi
+
+	echo "" > $folder/etc/fstab
+	rm -rf $folder/etc/resolv.conf
+	echo nameserver 8.8.8.8 > $folder/etc/resolv.conf
+	echo "Installation Finished"
+	echo "Start $name with command ./start-$distro.sh"
+else 
+	echo "Installation unsuccessful"
+	echo "Check network connectivity and contact devs on Discord if problems persist"
+fi
