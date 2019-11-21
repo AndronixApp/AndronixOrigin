@@ -3,7 +3,7 @@
 #Get the necessary components
 sudo apt-mark hold udisks2
 sudo apt-get update
-sudo apt-get install mate-desktop-environment-core mate-terminal tightvncserver -y
+sudo apt-get install mate-desktop-environment-core mate-terminal tigervnc-standalone-server tigervnc-common -y
 sudo apt-get install xfe -y
 sudo apt-get clean
 
