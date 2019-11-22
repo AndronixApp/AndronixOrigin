@@ -76,27 +76,6 @@ fi
 bin=start-$distro.sh
 if [ -d $folder/var ];then
 	clear
-	echo "--------------------------------------------------------"
-	echo "|  Enabling Audio support in Termux and configuring it  |"
-	echo "--------------------------------------------------------"
-	if grep -q "anonymous" ~/../usr/etc/pulse/default.pa
-	then
-    		sed -i '/anonymous/d' ~/../usr/etc/pulse/default.pa
-    		echo "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1>" >> ~/../usr/etc/pulse/default.pa
-	else
-    		echo "load-module module-native-protocol-tcp auth-ip-acl=127.0.0.1 auth-anonymous=1>" >> ~/../usr/etc/pulse/default.pa
-	fi
-
-	if grep -q "exit-idle" ~/../usr/etc/pulse/daemon.conf
-	then
-    		sed -i '/exit-idle/d' ~/../usr/etc/pulse/daemon.conf
-    		echo "exit-idle-time = 180" >> ~/../usr/etc/pulse/daemon.conf
-	else
-    		echo "exit-idle-time = 180" >> ~/../usr/etc/pulse/daemon.conf
-	fi
-	echo "Done patching termux to enable audio playback"
-	echo ""
-	sleep 2
 	echo "---------------------------"
 	echo "|  Writing launch script  |"
 	echo "---------------------------"
@@ -105,8 +84,6 @@ if [ -d $folder/var ];then
 	#!/data/data/com.termux/files/usr/bin/bash
 	cd \$(dirname \$0)
 	## unset LD_PRELOAD in case termux-exec is installed
-	pulseaudio -k >>/dev/null 2>&1
-	pulseaudio --start >>/dev/null 2>&1
 	unset LD_PRELOAD
 	command="proot"
 	command+=" --link2symlink"
