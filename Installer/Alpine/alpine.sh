@@ -22,6 +22,7 @@ sleep 1
 echo -n "1. "
 sleep 1 
 echo "Removing $folder and $distro-binds"
+chmod 777 $folder
 rm -rf $distro-binds $folder
 echo " "
 echo "Proceeding with installation"
