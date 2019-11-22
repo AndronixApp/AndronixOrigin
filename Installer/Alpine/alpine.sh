@@ -1,5 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
-pkg install wget pv proot tar pulseaudio -y
+pkg install wget pv proot tar -y
 #Variables we need. Script is modular, change below variables to install different distro's
 name="Alpine"
 distro=alpine
