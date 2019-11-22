@@ -11,4 +11,4 @@ groupadd --gid 20195 permagrp5
 groupadd --gid 50195 permagrp6
 chmod 4755 /usr/bin/sudo
 /usr/share/andronix/firstrun
-
+exit
