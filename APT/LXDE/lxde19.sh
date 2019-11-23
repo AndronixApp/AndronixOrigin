@@ -3,7 +3,7 @@
 #Get the necessary components
 sudo apt-mark hold udisks2
 sudo apt-get update
-sudo apt-get install lxde-core lxterminal tigervnc-standalone-server tigervnc-commor dbus-x11 --no=install-recommends -y
+sudo apt-get install lxde-core lxterminal tigervnc-standalone-server tigervnc-common dbus-x11 --no-install-recommends -y
 sudo apt-get clean
 
 #Setup the necessary files
