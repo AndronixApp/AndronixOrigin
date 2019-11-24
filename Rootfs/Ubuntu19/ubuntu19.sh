@@ -32,7 +32,7 @@ fi
 	mkdir -p "$folder"
 	cd "$folder"
 	echo "Decompressing Rootfs, please be patient."
-	proot --link2symlink tar -xJf ${cur}/${tarball}||:
+	proot --link2symlink tar -xJf ${cur}/${tarball} --exclude=dev||:
 	cd "$cur"
 fi
 mkdir -p ubuntu19-binds
