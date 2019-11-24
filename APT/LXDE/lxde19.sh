@@ -8,6 +8,7 @@ sudo apt-get clean
 
 #Setup the necessary files
 mkdir -p ~/.vnc
+
 echo "#!/bin/bash
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 export PULSE_SERVER=127.0.0.1
@@ -16,8 +17,7 @@ export XAUTHORITY
 LANG=en_US.UTF-8
 export LANG
 echo $$ > /tmp/xsession.pid
-dbus-launch --exit-with-session startlxde &" >> ~/.vnc/xstartup
-
+dbus-launch --exit-with-session startlxde &" > ~/.vnc/xstartup
 
 echo " "
 echo "You can now start vncserver by running vncserver-start"
