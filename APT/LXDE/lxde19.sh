@@ -7,7 +7,7 @@ sudo apt-get install lxde-core lxterminal tigervnc-standalone-server tigervnc-co
 sudo apt-get clean
 
 #Setup the necessary files
-mkdir ~/.vnc
+mkdir -p ~/.vnc
 echo "#!/bin/bash
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 export PULSE_SERVER=127.0.0.1
@@ -41,4 +41,5 @@ echo " "
 echo " "
 echo " "
 
+vncpasswd
 vncserver-start
