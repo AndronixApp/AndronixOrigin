@@ -74,7 +74,14 @@ else
 fi
 EOM
 
-mkdir ~/ubuntu19-fs/usr/share/andronix
+rm -rf ~/ubuntu19-fs/usr/share/andronix/
+mkdir ~/ubuntu19-fs/usr/share/andronix/
+mkdir ~/ubuntu19-fs/var/tmp
+rm -rf ~/ubuntu19-fs/root/.bash_profile
+rm -rf ~/ubuntu19-fs/etc/skel/.profile
+rm -rf ~/ubuntu19-fs/root/.profile
+rm -rf ~/ubuntu19-fs/usr/local/bin/*
+
 wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile -P ~/ubuntu19-fs/root/
 wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -P ~/ubuntu19-fs/etc/skel
 wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -P ~/ubuntu19-fs/root/
