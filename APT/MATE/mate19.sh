@@ -1,6 +1,9 @@
 #!/bin/bash
 
 #Get the necessary components
+sudo apt install udisks2 -y
+echo "" > /var/lib/dpkg/info/udisks2.postinst
+sudo dpkg --configure -a
 sudo apt-mark hold udisks2
 sudo apt-get update
 sudo apt-get install mate-desktop-environment-core mate-terminal tigervnc-standalone-server tigervnc-common -y
