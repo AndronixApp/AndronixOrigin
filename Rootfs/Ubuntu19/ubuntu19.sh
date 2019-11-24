@@ -74,32 +74,23 @@ else
 fi
 EOM
 
-rm -rf ~/ubuntu19-fs/usr/share/andronix/
-mkdir ~/ubuntu19-fs/usr/share/andronix/
 mkdir ~/ubuntu19-fs/var/tmp
-rm -rf ~/ubuntu19-fs/root/.bash_profile
-rm -rf ~/ubuntu19-fs/etc/skel/.profile
-rm -rf ~/ubuntu19-fs/root/.profile
 rm -rf ~/ubuntu19-fs/usr/local/bin/*
 
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile -P ~/ubuntu19-fs/root/
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -P ~/ubuntu19-fs/etc/skel
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -P ~/ubuntu19-fs/root/
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/firstrun -P ~/ubuntu19-fs/usr/share/andronix
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ~/ubuntu19-fs/usr/local/bin
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ~/ubuntu19-fs/usr/local/bin
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ~/ubuntu19-fs/usr/local/bin
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-start -P ~/ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ~/ubuntu19-fs/root/.profile.1
+cat $folder/root/.profile.1 >> $folder/root/.profile && rm -rf $folder/root/.profile.1
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile-ub19 -O ~/ubuntu19-fs/root/.bash_profile
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ~/ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ~/ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ~/ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-start -P ~/ubuntu19-fs/usr/local/bin
 
 chmod +x ~/ubuntu19-fs/root/.bash_profile
-chmod +x ~/ubuntu19-fs/etc/skel/.profile
 chmod +x ~/ubuntu19-fs/root/.profile
-chmod +x ~/ubuntu19-fs/usr/share/andronix/firstrun
 chmod +x ~/ubuntu19-fs/usr/local/bin/vnc
 chmod +x ~/ubuntu19-fs/usr/local/bin/vncpasswd
 chmod +x ~/ubuntu19-fs/usr/local/bin/vncserver-start
 chmod +x ~/ubuntu19-fs/usr/local/bin/vncserver-stop
-
 
 echo "fixing shebang of $bin"
 termux-fix-shebang $bin
