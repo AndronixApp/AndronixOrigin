@@ -7,6 +7,17 @@ sudo apt-get install lxqt-core lxqt-config qterminal tightvncserver -y
 sudo apt-get install xfe -y
 sudo apt-get clean
 
+#Setup the necessary files
+mkdir -p ~/.vnc
+echo "#!/bin/bash
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+export PULSE_SERVER=127.0.0.1
+XAUTHORITY=$HOME/.Xauthority
+export XAUTHORITY                                                         
+LANG=en_US.UTF-8
+export LANG
+echo $$ > /tmp/xsession.pid
+dbus-launch --exit-with-session startlxqt &" >> ~/.vnc/xstartup
 
 echo " "
 echo "You can now start vncserver by running vncserver-start"
@@ -33,4 +44,5 @@ echo " "
 echo "export DISPLAY=":1"" >> /etc/profile
 source /etc/profile
 
+vncpasswd
 vncserver-start
