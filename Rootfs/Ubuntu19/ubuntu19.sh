@@ -74,7 +74,7 @@ else
 fi
 EOM
 
-mkdir ~/ubuntu19-fs/var/tmp
+mkdir -p ~/ubuntu19-fs/var/tmp
 rm -rf ~/ubuntu19-fs/usr/local/bin/*
 
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ~/ubuntu19-fs/root/.profile.1
