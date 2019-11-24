@@ -17,7 +17,7 @@ export XAUTHORITY
 LANG=en_US.UTF-8
 export LANG
 echo $$ > /tmp/xsession.pid
-dbus-launch --exit-with-session startlxqt &" >> ~/.vnc/xstartup
+dbus-launch --exit-with-session startlxqt &" > ~/.vnc/xstartup
 
 echo " "
 echo "You can now start vncserver by running vncserver-start"
