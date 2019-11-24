@@ -11,6 +11,7 @@ mkdir ~/.vnc
 echo "#!/bin/bash
 xrdb $HOME/.Xresources
 mate-session &" >> ~/.vnc/xstartup
+
 echo " "
 echo "You can now start vncserver by running vncserver-start"
 echo " "
@@ -36,4 +37,5 @@ echo " "
 echo "export DISPLAY=":1"" >> /etc/profile
 source /etc/profile
 
+vncpasswd
 vncserver-start
