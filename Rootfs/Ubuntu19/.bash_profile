@@ -10,5 +10,6 @@ groupadd --gid 99909997 permagrp4
 groupadd --gid 20195 permagrp5
 groupadd --gid 50195 permagrp6
 chmod 4755 /usr/bin/sudo
+apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0CC3FD642696BFC8
 /usr/share/andronix/firstrun
 exit
