@@ -2,7 +2,7 @@ rm -rf /etc/resolv.conf
 echo "nameserver 8.8.8.8" >> /etc/resolv.conf
 chmod +x /usr/share/andronix/firstrun
 mkdir ~/.vnc
-apt update -y && apt install ffmpeg dialog -y
+apt update -y && apt install ffmpeg dialog xfce4-goodies -y
 groupadd --gid 3003 permagrp
 groupadd --gid 9997 permagrp2
 groupadd --gid 50110 permagrp3
