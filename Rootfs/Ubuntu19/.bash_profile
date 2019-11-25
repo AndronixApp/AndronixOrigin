@@ -11,4 +11,5 @@ groupadd --gid 99909997 permagrp4
 groupadd --gid 20195 permagrp5
 groupadd --gid 50195 permagrp6
 chmod 4755 /usr/bin/sudo
+rm -rf /etc/skel/.profile.1 /root/.profile.1
 /usr/share/andronix/firstrun; exit
