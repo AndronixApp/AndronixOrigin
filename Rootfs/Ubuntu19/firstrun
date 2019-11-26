@@ -18,6 +18,25 @@ msg() {
  }
 
 
+show_spinner()
+{
+        local -r pid="${1}"
+        local -r delay='0.75'
+        local spinstr='\|/-'
+        local temp
+        printf "${GREEN} This might take a while.. "
+        while ! grep -q "done" $TMPDIR/status ; do
+                temp="${spinstr#?}"
+                printf " [%c]  " "${spinstr}"
+                spinstr=${temp}${spinstr%"${temp}"}
+                sleep "${delay}"
+                printf "\b\b\b\b\b\b"
+        done
+        printf "Done!    \b\b\b\b"
+        echo ""
+
+}
+
 create_oem_install() {
     echo "$USER" > $TMPDIR/user
     echo "$PASSWORD" >> $TMPDIR/password
@@ -28,7 +47,8 @@ create_oem_install() {
     passwd root < $TMPDIR/rootpassword 1> /dev/null 2>&1
     /usr/bin/vncpasswd -f <<<"$ROOTPASSWORD"$'\n'"$ROOTPASSWORD" > /root/.vnc/passwd 
     msg "Adding user $USER..."
-    useradd -m -G sudo -s /bin/bash -U $(cat $TMPDIR/user) 1> /dev/null 2>&1
+    useradd -m -G sudo -s /bin/bash -U $(cat $TMPDIR/user) 1> /dev/null 2>&1 && echo "done" > $TMPDIR/status &
+    show_spinner
     msg "Setting full name to $FULLNAME..."
     chfn -f "$FULLNAME" $(cat $TMPDIR/user) 1> /dev/null 2>&1
     msg "Setting password for $USER..."
@@ -190,6 +210,6 @@ if [ -e /etc/ssh/sshd_config ]
 then
 	sed -i s/"PermitRootLogin yes"/"#PermitRootLogin prohibit-password"/g /etc/ssh/sshd_config
 fi
-msg "You can start using your newly installed Ubuntu - Andronix Edition..."
+msg "You can start using your newly installed Andronix Modded OS..."
 # Replace the current activity with a new shell for the user
 exec su - $USER
