@@ -74,23 +74,23 @@ else
 fi
 EOM
 
-mkdir -p ~/ubuntu19-fs/var/tmp
-rm -rf ~/ubuntu19-fs/usr/local/bin/*
+mkdir -p ubuntu19-fs/var/tmp
+rm -rf ubuntu19-fs/usr/local/bin/*
 
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ~/ubuntu19-fs/root/.profile.1
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ubuntu19-fs/root/.profile.1
 cat $folder/root/.profile.1 >> $folder/root/.profile && rm -rf $folder/root/.profile.1
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile-ub19 -O ~/ubuntu19-fs/root/.bash_profile
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ~/ubuntu19-fs/usr/local/bin
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ~/ubuntu19-fs/usr/local/bin
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ~/ubuntu19-fs/usr/local/bin
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-start -P ~/ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile-ub19 -O ubuntu19-fs/root/.bash_profile
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ubuntu19-fs/usr/local/bin
+wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-start -P ubuntu19-fs/usr/local/bin
 
-chmod +x ~/ubuntu19-fs/root/.bash_profile
-chmod +x ~/ubuntu19-fs/root/.profile
-chmod +x ~/ubuntu19-fs/usr/local/bin/vnc
-chmod +x ~/ubuntu19-fs/usr/local/bin/vncpasswd
-chmod +x ~/ubuntu19-fs/usr/local/bin/vncserver-start
-chmod +x ~/ubuntu19-fs/usr/local/bin/vncserver-stop
+chmod +x ubuntu19-fs/root/.bash_profile
+chmod +x ubuntu19-fs/root/.profile
+chmod +x ubuntu19-fs/usr/local/bin/vnc
+chmod +x ubuntu19-fs/usr/local/bin/vncpasswd
+chmod +x ubuntu19-fs/usr/local/bin/vncserver-start
+chmod +x ubuntu19-fs/usr/local/bin/vncserver-stop
 
 echo "fixing shebang of $bin"
 termux-fix-shebang $bin
