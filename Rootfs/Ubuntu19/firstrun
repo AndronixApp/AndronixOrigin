@@ -47,6 +47,7 @@ create_oem_install() {
     passwd root < $TMPDIR/rootpassword 1> /dev/null 2>&1
     /usr/bin/vncpasswd -f <<<"$ROOTPASSWORD"$'\n'"$ROOTPASSWORD" > /root/.vnc/passwd 
     msg "Adding user $USER..."
+    echo "" > $TMPDIR/status
     useradd -m -G sudo -s /bin/bash -U $(cat $TMPDIR/user) 1> /dev/null 2>&1 && echo "done" > $TMPDIR/status &
     show_spinner
     msg "Setting full name to $FULLNAME..."
