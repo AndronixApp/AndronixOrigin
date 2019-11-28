@@ -146,6 +146,10 @@ if [ -d $folder/var ];then
 	echo "" > $folder/etc/fstab
 	rm -rf $folder/etc/resolv.conf
 	echo nameserver 8.8.8.8 > $folder/etc/resolv.conf
+        ./$bin apk update
+        ./$bin apk add --no-cache bash
+        sed -i 's/ash/bash/g' $folder/etc/passwd
+        sed -i 's/bin\/sh/bin\/bash/g' $bin
 	echo "Installation Finished"
 	echo "Start $name with command ./start-$distro.sh"
 else 
