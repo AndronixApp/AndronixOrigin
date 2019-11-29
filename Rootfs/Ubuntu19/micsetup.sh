@@ -10,12 +10,12 @@ echo ""
 echo "Make sure you have started the server from the app with following config"
 echo ""
 echo "---------------------------"
-echo "				                  |"
+echo "                          |"
 echo " TARGET ADDRESS: 127.0.0.1|"
-echo " TARGET PORT: 55555     	|" 
-echo " MODE: Manual		          |"
-echo " FORMAT: G.722		        |"
-echo "			                    |"
+echo " TARGET PORT: 55555       |" 
+echo " MODE: Manual             |"
+echo " FORMAT: G.722            |"
+echo "                          |"
 echo "---------------------------"
 echo ""
 ffplay -i rtp://@127.0.0.1:55555 > output.log 2>&1 < /dev/null &
@@ -27,4 +27,4 @@ echo "Also open new Termux session and type pluseaudio --start"
 EOT
 chmod +x /usr/local/bin/startmic 
 
-echo "To start the mic input type: startmic"
+echo "To start the mic input next time type: startmic"
