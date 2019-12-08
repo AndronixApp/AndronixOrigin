@@ -11,6 +11,6 @@ apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 0EBEA9B02842F1
 echo "Installing chromium-browser"
 apt update && apt install chromium-browser --no-install-recommends -y -qq
 echo "Patching application shortcuts..."
-sed -i 's/chromium-browser %U/chromium-broswer --no-sandbox %U/g' /usr/share/applications/chromium-browser.desktop
+sed -i 's/chromium-browser %U/chromium-browser --no-sandbox %U/g' /usr/share/applications/chromium-browser.desktop
 echo 'alias chromium="chromium-browser --no-sandbox" >> /etc/profile'
 echo "You can now start chromium by using the application icon or by typing chromium" && . /etc/profile
