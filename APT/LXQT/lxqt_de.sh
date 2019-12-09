@@ -18,6 +18,11 @@ chmod +x /usr/local/bin/vncserver-start
 chmod +x /usr/local/bin/vncserver-stop
 
 echo " "
+
+echo "Running browser patch"
+wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Uninstall/ubchromiumfix.sh && chmod +x ubchromiumfix.sh
+./ubchromiumfix.sh && rm -rf ubchromiumfix.sh
+
 echo "You can now start vncserver by running vncserver-start"
 echo " "
 echo "It will ask you to enter a password when first time starting it."
