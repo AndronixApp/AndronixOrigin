@@ -4,7 +4,6 @@
 
 &nbsp;
 
-[![Build Status](https://app.bitrise.io/app/49559d7f97084931/status.svg?token=tfy28XkXGlo-1snOW8sH-w)](https://app.bitrise.io/app/49559d7f97084931)
 
 &nbsp;
 
