@@ -27,18 +27,12 @@ if [ "$first" != 1 ];then
     *)
       echo "unknown architecture"; exit 1 ;;
     esac
-    wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Void/${archurl}/void_${archurl}.tar.xz?raw=true" -O $tarball
+    wget "https://github.com/AndronixApp/AndronixOrigin/blob/master/Rootfs/Void/${archurl}/void_${archurl}.tar.xz?raw=true" -O $tarball
   fi
   mkdir -p "$folder"
-  cd "$folder"
   echo "Decompressing Rootfs, please be patient."
-  cd
-  proot --link2symlink tar -xJf ${cur}/${tarball}||:
-  cd 
+  proot --link2symlink tar -xJf ${tarball} -C $folder||:
 fi
-
-
-
 
 mkdir -p void-binds
 bin=start-void.sh
@@ -85,13 +79,11 @@ termux-fix-shebang $bin
 
 
 echo "Fixing DNS for internet connection"
-cd
 rm -rf void-fs/etc/resolv.conf
-touch void-fs/etc/resolv.conf
 echo "nameserver 8.8.8.8
 nameserver 8.8.4.4
 nameserver 192.168.1.1
-nameserver 127.0.0.1" >> void-fs/etc/resolv.conf
+nameserver 127.0.0.1" > void-fs/etc/resolv.conf
 
 echo "making $bin executable"
 chmod +x $bin
