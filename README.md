@@ -87,7 +87,7 @@ Features:
   
 - Termux is required.  
   
-- Android version should be atleast 5.0  
+- Android version should be atleast 5.1  
   
 - Device architecture supported: ARMv7, ARM64, x64.
 
