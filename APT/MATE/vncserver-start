@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 export USER=root
 export HOME=/root
 
