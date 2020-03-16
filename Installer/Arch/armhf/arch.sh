@@ -76,4 +76,6 @@ wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/
 wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/armhf/additional.sh" -P arch-fs/root
 rm -rf arch-fs/root/.bash_profile
 wget "https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Installer/Arch/armhf/bash_profile" -O arch-fs/root/.bash_profile
-echo "done"
+echo "Basic installation complete.... Instsalling the Desktop environment..."
+clear
+bash start-arch.sh
