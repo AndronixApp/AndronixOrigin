@@ -1,6 +1,6 @@
 #!/bin/bash
 bash ~/additional.sh
-pacman -S wget -y
+pacman -S wget --noconfirm
 wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Pacman/de-pac.sh && bash de-pac.sh
 if [ ! -f /usr/local/bin/vncserver-start ]; then
     wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/vncserver-start
