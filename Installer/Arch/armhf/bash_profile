@@ -1,0 +1,11 @@
+#!/bin/bash
+bash ~/additional.sh
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Pacman/de-pac.sh && bash de-pac.sh
+if [ ! -f /usr/local/bin/vncserver-start ]; then
+    wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/vncserver-start
+    wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/vncserver-stop
+fi
+if [ ! -f /usr/bin/vncserver ]; then
+    pacman -S tigervnc -y
+fi
+rm -rf ~/.bash_profile
