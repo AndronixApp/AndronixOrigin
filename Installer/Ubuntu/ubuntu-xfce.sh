@@ -87,7 +87,6 @@ echo "Setting up the installation of XFCE VNC"
 
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
-bash ~/additional.sh
 apt update -y && apt install wget -y
 clear
 
