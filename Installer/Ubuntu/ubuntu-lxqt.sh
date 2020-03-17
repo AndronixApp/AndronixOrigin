@@ -90,7 +90,7 @@ echo "#!/bin/bash
 apt update -y && apt install wget -y
 clear
 
-if [ ! -f /root/xfce4_de.sh ]; then
+if [ ! -f /root/lxqt_de.sh ]; then
     wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/lxqt_de.sh -P /root
     bash ~/lxqt_de.sh
 else
