@@ -87,7 +87,7 @@ wget --tries=20 $dlink/LXDE/lxde_de.sh -P $folder/root
 clear
 echo "Setting up the installation of LXDE VNC"
 echo "#!/bin/bash
-apt update -y && apt install wget -y
+yum install wget -y
 clear
 if [ ! -f /root/lxde_de.sh ]; then
     wget --tries=20 $dlink/LXDE/lxde_de.sh -P /root
@@ -101,8 +101,8 @@ if [ ! -f /usr/local/bin/vncserver-start ]; then
     wget --tries=20 $dlink/LXDE/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
-    apt install tigervnc-standalone-server -y
+    yum install tigervnc-server -y
 fi
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
-
+rm -rf fedora-lxde.sh
 bash $bin
