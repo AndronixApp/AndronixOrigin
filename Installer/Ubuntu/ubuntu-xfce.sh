@@ -84,13 +84,15 @@ rm $tarball
 wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/xfce4_de.sh -P $folder/root
 clear
 echo "Setting up the installation of XFCE VNC"
+
+echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
 bash ~/additional.sh
 apt update -y && apt install wget -y
 clear
 
 if [ ! -f /root/xfce4_de.sh ]; then
-    wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/xfce4_de.sh -P /root
+    wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/xfce4_de.sh -P /root
     bash ~/xfce4_de.sh
 else
     bash ~/xfce4_de.sh
@@ -98,8 +100,8 @@ fi
 
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/vncserver-start
-    wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/vncserver-stop
+    wget --tries=20  https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/vncserver-start
+    wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
