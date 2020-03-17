@@ -91,7 +91,7 @@ apt update -y && apt install wget -y
 clear
 
 if [ ! -f /root/lxde_de.sh ]; then
-    wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/lxde_de.sh -P /root
+    wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/LXDE/lxde_de.sh -P /root
     bash ~/lxde_de.sh
 else
     bash ~/lxde_de.sh
