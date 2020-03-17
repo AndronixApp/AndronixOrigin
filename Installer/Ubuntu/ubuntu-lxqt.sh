@@ -91,7 +91,7 @@ apt update -y && apt install wget -y
 clear
 
 if [ ! -f /root/lxqt_de.sh ]; then
-    wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/XFCE4/lxqt_de.sh -P /root
+    wget --tries=20 https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT/LXQT/lxqt_de.sh -P /root
     bash ~/lxqt_de.sh
 else
     bash ~/lxqt_de.sh
