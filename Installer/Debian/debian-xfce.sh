@@ -82,7 +82,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/XFCE4/XFCE4_de.sh -P $folder/root
+wget --tries=20 $dlink/XFCE4/xfce4_de.sh -P $folder/root
 clear
 echo "Setting up the installation of XFCE VNC"
 
@@ -90,7 +90,7 @@ echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Set
 echo "#!/bin/bash
 apt update -y && apt install wget -y
 clear
-if [ ! -f /root/lxde_de.sh ]; then
+if [ ! -f /root/xfce4_de.sh ]; then
     wget --tries=20 $dlink/XFCE4/xfce4_de.sh -P /root
     bash ~/xfce4_de.sh
 else
