@@ -1,0 +1,25 @@
+#!/bin/bash
+
+xbps-install -Su
+xbps-install -S lxde tigervnc wget 
+mkdir ~/.vnc
+
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/vncserver-start
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/vncserver-stop
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/xstartup
+
+chmod +x ~/.vnc/xstartup
+chmod +x /usr/local/bin/vncserver-start
+chmod +x /usr/local/bin/vncserver-stop
+
+echo "export DISPLAY=":1"" >> /etc/profile
+source /etc/profile
+
+vncserver-start
+echo "The VNC Server will be started at 127.0.0.1:5901"
+echo " "
+echo "You can connect to this address with a VNC Viewer you prefer"
+echo " "
+echo "Connect to this address will open a window with LXDE Desktop Environment"
+echo " "
+echo "To Kill VNC Server just run vncserver-stop"
