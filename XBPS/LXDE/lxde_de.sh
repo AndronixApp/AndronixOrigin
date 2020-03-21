@@ -4,9 +4,9 @@ xbps-install -Su
 xbps-install -S lxde tigervnc wget 
 mkdir ~/.vnc
 
-wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/vncserver-start
-wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/vncserver-stop
-wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/xstartup
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/vncserver-start -P /usr/local/bin/
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/vncserver-stop -P /usr/local/bin/
+wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS/XFCE4/xstartup -P ~/.vnc/
 
 chmod +x ~/.vnc/xstartup
 chmod +x /usr/local/bin/vncserver-start
