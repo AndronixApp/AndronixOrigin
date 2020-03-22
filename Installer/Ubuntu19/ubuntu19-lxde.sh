@@ -80,7 +80,6 @@ rm -rf ubuntu19-fs/usr/local/bin/*
 
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ubuntu19-fs/root/.profile.1 > /dev/null
 cat $folder/root/.profile.1 >> $folder/root/.profile && rm -rf $folder/root/.profile.1
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile-ub19 -O ubuntu19-fs/root/.bash_profile > /dev/null
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ubuntu19-fs/usr/local/bin > /dev/null
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ubuntu19-fs/usr/local/bin > /dev/null
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ubuntu19-fs/usr/local/bin > /dev/null
@@ -106,6 +105,7 @@ wget --tries=20 $dlink/LXDE/lxde_de.sh -P $folder/root
 clear
 echo "Setting up the installation of LXDE VNC"
 
+rm -rf $folder/root/.bash_profile
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
 rm -rf /etc/resolv.conf
