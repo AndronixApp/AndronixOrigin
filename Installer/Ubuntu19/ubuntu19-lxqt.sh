@@ -102,7 +102,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/LXQT/lxqt_de.sh -P $folder/root
+wget --tries=20 $dlink/LXQT/lxqt19.sh -O $folder/root/lxqt19.sh
 clear
 echo "Setting up the installation of LXQT VNC"
 
@@ -112,23 +112,24 @@ echo "#!/bin/bash
 rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 mkdir -p ~/.vnc
-apt update -y && apt install  dialog wget -y > /dev/null
+apt update -y && apt install sudo dialog wget -y > /dev/null
 touch ~/.hushlogin
 clear
 if [ ! -f /root/lxqt_de.sh ]; then
-    wget --tries=20 $dlink/LXQT/lxqt_de.sh -P /root
+    wget --tries=20 $dlink/LXQT/lxqt19.sh -O /root/lxqt19.sh
     bash ~/lxqt_de.sh
 else
     bash ~/lxqt_de.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/LXQT/vncserver-start
-    wget --tries=20 $dlink/LXQT/vncserver-stop
+    wget --tries=20  $dlink/XFCE4/vncserver-start -O /usr/local/bin/vncserver-start 
+    wget --tries=20 $dlink/XFCE4/vncserver-stop -O /usr/local/bin/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
 fi
+rm -rf /root/lxqt19.sh
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
 clear
 bash $bin
