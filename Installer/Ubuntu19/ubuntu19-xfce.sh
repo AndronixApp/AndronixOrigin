@@ -112,7 +112,7 @@ echo "#!/bin/bash
 rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 mkdir -p ~/.vnc
-apt update -y && apt install  dialog wget -y > /dev/null
+apt update -y && apt install sudo dialog wget -y > /dev/null
 touch ~/.hushlogin
 clear
 if [ ! -f /root/xfce19sh ]; then
