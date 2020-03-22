@@ -73,7 +73,7 @@ rm -rf /etc/pacman.d/mirrors/United_States && pacman-mirrors -g -c United_States
 mkdir -p ~/.vnc
 clear
 if [ ! -f /root/xfce4_de.sh ]; then
-    wget --tries=20 $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
+    wget --tries=20 $dlink/xfce4_de.sh -O /root/xfce4_de.sh
     bash ~/xfce4_de.sh
 else
     bash ~/xfce4_de.sh
