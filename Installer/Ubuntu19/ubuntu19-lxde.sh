@@ -101,7 +101,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/LXDE/lxde_de.sh -P $folder/root
+wget --tries=20 $dlink/LXDE/lxde19.sh -O $folder/root/lxde19.sh
 clear
 echo "Setting up the installation of LXDE VNC"
 
@@ -111,22 +111,22 @@ echo "#!/bin/bash
 rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 mkdir -p ~/.vnc
-apt update -y && apt install  dialog wget -y > /dev/null
+apt update -y && apt install sudo dialog wget -y > /dev/null
 touch ~/.hushlogin
 clear
-if [ ! -f /root/lxde_de.sh ]; then
-    wget --tries=20 $dlink/LXDE/lxde_de.sh -P /root
-    bash ~/lxde_de.sh
+if [ ! -f /root/lxde19.sh ]; then
+    wget --tries=20 $dlink/LXDE/lxde19.sh -P /root
+    bash ~/lxde19.sh
 else
-    bash ~/lxde_de.sh
+    bash ~/lxde19.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/LXDE/vncserver-start
-    wget --tries=20 $dlink/LXDE/vncserver-stop
+    wget --tries=20  $dlink/XFCE4/vncserver-start -O /usr/local/bin/vncserver-start 
+    wget --tries=20 $dlink/XFCE4/vncserver-stop -O /usr/local/bin/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
-    apt install tigervnc-standalone-server -y
+    apt install tigervnc-standalone-server -y > /dev/null
 fi
 clear
 rm -rf ~/.bash_profile" > ubuntu-fs/root/.bash_profile 
