@@ -71,13 +71,12 @@ echo "making $bin executable"
 chmod +x $bin
 echo "removing image for some space"
 rm $tarball
-echo "You can now launch Arch Linux with the ./${bin} script"
 echo "Preparing additional component for the first time, please wait..."
-wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/amd64/resolv.conf" -P arch-fs/root
-wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/amd64/additional.sh" -P arch-fs/root
+wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/amd64/resolv.conf" -P arch-fs/root > /dev/null
+wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/amd64/additional.sh" -P arch-fs/root > /dev/null
 rm -rf arch-fs/root/.bash_profile
-wget "https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Installer/Arch/armhf/bash_profile" -O arch-fs/root/.bash_profile
-echo "Basic installation complete.... Instsalling the Desktop environment..."
+echo "You can now launch Arch Linux with the ./${bin} script"
+echo "Welcome to Arch Linux | Bare"
 clear
 bash start-arch.sh
 echo "done"
