@@ -115,11 +115,11 @@ mkdir -p ~/.vnc
 apt update -y && apt install sudo dialog wget -y > /dev/null
 touch ~/.hushlogin
 clear
-if [ ! -f /root/lxqt_de.sh ]; then
+if [ ! -f /root/lxqt19.sh ]; then
     wget --tries=20 $dlink/LXQT/lxqt19.sh -O /root/lxqt19.sh
-    bash ~/lxqt_de.sh
+    bash ~/lxqt19.sh
 else
-    bash ~/lxqt_de.sh
+    bash ~/lxqt19.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
