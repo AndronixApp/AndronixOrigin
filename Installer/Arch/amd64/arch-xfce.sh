@@ -76,11 +76,7 @@ echo "Preparing additional component for the first time, please wait..."
 wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/amd64/resolv.conf" -P arch-fs/root
 wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/amd64/additional.sh" -P arch-fs/root
 rm -rf arch-fs/root/.bash_profile
-wget "https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Installer/Arch/armhf/bash_profile" -O arch-fs/root/.bash_profile
-echo "Basic installation complete.... Instsalling the Desktop environment..."
 clear
-
-rm -rf arch-fs/root/.bash_profile
 
 
 wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
