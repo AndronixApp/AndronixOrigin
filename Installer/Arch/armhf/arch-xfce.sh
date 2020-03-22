@@ -99,7 +99,7 @@ if [ ! -f /usr/bin/vncserver ]; then
     pacman -S tigervnc --noconfirm > /dev/null
 fi
 clear
-echo 'Welcome to Arch Linux | LXDE'
+echo 'Welcome to Arch Linux | XFCE'
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
 
 bash $bin
