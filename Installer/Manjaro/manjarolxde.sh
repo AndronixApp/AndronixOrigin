@@ -73,7 +73,7 @@ rm -rf /etc/pacman.d/mirrors/United_States && pacman-mirrors -g -c United_States
 mkdir -p ~/.vnc
 clear
 if [ ! -f /root/lxde_de.sh ]; then
-    wget --tries=20 $dlink/lxed_de.sh -O /root/lxde_de.sh
+    wget --tries=20 $dlink/lxde_de.sh -O /root/lxde_de.sh
     bash ~/lxde_de.sh
 else
     bash ~/lxde_de.sh
