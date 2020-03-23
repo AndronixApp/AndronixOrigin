@@ -82,7 +82,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/LXQT/lxqt_de.sh -O $folder/root/lxde_de.sh
+wget --tries=20 $dlink/LXQT/lxqt_de.sh -O $folder/root/lxqt_de.sh
 clear
 echo "Setting up the installation of LXQT VNC"
 
@@ -91,7 +91,7 @@ echo "#!/bin/bash
 apt update -y && apt install wget -y
 clear
 if [ ! -f /root/lxqt_de.sh ]; then
-    wget --tries=20 $dlink/LXQT/lxqt_de.sh -O /root/lxde_de.sh
+    wget --tries=20 $dlink/LXQT/lxqt_de.sh -O /root/lxqt_de.sh
     bash ~/lxqt_de.sh
 else
     bash ~/lxqt_de.sh
