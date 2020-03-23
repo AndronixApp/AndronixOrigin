@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 folder=fedora-fs
-dlink="https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Fedora"
+dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Fedora"
 if [ -d "$folder" ]; then
 	first=1
 	echo "skipping downloading"
@@ -83,22 +83,22 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/LXQT/lxqt_de.sh -P $folder/root
+wget --tries=20 $dlink/LXQT/lxqt_de.sh -O $folder/root/lxqt_de.sh
 clear
 echo "Setting up the installation of LXQT VNC"
 echo "#!/bin/bash
 yum install wget -y
 clear
 if [ ! -f /root/lxqt_de.sh ]; then
-    wget --tries=20 $dlink/LXQT/lxqt_de.sh -P /root
+    wget --tries=20 $dlink/LXQT/lxqt_de.sh -O /root/lxqt_de.sh
     bash ~/lxqt_de.sh
 else
     bash ~/lxqt_de.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/LXDE/vncserver-start
-    wget --tries=20 $dlink/LXDE/vncserver-stop
+    wget --tries=20  $dlink/LXDE/vncserver-start -O /usr/local/bin/vncserver-start
+    wget --tries=20 $dlink/LXDE/vncserver-stop -O /usr/local/bin/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     yum install tigervnc-server -y
