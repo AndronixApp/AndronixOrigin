@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 folder=debian-fs
-dlink="https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT"
+dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/APT"
 if [ -d "$folder" ]; then
 	first=1
 	echo "skipping downloading"
@@ -82,7 +82,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/LXDE/lxde_de.sh -P $folder/root
+wget --tries=20 $dlink/LXDE/lxde_de.sh -O $folder/root/lxde_de.sh
 clear
 echo "Setting up the installation of LXDE VNC"
 
@@ -91,15 +91,15 @@ echo "#!/bin/bash
 apt update -y && apt install wget -y
 clear
 if [ ! -f /root/lxde_de.sh ]; then
-    wget --tries=20 $dlink/LXDE/lxde_de.sh -P /root
+    wget --tries=20 $dlink/LXDE/lxde_de.sh -O /root/lxde_de.sh
     bash ~/lxde_de.sh
 else
     bash ~/lxde_de.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/LXDE/vncserver-start
-    wget --tries=20 $dlink/LXDE/vncserver-stop
+    wget --tries=20  $dlink/LXDE/vncserver-start -O /usr/local/bin/vncserver-stop
+    wget --tries=20 $dlink/LXDE/vncserver-stop -O /usr/local/bin/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
