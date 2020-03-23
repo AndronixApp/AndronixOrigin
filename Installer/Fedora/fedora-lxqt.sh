@@ -103,6 +103,9 @@ fi
 if [ ! -f /usr/bin/vncserver ]; then
     yum install tigervnc-server -y
 fi
+clear
+echo 'Installing browser'
+yum install firefox -y
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
 rm -rf fedora-lxqt.sh
 bash $bin
