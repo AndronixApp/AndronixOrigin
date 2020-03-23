@@ -7,6 +7,6 @@ rm -rf void-fs
 rm -rf void-binds
 rm -rf void.sh
 rm -rf start-void.sh
-rm -rf UNI-ubuntu.sh
+rm -rf UNI-void.sh
 
 echo "Done"
