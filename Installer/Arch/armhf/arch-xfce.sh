@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 folder=arch-fs
-dlink="https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Pacman/Manjaro"
+dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/Manjaro"
 if [ -d "$folder" ]; then
 	first=1
 	echo "skipping downloading"
