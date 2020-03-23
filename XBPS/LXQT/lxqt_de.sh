@@ -1,7 +1,7 @@
 #!/bin/bash
 
 xbps-install -Su
-xbps-install -S lxqt tigervnc wget 
+xbps-install -S lxqt xorg tigervnc wget 
 mkdir ~/.vnc
 
 wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/XBPS/XFCE4/vncserver-start -P /usr/local/bin/
