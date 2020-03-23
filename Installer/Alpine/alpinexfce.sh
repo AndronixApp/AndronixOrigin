@@ -153,7 +153,7 @@ if [ -d $folder/var ];then
 	echo "Installation Finished"
 	rm -rf $folder/root/.bash_profile
   	echo "#!/bin/bash
-              wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Installer/Alpine/alpine-xfce.sh -O /root/alpine-xfce.sh
+              wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Installer/Alpine/alpine-xfce.sh -O /root/alpine-xfce.sh
               bash /root/alpine-xfce.sh
               rm -rf /root/alpine-xfce.sh
               clear" > /root/.bash_profile  
