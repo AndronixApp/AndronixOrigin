@@ -104,6 +104,11 @@ fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
 fi
+clear
+echo 'Installing Browser'
+apt install firefox-esr -y 
+clear
+echo ' Welcome to Andronix | Debian '
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
 
 bash $bin
