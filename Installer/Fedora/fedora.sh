@@ -79,4 +79,5 @@ echo "making $bin executable"
 chmod +x $bin
 echo "removing image for some space"
 rm $tarball
-echo "You can now launch Fedora with the ./${bin} script"
+echo "You can now launch Fedora with the ./${bin} script next time"
+bash $bin
