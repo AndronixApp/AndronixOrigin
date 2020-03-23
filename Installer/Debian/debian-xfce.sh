@@ -82,7 +82,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/XFCE4/xfce4_de.sh -P $folder/root
+wget --tries=20 $dlink/XFCE4/xfce4_de.sh -O $folder/root/xfce4_de.sh
 clear
 echo "Setting up the installation of XFCE VNC"
 
@@ -91,15 +91,15 @@ echo "#!/bin/bash
 apt update -y && apt install wget -y
 clear
 if [ ! -f /root/xfce4_de.sh ]; then
-    wget --tries=20 $dlink/XFCE4/xfce4_de.sh -P /root
+    wget --tries=20 $dlink/XFCE4/xfce4_de.sh -O /root/xfce4_de.sh
     bash ~/xfce4_de.sh
 else
     bash ~/xfce4_de.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/XFCE4/vncserver-start
-    wget --tries=20 $dlink/XFCE4/vncserver-stop
+    wget --tries=20  $dlink/XFCE4/vncserver-start -O /usr/local/bin/vncserver-start
+    wget --tries=20 $dlink/XFCE4/vncserver-stop -O /usr/local/bin/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
