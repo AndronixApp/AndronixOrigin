@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 folder=kali-fs
-dlink="https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/APT"
+dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/APT"
 
 if [ -d "$folder" ]; then
 	first=1
