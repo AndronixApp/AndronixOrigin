@@ -152,12 +152,12 @@ if [ -d $folder/var ];then
         sed -i 's/bin\/sh/bin\/bash/g' $bin
 	echo "Installation Finished"
 	rm -rf $folder/root/.bash_profile
-  echo "#!/bin/bash
-        wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Installer/Alpine/alpine-xfce.sh -O /root/alpine-xfce.sh
-        bash /root/alpine-xfce.sh
-        rm -rf /root/alpine-xfce.sh
-        clear" > /root/.bash_profile  
-   bash $bin
+  	echo "#!/bin/bash
+              wget https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/Installer/Alpine/alpine-xfce.sh -O /root/alpine-xfce.sh
+              bash /root/alpine-xfce.sh
+              rm -rf /root/alpine-xfce.sh
+              clear" > /root/.bash_profile  
+   	bash $bin
 else 
 	echo "Installation unsuccessful"
 	echo "Check network connectivity and contact devs on Discord if problems persist"
