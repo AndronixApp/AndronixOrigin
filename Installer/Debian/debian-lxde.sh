@@ -98,7 +98,7 @@ else
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/LXDE/vncserver-start -O /usr/local/bin/vncserver-stop
+    wget --tries=20  $dlink/LXDE/vncserver-start -O /usr/local/bin/vncserver-start
     wget --tries=20 $dlink/LXDE/vncserver-stop -O /usr/local/bin/vncserver-stop
 fi
 if [ ! -f /usr/bin/vncserver ]; then
