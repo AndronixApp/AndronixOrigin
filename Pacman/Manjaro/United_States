@@ -3,6 +3,6 @@
 ##
 
 [United_States]
-#Server = http://ftp-osl.osuosl.org/pub/manjaro-arm/repo/$branch/$arch/$repo
+Server = http://ftp-osl.osuosl.org/pub/manjaro-arm/repo/$branch/$arch/$repo
 #Server = http://y0sh.co/manjaro-arm/$branch/$arch/$repo
 Server = https://manjaro-arm.ericlay.online/$branch/$repo/$arch
