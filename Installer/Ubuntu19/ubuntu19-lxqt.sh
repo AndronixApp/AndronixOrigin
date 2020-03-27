@@ -26,7 +26,7 @@ if [ "$first" != 1 ];then
 		*)
 			echo "unknown architecture"; exit 1 ;;
 		esac
-		wget "https://andronixos.sfo2.digitaloceanspaces.com/Ubuntu19/ubuntu19-rootfs-${archurl}.tar.xz" -O $tarball
+		wget "https://andronix.app/app/ubuntu19-rootfs-${archurl}.tar.xz" -O $tarball
 
 fi
 	cur=`pwd`
@@ -110,7 +110,8 @@ rm -rf $folder/root/.bash_profile
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
 rm -rf /etc/resolv.conf
-echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
+echo 'nameserver 8.8.8.8
+nameserver 1.1.1.1' > /etc/resolv.conf
 mkdir -p ~/.vnc
 apt update -y && apt install sudo dialog wget -y > /dev/null
 touch ~/.hushlogin
