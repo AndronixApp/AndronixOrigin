@@ -156,7 +156,7 @@ if [ -d $folder/var ];then
               wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Installer/Alpine/alpine-xfce.sh -O /root/alpine-xfce.sh
               bash /root/alpine-xfce.sh
               rm -rf /root/alpine-xfce.sh
-              clear" > /root/.bash_profile  
+              clear" > $folder/root/.bash_profile  
    	bash $bin
 else 
 	echo "Installation unsuccessful"
