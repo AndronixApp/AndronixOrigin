@@ -129,6 +129,6 @@ if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y > /dev/null
 fi
 clear
-rm -rf ~/.bash_profile" > ubuntu-fs/root/.bash_profile 
+rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
 
 bash $bin
