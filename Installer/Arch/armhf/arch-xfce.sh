@@ -94,6 +94,8 @@ clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
     wget --tries=20  $dlink/XFCE4/vncserver-start -O /usr/local/bin/vncserver-start 
     wget --tries=20 $dlink/XFCE4/vncserver-stop -O /usr/local/bin/vncserver-stop
+    chmod +x /usr/local/bin/vncserver-stop
+    chmod +x /usr/local/bin/vncserver-start
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     pacman -S tigervnc --noconfirm > /dev/null
