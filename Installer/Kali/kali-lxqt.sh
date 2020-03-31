@@ -101,6 +101,8 @@ clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
     wget --tries=20  $dlink/LXQT/vncserver-start
     wget --tries=20 $dlink/LXQT/vncserver-stop
+    chmod +x /usr/local/bin/vncserver-stop
+    chmod +x /usr/local/bin/vncserver-start
 fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
