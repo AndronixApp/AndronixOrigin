@@ -108,12 +108,12 @@ clear
 echo "Setting up the installation of XFCE VNC"
 
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
+touch $folder/root/.hushlogin
 echo "#!/bin/bash
 rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 mkdir -p ~/.vnc
 apt update -y && apt install sudo dialog wget -y > /dev/null
-touch ~/.hushlogin
 clear
 if [ ! -f /root/xfce19.sh ]; then
     wget --tries=20 $dlink/XFCE4/xfce19.sh -O /root/xfce19.sh
