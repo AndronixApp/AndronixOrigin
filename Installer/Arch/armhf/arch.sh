@@ -75,6 +75,8 @@ echo "Preparing additional component for the first time, please wait..."
 wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/armhf/resolv.conf" -P arch-fs/root
 wget "https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Installer/Arch/armhf/additional.sh" -P arch-fs/root
 rm -rf arch-fs/root/.bash_profile
+echo "#!/bin/bash
+bash /root/additional.sh" > $folder/root/.bash_profile
 clear
 echo "You can launch Arch Linux with the ./${bin} script next time"
 echo "Welcome to Arch Linux.... Powered by AndroNix"
