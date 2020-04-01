@@ -91,6 +91,7 @@ chmod +x ubuntu19-fs/usr/local/bin/vnc
 chmod +x ubuntu19-fs/usr/local/bin/vncpasswd
 chmod +x ubuntu19-fs/usr/local/bin/vncserver-start
 chmod +x ubuntu19-fs/usr/local/bin/vncserver-stop
+touch $folder/root/.hushlogin
 
 echo "fixing shebang of $bin"
 termux-fix-shebang $bin
