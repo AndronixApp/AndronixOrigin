@@ -60,5 +60,6 @@ echo "making $bin executable"
 chmod +x $bin
 echo "fixing permissions for manjaro"
 chmod 755 -R manjaro-fs
+echo "pacman-mirrors -g && pacman -Syyuu --noconfirm" > $folder/root/.bash_profile
 echo "You can now launch Manjaro Linux with the ./${bin} script next time"
 bash $bin
