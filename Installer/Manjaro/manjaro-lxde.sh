@@ -66,11 +66,10 @@ chmod 755 -R manjaro-fs
 
 rm -rf $folder/root/.bash_profile
 wget $dlink/lxde_de.sh -O $folder/root/lxde_de.sh
-wget $dlink/United_States -O $folder/etc/pacman.d/mirrors/United_States
+rm -rf $folder/etc/resolv.conf
 echo " #!/bin/bash
-echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
-rm -rf /etc/pacman.d/mirrors/United_States && pacman-mirrors -g -c United_States && pacman -Syyuu --noconfirm && pacman -S wget sudo --noconfirm 
-mkdir -p ~/.vnc
+echo 'nameserver 1.1.1.1' >> /etc/resolv.conf
+pacman-mirrors -g && pacman -Syyuu --noconfirm && pacman -S wget sudo --noconfirm mkdir -p ~/.vnc
 clear
 if [ ! -f /root/lxde_de.sh ]; then
     wget --tries=20 $dlink/lxde_de.sh -O /root/lxde_de.sh
