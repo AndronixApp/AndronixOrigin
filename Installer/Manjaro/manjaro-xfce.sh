@@ -69,7 +69,7 @@ wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
 rm -rf $folder/etc/resolv.conf
 echo " #!/bin/bash
 echo 'nameserver 1.1.1.1' >> /etc/resolv.conf
-pacman-mirrors -g && pacman -Syyuu --noconfirm && pacman -S wget sudo --noconfirm 
+pacman-mirrors -g -c The_Netherlands && pacman -Syyuu --noconfirm && pacman -S wget sudo --noconfirm 
 mkdir -p ~/.vnc
 clear
 if [ ! -f /root/xfce4_de.sh ]; then
