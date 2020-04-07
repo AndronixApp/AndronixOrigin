@@ -68,8 +68,8 @@ rm -rf $folder/root/.bash_profile
 wget $dlink/lxde_de.sh -O $folder/root/lxde_de.sh
 rm -rf $folder/etc/resolv.conf
 echo " #!/bin/bash
-echo 'nameserver 1.1.1.1' >> /etc/resolv.conf
-pacman-mirrors -g && pacman -Syyuu --noconfirm && pacman -S wget sudo --noconfirm mkdir -p ~/.vnc
+rm -rf /etc/resolv.conf && echo 'nameserver 1.1.1.1' > /etc/resolv.conf
+pacman-mirrors -g -c Australia && pacman -Syyuu --noconfirm
 clear
 if [ ! -f /root/lxde_de.sh ]; then
     wget --tries=20 $dlink/lxde_de.sh -O /root/lxde_de.sh
