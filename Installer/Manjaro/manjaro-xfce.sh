@@ -68,8 +68,8 @@ rm -rf $folder/root/.bash_profile
 wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
 rm -rf $folder/etc/resolv.conf
 echo " #!/bin/bash
-echo 'nameserver 1.1.1.1' >> /etc/resolv.conf
-pacman-mirrors -g -c The_Netherlands && pacman -Syyuu --noconfirm && pacman -S wget sudo --noconfirm 
+rm -rf $folder/etc/resolv.conf && echo 'nameserver 1.1.1.1' > $folder/etc/resolv.conf
+pacman-mirrors -g -c Australia && pacman -Syyuu --noconfirm
 mkdir -p ~/.vnc
 clear
 if [ ! -f /root/xfce4_de.sh ]; then
