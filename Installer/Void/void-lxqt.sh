@@ -105,7 +105,7 @@ echo "#!/bin/bash
 clear
  echo 'Installing LXQT... This might take some time depending upon your Internet'
 xbps-install -Su -y > /dev/null 
-xbps-install -S lxqt tigervnc wget  -y 
+xbps-install -S lxqt tigervnc wget sudo -y 
 clear
 if [ ! -f /root/lxqt_de.sh ]; then
     wget --tries=20 $dlink/LXQT/lxqt_de.sh -O /root/lxqt_de.sh > /dev/null
