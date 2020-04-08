@@ -1,6 +1,6 @@
 #!/data/data/com.termux/files/usr/bin/bash
 folder=void-fs
-dlink="https://raw.githubusercontent.com/ultrahacx/AndronixOrigin/master/XBPS"
+dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/XBPS"
 
 echo "Please enable Termux storage permission if it asks for so"
 sleep 3
@@ -105,7 +105,7 @@ echo "#!/bin/bash
 clear
  echo 'Installing LXDE... This might take some time depending upon your Internet'
 xbps-install -Su -y > /dev/null 
-xbps-install -S lxde tigervnc wget  -y 
+xbps-install -S lxde tigervnc wget sudo -y 
 clear
 if [ ! -f /root/lxde_de.sh ]; then
     wget --tries=20 $dlink/LXDE/lxde_de.sh -O /root/lxde_de.sh > /dev/null
