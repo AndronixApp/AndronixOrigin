@@ -6,7 +6,7 @@ echo "Updating the system "
 echo " "
 echo " "
 pacman -Suuyy --noconfirm
-pacman -S xfce4 xfce4-goodies --noconfirm 
+pacman -S xfce4 xfce4-goodies sudo --noconfirm 
 pacman -S tigervnc --noconfirm
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/XFCE/xstartup   -P ~/.vnc/
