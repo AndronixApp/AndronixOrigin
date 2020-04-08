@@ -89,7 +89,7 @@ echo "Setting up the installation of LXQT VNC"
 
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
-apt update -y && apt install wget -y
+apt update -y && apt install wget sudo -y
 clear
 if [ ! -f /root/lxqt_de.sh ]; then
     wget --tries=20 $dlink/LXQT/lxqt_de.sh -O /root/lxqt_de.sh
