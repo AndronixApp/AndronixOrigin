@@ -1,6 +1,7 @@
 #!/bin/sh
 
 apk update
+apk add sudo
 DISPLAY=:99
 RESOLUTION=1920x1080x24
 
