@@ -6,7 +6,7 @@ echo "Updating the system "
 echo " "
 echo " "
 pacman -Suuyy --noconfirm
-pacman -S lxqt xscreensaver --noconfirm 
+pacman -S lxqt xscreensaver sudo --noconfirm 
 pacman -S tigervnc --noconfirm
 pacman -S xorg --noconfirm
 
