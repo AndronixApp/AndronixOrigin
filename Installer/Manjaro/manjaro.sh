@@ -6,6 +6,10 @@ if [ -d "$folder" ]; then
 fi
 tarball="manjaro.tar.xz"
 if [ "$first" != 1 ];then
+	wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partaa -O manjaro.partaa
+	wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partab -O manjaro.partab
+	wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partac -O manjaro.partac
+	cat manjaro.parta* > manjaro.tar.xz
 	cur=`pwd`
 	mkdir -p "$folder"
 	cd "$folder"
