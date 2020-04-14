@@ -65,6 +65,8 @@ chmod +x $bin
 echo "fixing permissions for manjaro"
 chmod 755 -R manjaro-fs
 rm -rf $folder/etc/resolv.conf && echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
-echo "pacman-mirrors -g -c Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm" > $folder/root/.bash_profile
+echo "pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm" > $folder/usr/local/bin/fix-repo
+chmod +x $folder/usr/local/bin/fix-repo
+echo "fix-repo && rm -rf ~/.bash_profile" > $folder/root/.bash_profile
 echo "You can now launch Manjaro Linux with the ./${bin} script next time"
 bash $bin
