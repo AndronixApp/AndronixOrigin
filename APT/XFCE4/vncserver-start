@@ -3,4 +3,4 @@
 export USER=root
 export HOME=/root
 
-vncserver -name remote-desktop :1
+vncserver -name remote-desktop -localhost no :1
