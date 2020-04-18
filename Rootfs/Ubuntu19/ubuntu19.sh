@@ -4,7 +4,7 @@ if [ -d "$folder" ]; then
 	first=1
 	echo "skipping downloading"
 fi
-tarball="ubuntu19-rootfs.tar.xz"
+tarball="ubuntu19-rootfs.tar.gz"
 
 if [ "$first" != 1 ];then
 	if [ ! -f $tarball ]; then
