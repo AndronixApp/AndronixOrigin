@@ -5,7 +5,7 @@ if [ -d "$folder" ]; then
 	first=1
 	echo "skipping downloading"
 fi
-tarball="ubuntu19-rootfs.tar.xz"
+tarball="ubuntu19-rootfs.tar.gz"
 
 if [ "$first" != 1 ];then
 	if [ ! -f $tarball ]; then
@@ -26,7 +26,7 @@ if [ "$first" != 1 ];then
 		*)
 			echo "unknown architecture"; exit 1 ;;
 		esac
-		wget "" -O $tarball
+		wget "https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Ubuntu19/ubuntu-19.10-${archurl}.tar.gz" -O $tarball
 
 fi
 	cur=`pwd`
