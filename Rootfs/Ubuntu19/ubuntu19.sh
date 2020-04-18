@@ -25,7 +25,7 @@ if [ "$first" != 1 ];then
 		*)
 			echo "unknown architecture"; exit 1 ;;
 		esac
-		wget "https://us-east-1.linodeobjects.com/andro/os/ubuntu19-rootfs-${archurl}.tar.xz" -O $tarball
+		wget "https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Ubuntu19/ubuntu-19.10-${archurl}.tar.gz" -O $tarball
 
 fi
 	cur=`pwd`
