@@ -73,7 +73,9 @@ wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
 rm -rf $folder/etc/resolv.conf
 echo " #!/bin/bash
 rm -rf /etc/resolv.conf && echo 'nameserver 1.1.1.1' > /etc/resolv.conf
-pacman-mirrors -g -c Australia && pacman -Syyuu --noconfirm
+echo 'pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
+chmod +x $folder/usr/local/bin/fix-repo
+fix-repo
 mkdir -p ~/.vnc
 clear
 if [ ! -f /root/xfce4_de.sh ]; then
