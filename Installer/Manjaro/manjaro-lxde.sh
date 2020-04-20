@@ -69,17 +69,20 @@ chmod 755 -R manjaro-fs
 #DE installation
 
 rm -rf $folder/root/.bash_profile
-wget $dlink/lxde_de.sh -O $folder/root/lxde_de.sh
+wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
 rm -rf $folder/etc/resolv.conf
 echo " #!/bin/bash
 rm -rf /etc/resolv.conf && echo 'nameserver 1.1.1.1' > /etc/resolv.conf
-pacman-mirrors -g -c Australia && pacman -Syyuu --noconfirm
+echo 'pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
+chmod +x $folder/usr/local/bin/fix-repo
+fix-repo
+mkdir -p ~/.vnc
 clear
-if [ ! -f /root/lxde_de.sh ]; then
-    wget --tries=20 $dlink/lxde_de.sh -O /root/lxde_de.sh
-    bash ~/lxde_de.sh
+if [ ! -f /root/xfce4_de.sh ]; then
+    wget --tries=20 $dlink/xfce4_de.sh -O /root/xfce4_de.sh
+    bash ~/xfce4_de.sh
 else
-    bash ~/lxde_de.sh
+    bash ~/xfce4_de.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
