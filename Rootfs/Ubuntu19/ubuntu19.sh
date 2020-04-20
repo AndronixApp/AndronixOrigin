@@ -99,4 +99,8 @@ echo "making $bin executable"
 chmod +x $bin
 echo "removing image for some space"
 rm $tarball
-echo "You can now launch Ubuntu with the ./${bin} script"
+clear
+echo "You can now launch Ubuntu with the ./${bin} script form next time"
+bash $bin
+
+
