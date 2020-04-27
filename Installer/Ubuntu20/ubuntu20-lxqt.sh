@@ -73,7 +73,7 @@ EOM
 
 mkdir -p ubuntu20-fs/var/tmp
 rm -rf ubuntu20-fs/usr/local/bin/*
-
+echo "127.0.0.1 localhost localhost" > $folder/etc/hosts
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ubuntu20-fs/root/.profile.1 > /dev/null
 cat $folder/root/.profile.1 >> $folder/root/.profile && rm -rf $folder/root/.profile.1
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.bash_profile-ub19 -O ubuntu20-fs/root/.bash_profile > /dev/null
