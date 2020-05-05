@@ -64,7 +64,7 @@ echo "making $bin executable"
 chmod +x $bin
 echo "fixing permissions for manjaro"
 chmod 755 -R manjaro-fs
-rm -rf $folder/etc/pacman.d/mirrorlist && echo "
+cat >$folder/etc/pacman.d/mirrorlist <<'EOL'
 ##
 ## Manjaro Linux repository mirrorlist
 ## Generated on 02 May 2020 14:22
@@ -75,9 +75,11 @@ rm -rf $folder/etc/pacman.d/mirrorlist && echo "
 ## Location  : Germany
 ## Time      : 99.99
 ## Last Sync :
-Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/" > $folder/etc/pacman.d/mirrorlist
+Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/
+EOL
 rm -rf $folder/etc/resolv.conf && echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
 echo "pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm" > $folder/usr/local/bin/fix-repo
 chmod +x $folder/usr/local/bin/fix-repo
+rm -rf $folder/root/.bash_profile && echo "pacman -Syu --noconfirm" > $folder/root/.bash_profile
 echo "You can now launch Manjaro Linux with the ./${bin} script next time"
 bash $bin
