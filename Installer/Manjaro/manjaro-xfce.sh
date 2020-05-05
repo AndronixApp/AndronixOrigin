@@ -71,9 +71,22 @@ chmod 755 -R manjaro-fs
 rm -rf $folder/root/.bash_profile
 wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
 rm -rf $folder/etc/resolv.conf
+cat >$folder/etc/pacman.d/mirrorlist <<'EOL'
+##
+## Manjaro Linux repository mirrorlist
+## Generated on 02 May 2020 14:22
+##
+## Use pacman-mirrors to modify
+##
+## Location  : Germany
+## Time      : 99.99
+## Last Sync :
+Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/
+EOL
+rm -rf $folder/etc/resolv.conf && echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
 echo " #!/bin/bash
 rm -rf /etc/resolv.conf && echo 'nameserver 1.1.1.1' > /etc/resolv.conf
-echo 'pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
+echo 'pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
 chmod +x $folder/usr/local/bin/fix-repo
 fix-repo
 mkdir -p ~/.vnc
@@ -96,5 +109,5 @@ if [ ! -f /usr/bin/vncserver ]; then
 fi
 clear
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
-
+rm -rf manjaro.partaa manjaro.partab manjaro.partac manjaro.tar.xz manjaro.sh
 bash $bin
