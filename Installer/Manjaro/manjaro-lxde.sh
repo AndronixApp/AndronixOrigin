@@ -69,20 +69,32 @@ chmod 755 -R manjaro-fs
 #DE installation
 
 rm -rf $folder/root/.bash_profile
-wget $dlink/xfce4_de.sh -O $folder/root/xfce4_de.sh
+wget $dlink/lxde_de.sh -O $folder/root/lxde_de.sh
 rm -rf $folder/etc/resolv.conf
+cat >$folder/etc/pacman.d/mirrorlist <<'EOL'
+##
+## Manjaro Linux repository mirrorlist
+## Generated on 02 May 2020 14:22
+##
+## Use pacman-mirrors to modify
+##
+## Location  : Germany
+## Time      : 99.99
+## Last Sync :
+Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/
+EOL
+rm -rf $folder/etc/resolv.conf && echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
 echo " #!/bin/bash
-rm -rf /etc/resolv.conf && echo 'nameserver 1.1.1.1' > /etc/resolv.conf
-echo 'pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
+echo 'pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
 chmod +x $folder/usr/local/bin/fix-repo
 fix-repo
 mkdir -p ~/.vnc
 clear
-if [ ! -f /root/xfce4_de.sh ]; then
-    wget --tries=20 $dlink/xfce4_de.sh -O /root/xfce4_de.sh
-    bash ~/xfce4_de.sh
+if [ ! -f /root/lxde_de.sh ]; then
+    wget --tries=20 $dlink/lxde_de.sh -O /root/lxde_de.sh
+    bash ~/lxde_de.sh
 else
-    bash ~/xfce4_de.sh
+    bash ~/lxde_de.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
