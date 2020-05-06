@@ -87,4 +87,4 @@ nameserver 127.0.0.1" > void-fs/etc/resolv.conf
 
 echo "making $bin executable"
 chmod +x $bin
-echo "You can now launch Kali with the ./${bin} script"
+echo "You can now launch Void with the ./${bin} script"
