@@ -1,0 +1,10 @@
+  ##
+	## Manjaro Linux repository mirrorlist
+	## Generated on 02 May 2020 14:22
+	##
+	## Use pacman-mirrors to modify
+	##
+	## Location  : Germany
+	## Time      : 99.99
+	## Last Sync :
+	Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/
