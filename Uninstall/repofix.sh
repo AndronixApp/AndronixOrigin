@@ -13,6 +13,6 @@ if [ -d "$folder2" ]; then
 
     rm -rf $folder2/etc/pacman.d/mirrorlist
     wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Uninstall/mirrorlist -O $folder2/etc/pacman.d/mirrorlist
-    sed -i '1s/^/pacman-key --init \&\& pacman-key --populate \&\& pacman -Syu --noconfirm\n/' $folder2/root/.bash_profile
+    sed -i '1s/^/sudo pacman-key --init \&\& sudo pacman-key --populate \&\& sudo pacman -Syu --noconfirm\n/' $folder2/root/.bash_profile
 
 fi
