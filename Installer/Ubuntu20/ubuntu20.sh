@@ -41,6 +41,7 @@ cd \$(dirname \$0)
 unset LD_PRELOAD
 command="proot"
 command+=" --link2symlink"
+command+=" --kill-on-exit"
 command+=" -0"
 command+=" -r $folder"
 if [ -n "\$(ls -A ubuntu20-binds)" ]; then
