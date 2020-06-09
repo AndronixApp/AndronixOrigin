@@ -108,5 +108,5 @@ if [ ! -f /usr/bin/vncserver ]; then
 fi
 clear
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
-
+rm -rf manjaro.partaa manjaro.partab manjaro.partac manjaro.tar.xz manjaro.sh
 bash $bin
