@@ -1,22 +1,24 @@
+
+
 #!/data/data/com.termux/files/usr/bin/bash
 folder=manjaro-fs
 dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/Manjaro"
 if [ -d "$folder" ]; then
-	first=1
-	echo "skipping downloading"
+    first=1
+    echo "skipping downloading"
 fi
 tarball="manjaro.tar.xz"
 if [ "$first" != 1 ];then
-	wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partaa -O manjaro.partaa
-	wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partab -O manjaro.partab
-	wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partac -O manjaro.partac
-	cat manjaro.parta* > manjaro.tar.xz
-	cur=`pwd`
-	mkdir -p "$folder"
-	cd "$folder"
-	echo "Decompressing Rootfs, please be patient."
-	proot --link2symlink tar -xf ${cur}/$tarball --exclude='dev'|| :
-	cd "$cur"
+    wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partaa -O manjaro.partaa
+    wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partab -O manjaro.partab
+    wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Manjaro/manjaro.partac -O manjaro.partac
+    cat manjaro.parta* > manjaro.tar.xz
+    cur=`pwd`
+    mkdir -p "$folder"
+    cd "$folder"
+    echo "Decompressing Rootfs, please be patient."
+    proot --link2symlink tar -xf ${cur}/$tarball --exclude='dev'|| :
+    cd "$cur"
 fi
 mkdir -p manjaro-binds
 bin=start-manjaro.sh
@@ -84,9 +86,13 @@ cat >$folder/etc/pacman.d/mirrorlist <<'EOL'
 Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/
 EOL
 rm -rf $folder/etc/resolv.conf && echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
+wget --tries=20  $dlink/XFCE/vncserver-start -O $folder/usr/local/bin/vncserver-start 
+wget --tries=20 $dlink/XFCE/vncserver-stop -O $folder/usr/local/bin/vncserver-stop
+chmod +x $folder/usr/local/bin/vncserver-stop
+chmod +x $folder/usr/local/bin/vncserver-start
 echo " #!/bin/bash
-echo 'pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > $folder/usr/local/bin/fix-repo
-chmod +x $folder/usr/local/bin/fix-repo
+echo 'pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm' > /usr/local/bin/fix-repo
+chmod +x /usr/local/bin/fix-repo
 fix-repo
 mkdir -p ~/.vnc
 clear
@@ -97,12 +103,6 @@ else
     bash ~/lxde_de.sh
 fi
 clear
-if [ ! -f /usr/local/bin/vncserver-start ]; then
-    wget --tries=20  $dlink/XFCE4/vncserver-start -O /usr/local/bin/vncserver-start 
-    wget --tries=20 $dlink/XFCE4/vncserver-stop -O /usr/local/bin/vncserver-stop
-    chmod +x /usr/local/bin/vncserver-stop
-    chmod +x /usr/local/bin/vncserver-start
-fi
 if [ ! -f /usr/bin/vncserver ]; then
     pacman -S tigervnc --noconfirm > /dev/null
 fi
