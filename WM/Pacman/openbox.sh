@@ -22,8 +22,8 @@ esac
 
 mkdir -p ~/.vnc
 
-wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/WM/wallpaper.jpg -O /usr/share/wallpaper.jpg
-
+#wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/WM/wallpaper.jpg -O /usr/share/wallpaper.jpg
+wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/wm-test/WM/wallpaper.jpg -O /usr/share/wallpaper.jpg
 echo "#!/bin/bash
 [ -r ~/.Xresources ] && xrdb ~/.Xresources
 export PULSE_SERVER=127.0.0.1
