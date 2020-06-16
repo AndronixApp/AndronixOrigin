@@ -3,7 +3,7 @@ clear
 echo "Installing AwesomeWM"
 sleep 2
 dnf update -y
-dnf install awesome tigervnc-server wget nano dbus xorg xterm xfce4-terminal pcmanfm shotwell cairo-dock -y
+dnf install awesome tigervnc-server wget nano dbus xterm xfce4-terminal pcmanfm shotwell cairo-dock -y
 clear
 
 read -p "Want to install default browser ? (y/n)" choice
