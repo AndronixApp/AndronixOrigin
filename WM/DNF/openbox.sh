@@ -3,7 +3,7 @@ clear
 echo "Installing Openbox"
 sleep 2
 dnf update -y
-dnf install openbox obconf tigervnc-server feh wget nano dbus xorg xterm xfce4-terminal pcmanfm shotwell cairo-dock -y
+dnf install openbox obconf tigervnc-server feh wget nano dbus xterm xfce4-terminal pcmanfm shotwell cairo-dock -y
 clear
 
 read -p "Want to install default browser ? (y/n)" choice

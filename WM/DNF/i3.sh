@@ -3,7 +3,7 @@ clear
 echo "Installing i3wm"
 sleep 2
 dnf update -y
-dnf install i3 tigervnc-server wget nano feh dbus xorg xterm xfce4-terminal pcmanfm shotwell cairo-dock -y
+dnf install i3 tigervnc-server wget nano feh dbus xterm xfce4-terminal pcmanfm shotwell cairo-dock -y
 clear
 
 read -p "Want to install default browser ? (y/n)" choice
