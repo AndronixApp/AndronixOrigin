@@ -3,7 +3,7 @@ clear
 echo "Installing Openbox"
 sleep 2
 sudo apt update -y
-sudo apt install openbox obconf tigervnc-standalone-server wget nano dbus-x11 xorg xterm fehxfce4-terminal pcmanfm shotwell cairo-dock libexo-1-0 tigervnc-common --no-install-recommends -y
+sudo apt install openbox obconf tigervnc-standalone-server wget nano dbus-x11 xorg xterm feh xfce4-terminal pcmanfm shotwell cairo-dock libexo-1-0 tigervnc-common --no-install-recommends -y
 clear
 
 read -p "Want to install default browser ? (y/n)" choice
