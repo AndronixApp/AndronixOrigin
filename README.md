@@ -36,17 +36,17 @@ or in easier words, the benefits of enabling PRoot include running Linux operati
 We use **Termux** to provide the command line and the packages that are especially compiled for Termux implemented inside Andronix.
 
 # Get started now 🚀
-Hey! 😊, let's introduce to the basics of the documentations around here. This is the doc-hub for Andronix, from development to installations, you can find almost everything here. [Read the documentation here](https://docsv2.andronix.app)
+Hey! 😊, let's introduce to the basics of the documentations around here. This is the doc-hub for Andronix, from development to installations, you can find almost everything here. [Read the documentation here](https://docs.andronix.app)
 
 ### Introduction Docs 📒
 
 Here you can find all the information necessary to understand Andronix better. Diving deep in **PRoot**, **app structure** and **Shell scripts** that actually make you understand about what's actually happening.
 
 ### Installation Docs 📱
-All and everything for you to get up and running with your favourite Linux Distribution. If you're seeking for help installing a distribution, this is place you need to be. [Read the installation docs](https://docsv2.andronix.app/installations/non-modded-os)
+All and everything for you to get up and running with your favourite Linux Distribution. If you're seeking for help installing a distribution, this is place you need to be. [Read the installation docs](https://docs.andronix.app/installations/non-modded-os)
 
 ### Apps Installation 💻
-Here are the installation procedures of few most popular apps like **VS Code, IntelliJ Idea, GIMP, Blender** etc. Easy to follow and quick! [Read the app installation docs](https://docsv2.andronix.app/software/browsers)
+Here are the installation procedures of few most popular apps like **VS Code, IntelliJ Idea, GIMP, Blender** etc. Easy to follow and quick! [Read the app installation docs](https://docs.andronix.app/software/browsers)
 
 ### Development Docs 👨‍💻
 Looking into contributing and developing things around or for Andronix? Here you can find all the required documentation regarding **termux-packages, app, scripts** or anything to development. *We are working on it 👷‍♂️*
@@ -56,13 +56,13 @@ Pretty much anything you like to do. You're just limited by the lack of the full
 
 You don't have to worry about multi-booting your system which means you can have all the Un-Modded and Modded OS installed at once. **12 OS at once given that you have the storage for it.** Install as many as you like, uninstall them when you're done.
 
-[Here's what you can't do on Andronix systems](https://docsv2.andronix.app/)
+[Here's what you can't do on Andronix systems](https://docs.andronix.app/)
 
 ## Is it free?
 
 Yes! ⚡ Andronix is completely **Ad-free** and all the Un-modded distros and **free to use as much as you want**. 
 
-On the other hand [Modded OS](https://docsv2.andronix.app/installations/modded-os) are paid but they are very economical considering it is a **lifetime purchase with unlimited installs on unlimited devices.**  (We spend hours optimizing and packing it, and these are very large files which we need to serve requiring a massive amount of bandwidth, which costs money).
+On the other hand [Modded OS](https://docs.andronix.app/installations/modded-os) are paid but they are very economical considering it is a **lifetime purchase with unlimited installs on unlimited devices.**  (We spend hours optimizing and packing it, and these are very large files which we need to serve requiring a massive amount of bandwidth, which costs money).
 
 You can also get **Andronix Premium** which is another way to support the developers. You also get a few perks including online sync with Andronix Commands and a web-app to access it from any device you want.
 
