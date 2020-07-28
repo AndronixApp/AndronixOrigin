@@ -6,7 +6,7 @@ sudo apt purge chromium* chromium-browser* -y -qq && apt autoremove -y -qq
 
 echo "Adding Debian repo for Chromium installation"
 
-cat <<EOT >> ~/a
+cat <<EOT >> /etc/apt/preferences.d/chromium.pref
 #Note: 2 blank lines are required between entries
 
 Package: *
