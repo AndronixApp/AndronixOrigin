@@ -1,16 +1,37 @@
 #!/bin/bash
+
 echo "Removing distribution provided chromium packages and dependencies..."
 apt purge chromium* chromium-browser* snapd -y -qq && apt autoremove -y -qq
 sudo apt purge chromium* chromium-browser* -y -qq && apt autoremove -y -qq
-echo "Enabling PPA support..."
-[ ! -f .parrot ] && apt update -qq; apt install software-properties-common gnupg --no-install-recommends -y -qq
-echo " Adding chromium-team stable ppa"
-echo "deb http://ppa.launchpad.net/ultrahacx/chromium-universal/ubuntu bionic main 
-deb-src http://ppa.launchpad.net/ultrahacx/chromium-universal/ubuntu bionic main " >> /etc/apt/sources.list
-echo "Fetching and importing chromium-team GPG keys..."
-apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 8FEA526CE21182D1
-echo "Installing chromium-browser"
-apt purge snapd chromium* -y 
-apt update -qq; apt install chromium-browser --no-install-recommends -y
-echo "Patching application shortcuts..."
-sed -i 's/chromium-browser %U/chromium-browser --no-sandbox %U/g' /usr/share/applications/chromium-browser.desktop
+
+echo "Adding Debian repo for Chromium installation"
+
+cat <<EOT >> ~/a
+#Note: 2 blank lines are required between entries
+
+Package: *
+Pin: release a=eoan
+Pin-Priority: 500
+
+Package: *
+Pin: origin "ftp.debian.org"
+Pin-Priority: 300
+
+# Pattern includes 'chromium', 'chromium-browser' and similarly                 
+# named dependencies:                                                            Package: chromium*
+Pin: origin "ftp.debian.org"
+Pin-Priority: 700
+EOT
+
+echo "deb http://ftp.debian.org/debian buster main
+deb http://ftp.debian.org/debian buster-updates main" > /etc/apt/sources.list
+
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DCC9EFBF77E11517
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys AA8E81B4331F7F50
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 112695A0E562B32A
+
+apt update -y
+apt install chromium -y
+
+sed -i 's/chromium-browser %U/chromium --no-sandbox %U/g' /usr/share/application>
