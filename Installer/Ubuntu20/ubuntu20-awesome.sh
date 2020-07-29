@@ -104,7 +104,7 @@ rm $tarball
 
 wget --tries=20 $dlink2/awesome.sh -O $folder/awesome.sh
 clear
-echo "Setting up the installation of LXDE VNC"
+echo "Setting up the installation of Ubuntu20 AwesomeWM"
 
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 
