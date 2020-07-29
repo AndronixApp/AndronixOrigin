@@ -105,7 +105,7 @@ rm $tarball
 wget --tries=20 $dlink2/openbox.sh -O $folder/openbox.sh
 clear
 echo "Setting up the installation of Ubuntu20 Openbox"
-echo "namesever 1.1.1.1" > $folder/etc/resolv.conf
+echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
 apt update -y && apt install wget sudo -y
