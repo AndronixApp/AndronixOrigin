@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+pkg install wget -y 
 folder=void-fs
 dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/XBPS"
 

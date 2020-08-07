@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+pkg install wget -y 
 folder=manjaro-fs
 dlink="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/Manjaro"
 dlink2="https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/WM/Pacman"

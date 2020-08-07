@@ -1,4 +1,5 @@
 #!/data/data/com.termux/files/usr/bin/bash
+pkg install wget -y 
 folder=debian-fs
 if [ -d "$folder" ]; then
 	first=1
