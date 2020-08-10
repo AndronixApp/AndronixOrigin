@@ -3,6 +3,8 @@ clear
 echo "Installing i3wm"
 sleep 2
 sudo apt update -y
+apt-get install keyboard-configuration -y
+apt-get install sudo wget -y
 sudo apt install i3 tigervnc-standalone-server wget nano dbus-x11 xorg xterm xfce4-terminal pcmanfm shotwell feh cairo-dock libexo-1-0 tigervnc-common --no-install-recommends -y
 clear
 

@@ -6,6 +6,8 @@ sudo apt install udisks2 -y
 echo "" > /var/lib/dpkg/info/udisks2.postinst
 sudo dpkg --configure -a
 sudo apt-mark hold udisks2
+sudo apt-get install keyboard-configuration -y
+sudo apt-get install sudo wget -y
 sudo apt-get install xfce4 xfce4-goodies xfce4-terminal exo-utils tigervnc-standalone-server tigervnc-common dbus-x11 --no-install-recommends -y
 sudo apt-get clean
 mkdir -p ~/.vnc
