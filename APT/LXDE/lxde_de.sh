@@ -3,6 +3,7 @@
 #Get the necessary components
 apt-mark hold udisks2
 [ ! -f /root/.parrot ] && apt-get update || echo "Parrot detected, not updating apt cache since that will break the whole distro"
+apt-get install keyboard-configuration -y
 apt-get install lxde-core lxterminal tigervnc-standalone-server -y
 apt-get install xfe -y
 apt-get clean
