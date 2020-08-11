@@ -110,7 +110,7 @@ echo "#!/bin/bash
 rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8' >> /etc/resolv.conf
 mkdir -p ~/.vnc
-apt update -y && apt install sudo dialog wget -y > /dev/null
+apt update -y && apt install sudo wget -y > /dev/null
 clear
 if [ ! -f /root/xfce19.sh ]; then
     wget --tries=20 $dlink/XFCE4/xfce19.sh -O /root/xfce19.sh
