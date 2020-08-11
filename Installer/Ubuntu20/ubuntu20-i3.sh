@@ -109,7 +109,7 @@ echo "Setting up the installation of Ubuntu20 i3wm"
 echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
-apt update -y && apt install wget sudo -y
+apt update -y && apt install wget nano sudo -y
 clear
 if [ ! -f /root/i3.sh ]; then
     wget --tries=20 $dlink2/i3.sh -O /root/i3.sh
