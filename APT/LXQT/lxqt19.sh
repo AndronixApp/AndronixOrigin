@@ -3,8 +3,9 @@
 #Get the necessary components
 sudo apt-mark hold udisks2
 sudo apt-get update -y
-apt-get install keyboard-configuration -y
-apt-get install sudo wget -y
+sudo apt-get install keyboard-configuration -y
+sudo apt-get install tzdata -y
+sudo apt-get install sudo wget nano inetutils-tools -y
 sudo apt-get install lxqt-core lxqt-config qterminal tigervnc-standalone-server dbus-x11 openbox -y
 sudo apt-get install xfe -y
 sudo apt-get clean
