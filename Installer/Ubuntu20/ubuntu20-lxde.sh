@@ -111,7 +111,7 @@ rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8
 nameserver 1.1.1.1' > /etc/resolv.conf
 mkdir -p ~/.vnc
-apt update -y && apt install sudo dialog wget -y > /dev/null
+apt update -y && apt install sudo wget -y > /dev/null
 clear
 if [ ! -f /root/lxde19.sh ]; then
     wget --tries=20 $dlink/LXDE/lxde19.sh -O /root/lxde19.sh
