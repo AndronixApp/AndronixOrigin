@@ -111,7 +111,7 @@ rm -rf /etc/resolv.conf
 echo 'nameserver 8.8.8.8
 nameserver 1.1.1.1' > /etc/resolv.conf
 mkdir -p ~/.vnc
-apt update -y && apt install sudo dialog wget -y > /dev/null
+apt update -y && apt install sudo wget -y > /dev/null
 clear
 if [ ! -f /root/lxqt19.sh ]; then
     wget --tries=20 $dlink/LXQT/lxqt19.sh -O /root/lxqt19.sh
