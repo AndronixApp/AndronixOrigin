@@ -83,7 +83,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlinkT/XFCE4/lxqt_de.sh -O $folder/root/lxqt_de.sh
+wget --tries=20 $dlink/XFCE4/lxqt_de.sh -O $folder/root/lxqt_de.sh
 clear
 echo "Setting up the installation of LXQT VNC"
 
