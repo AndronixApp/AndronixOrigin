@@ -92,7 +92,7 @@ echo "#!/bin/bash
 apt update -y && apt install sudo wget -y
 clear
 if [ ! -f /root/lxqt_de.sh ]; then
-    wget --tries=20 $dlinkT/LXQT/lxqt_de.sh -O /root/lxqt_de.sh
+    wget --tries=20 $dlink/LXQT/lxqt_de.sh -O /root/lxqt_de.sh
     bash ~/lxqt_de.sh
 else
     bash ~/lxqt_de.sh
