@@ -89,6 +89,8 @@ chmod +x ubuntu20-fs/usr/local/bin/vncserver-start
 chmod +x ubuntu20-fs/usr/local/bin/vncserver-stop
 touch $folder/root/.hushlogin
 echo "127.0.0.1 localhost localhost" > $folder/etc/hosts
+echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
+chmod +x $folder/etc/resolv.conf
 echo "fixing shebang of $bin"
 termux-fix-shebang $bin
 echo "making $bin executable"
