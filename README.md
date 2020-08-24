@@ -84,10 +84,16 @@ Andronix currently supports 8 Un-Modded OS and 4 Modded OS at the moment.
 2. LXQT
 3. XFCE
 
+### Windows Managers
+1. Awesome
+2. Openbox
+3. i3
+
 ### Modded OS
 1. Ubuntu XFCE
 2. Debian XFCE
-3. Manjaro XFCE
+3. Ubuntu KDE
+4. Manjaro XFCE
 
 
 
