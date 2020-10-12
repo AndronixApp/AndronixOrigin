@@ -7,7 +7,7 @@ echo " "
 echo " "
 pacman -Suuyy --noconfirm
 pacman -S xfce4 xfce4-goodies sudo --noconfirm 
-pacman -S tigervnc --noconfirm
+pacman -S tigervnc wget --noconfirm
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/XFCE/xstartup   -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-start -P /usr/local/bin/
