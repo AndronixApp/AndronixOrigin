@@ -7,7 +7,7 @@ echo " "
 echo " "
 pacman -Suuyy --noconfirm
 pacman -S lxqt xscreensaver sudo --noconfirm 
-pacman -S tigervnc --noconfirm
+pacman -S tigervnc wget --noconfirm
 pacman -S xorg --noconfirm
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/LXQT/xstartup   -P ~/.vnc/
