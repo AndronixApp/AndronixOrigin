@@ -2,7 +2,7 @@
 
 #Get the necessary components
 pacman -Syu --noconfirm lxde tigervnc
-
+pacman -Syu --noconfirm lxde tigervnc
 #Setup the necessary files
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/xstartup -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-start -P /usr/local/bin/
@@ -36,4 +36,4 @@ echo " "
 echo "export DISPLAY=":1"" >> /etc/profile
 source /etc/profile
 
-vncserver-start
+wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/tigervnc-fix.sh -O ~/tigervnc-fix.sh && bash ~/tigervnc-fix.sh
