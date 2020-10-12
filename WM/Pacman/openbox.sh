@@ -4,6 +4,7 @@ echo "Installing Openbox"
 sleep 2
 pacman -Syu --noconfirm
 pacman -S openbox obconf tigervnc wget nano dbus xorg xterm xfce4-terminal pcmanfm shotwell feh cairo-dock --noconfirm
+pacman -S wget --noconfirm
 clear
 
 read -p "Want to install default browser ? (y/n)" choice
