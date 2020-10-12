@@ -59,4 +59,4 @@ echo ""
 echo ""
 
 vncpasswd
-vncserver-start
+wget https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Pacman/tigervnc-fix.sh -O ~/tigervnc-fix.sh && bash ~/tigervnc-fix.sh
