@@ -6,7 +6,7 @@ echo "Updating the system "
 echo " "
 echo " "
 pacman -Suuyy --noconfirm
-pacman -S lxde sudo --noconfirm 
+pacman -S lxde sudo wget --noconfirm 
  pacman -S tigervnc --noconfirm
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/LXDE/xstartup   -P ~/.vnc/
