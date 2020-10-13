@@ -4,6 +4,7 @@ echo "Installing i3wm"
 sleep 2
 pacman -Syu --noconfirm
 pacman -S i3 tigervnc wget feh nano dbus xorg xterm xfce4-terminal pcmanfm shotwell cairo-dock --noconfirm
+pacman -S tigervnc wget tar sed --noconfirm
 clear
 
 read -p "Want to install default browser ? (y/n)" choice
