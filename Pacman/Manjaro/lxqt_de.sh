@@ -9,6 +9,7 @@ pacman -Suuyy --noconfirm
 pacman -S lxqt xscreensaver sudo --noconfirm 
 pacman -S tigervnc wget --noconfirm
 pacman -S xorg --noconfirm
+pacman -S wget tar sed --noconfirm
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/Manjaro/LXQT/xstartup   -P ~/.vnc/
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/Pacman/vncserver-start -P /usr/local/bin/
