@@ -7,7 +7,7 @@ apt update -qq; apt install software-properties-common gnupg --no-install-recomm
 echo "Adding Debian repo for Chromium installation"
 
 echo "deb http://ftp.debian.org/debian buster main
-deb http://ftp.debian.org/debian buster-updates main" > /etc/apt/sources.list
+deb http://ftp.debian.org/debian buster-updates main" >> /etc/apt/sources.list
 
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DCC9EFBF77E11517
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 648ACFD622F3D138
