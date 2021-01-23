@@ -90,9 +90,9 @@ echo "Setting up the installation of XFCE VNC"
 
 echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Setting APT retry count
 echo "#!/bin/bash
-apt update -y && apt install wget sudo -y
+apt update -y && apt install wget sudo dbus-x11 -y
 clear
-if [ ! -f /root/lxde_de.sh ]; then
+if [ ! -f /root/xfce4_de.sh ]; then
     wget --tries=20 $dlink/XFCE4/xfce4_de.sh -O /root/xfce4_de.sh
     bash ~/xfce4_de.sh
 else
