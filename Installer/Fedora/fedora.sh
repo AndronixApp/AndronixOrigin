@@ -5,6 +5,20 @@ if [ -d "$folder" ]; then
 	echo "skipping downloading"
 fi
 tarball="fedora-rootfs.tar.xz"
+
+if [ "$first" != 1 ];then
+	echo "Download Rootfs, this may take a while base on your internet speed."
+	arch=$(dpkg --print-architecture)
+	if [ "$arch" == 'arm64' ];
+	then 
+		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partaa -O manjaro.partaa
+		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partab -O manjaro.partab
+		cat fedora.parta* > fedora-rootfs.tar.xz
+		rm -rf fedora.parta*
+		first=1
+	fi
+fi
+
 if [ "$first" != 1 ];then
 	if [ ! -f $tarball ]; then
 		echo "Download Rootfs, this may take a while base on your internet speed."
@@ -22,6 +36,8 @@ if [ "$first" != 1 ];then
 		esac
 		wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Fedora/${archurl}/fedora-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
   fi
+
+
 	cur=`pwd`
 	mkdir -p "$folder"
 	cd "$folder"
