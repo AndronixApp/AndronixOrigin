@@ -9,7 +9,7 @@ tarball="fedora-rootfs.tar.xz"
 if [ "$first" != 1 ];then
 	echo "Download Rootfs, this may take a while base on your internet speed."
 	arch=$(dpkg --print-architecture)
-	if [ "$arch" == 'arm64' ];
+	if [ "$arch" == 'aarch64' ];
 	then 
 		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partaa -O manjaro.partaa
 		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partab -O manjaro.partab
