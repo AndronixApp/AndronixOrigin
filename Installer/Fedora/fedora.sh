@@ -23,8 +23,6 @@ if [ "$first" != 1 ];then
 	if [ ! -f $tarball ]; then
 		echo "Download Rootfs, this may take a while base on your internet speed."
 		case `dpkg --print-architecture` in
-		aarch64)
-			archurl="arm64" ;;
 		arm)
 			archurl="armhf" ;;
 		amd64)
