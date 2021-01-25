@@ -12,8 +12,8 @@ if [ "$first" != 1 ];then
 	arch=$(dpkg --print-architecture)
 	if [ "$arch" == 'aarch64' ];
 	then 
-		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partaa -O manjaro.partaa
-		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partab -O manjaro.partab
+		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partaa -O fedora.partaa
+		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partab -O fedora.partab
 		cat fedora.parta* > fedora-rootfs.tar.xz
 		rm -rf fedora.parta*
 		first=1
