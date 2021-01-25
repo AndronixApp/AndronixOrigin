@@ -16,6 +16,12 @@ if [ "$first" != 1 ];then
 		wget --tries=20 https://github.com/AndronixApp/AndronixOrigin/raw/master/Rootfs/Fedora/arm64/fedora.partab -O fedora.partab
 		cat fedora.parta* > fedora-rootfs.tar.xz
 		rm -rf fedora.parta*
+		cur=`pwd`
+		mkdir -p "$folder"
+		cd "$folder"
+		echo "Decompressing Rootfs, please be patient."
+		proot --link2symlink tar -xJf ${cur}/${tarball} --exclude='dev'||:
+		cd "$cur"
 		first=1
 	fi
 fi
