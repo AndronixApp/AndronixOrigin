@@ -111,6 +111,8 @@ fi
 clear 
 echo 'Installing browser'
 apt install firefox-esr -y
+#Installing Desktop
+apt install xfce4
 clear 
 echo 'Welcome to Andronix | Kali'
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
