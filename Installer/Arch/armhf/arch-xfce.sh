@@ -29,7 +29,7 @@ if [ "$first" != 1 ];then
 fi
 
 mkdir -p arch-binds
-mkdir -p ${folder}/proc/fakethings
+mkdir -p ${cur}/${folder}/proc/fakethings
 
 if [ ! -f "${cur}/${folder}/proc/fakethings/stat" ]; then
 	cat <<- EOF > "${cur}/${folder}/proc/fakethings/stat"
@@ -187,7 +187,7 @@ command+=" -b /dev"
 command+=" -b /proc"
 command+=" -b /sys"
 command+=" -b /data"
-command+=" -b ubuntu20-fs/root:/dev/shm"
+command+=" -b arch-fs/root:/dev/shm"
 command+=" -b /proc/self/fd/2:/dev/stderr"
 command+=" -b /proc/self/fd/1:/dev/stdout"
 command+=" -b /proc/self/fd/0:/dev/stdin"
