@@ -75,6 +75,9 @@ else
 fi
 EOM
 
+echo -e "\e[31m Patching mirrorlist temporarily until further source update. Don't worry about GPG errors\e[0m"
+echo "deb [trusted=yes]  http://http.kali.org/kali kali-rolling main contrib non-free" > $folder/etc/apt/sources.list
+
 echo "fixing shebang of $bin"
 termux-fix-shebang $bin
 echo "making $bin executable"
