@@ -3,9 +3,10 @@ clear
 echo "Installing Openbox"
 sleep 2
 sudo apt update -y
-apt-get install keyboard-configuration tzdata -y
-apt-get install sudo wget dialog -y
-sudo apt install openbox obconf tigervnc-standalone-server wget nano dbus-x11 xorg xterm feh xfce4-terminal pcmanfm shotwell cairo-dock libexo-1-0 tigervnc-common --no-install-recommends -y
+apt install keyboard-configuration tzdata -y
+apt install sudo wget dialog -y
+apt install libexo-2-0 -y
+sudo apt install openbox obconf tigervnc-standalone-server wget nano dbus-x11 xorg xterm feh xfce4-terminal pcmanfm shotwell cairo-dock tigervnc-common --no-install-recommends -y
 clear
 
 read -p "Want to install default browser ? (y/n)" choice

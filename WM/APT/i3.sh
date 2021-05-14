@@ -3,9 +3,10 @@ clear
 echo "Installing i3wm"
 sleep 2
 sudo apt update -y
-apt-get install keyboard-configuration -y
-apt-get install sudo wget dialog -y
-sudo apt install i3 tigervnc-standalone-server wget nano dbus-x11 xorg xterm xfce4-terminal pcmanfm shotwell feh cairo-dock libexo-1-0 tigervnc-common --no-install-recommends -y
+apt install keyboard-configuration -y
+apt install sudo wget dialog -y
+apt install libexo-2-0 -y
+sudo apt install i3 tigervnc-standalone-server wget nano dbus-x11 xorg xterm xfce4-terminal pcmanfm shotwell feh cairo-dock tigervnc-common --no-install-recommends -y
 clear
 
 read -p "Want to install default browser ? (y/n)" choice
