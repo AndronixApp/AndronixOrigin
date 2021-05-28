@@ -32,8 +32,8 @@ export PULSE_SERVER=127.0.0.1
 export DISPLAY=:1
 XAUTHORITY=~/.Xauthority
 export XAUTHORITY
-dbus-launch openbox &
-dbus-launch cairo-dock & 
+dbus-launch openbox
+dbus-launch cairo-dock 
 feh --bg-fill /usr/share/wallpaper.jpg" > ~/.vnc/xstartup
 chmod +x ~/.vnc/xstartup
 
