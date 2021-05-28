@@ -25,7 +25,12 @@ if [ "$first" != 1 ];then
 		*)
 			echo "unknown architecture"; exit 1 ;;
 		esac
-		wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Kali/${archurl}/kali-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
+
+		if [ $archurl == "arm64" ] then
+			wget "https://github.com/AndronixApp/AndronixOrigin/releases/download/kali-arm64-tarball/kali-rootfs-arm64.tar.xz" -O $tarball
+		else
+			wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Kali/${archurl}/kali-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
+		fi
 	fi
 	cur=`pwd`
 	mkdir -p "$folder"
@@ -71,6 +76,13 @@ if [ -z "\$1" ];then
 else
     \$command -c "\$com"
 fi
+EOM
+
+cat > $folder/root/.bash_logout <<- EOM
+#!/bin/bash
+vncserver-stop
+pkill dbus*
+pkill ssh*
 EOM
 
 echo -e "\e[31m Patching mirrorlist temporarily until further source update. Don't worry about GPG errors\e[0m"
