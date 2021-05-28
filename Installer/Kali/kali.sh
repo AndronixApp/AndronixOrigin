@@ -26,7 +26,7 @@ if [ "$first" != 1 ];then
 			echo "unknown architecture"; exit 1 ;;
 		esac
 
-		if [ $archurl == "arm64" ] then
+		if [ $archurl == "arm64" ]; then
 			wget "https://github.com/AndronixApp/AndronixOrigin/releases/download/kali-arm64-tarball/kali-rootfs-arm64.tar.xz" -O $tarball
 		else
 			wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Kali/${archurl}/kali-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
