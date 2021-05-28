@@ -33,8 +33,8 @@ echo "#!/bin/bash
 export PULSE_SERVER=127.0.0.1
 export DISPLAY=:1
 export ~/.Xauthority
-dbus-launch awesome &
-dbus-launch cairo-dock & " > ~/.vnc/xstartup
+dbus-launch awesome
+dbus-launch cairo-dock " > ~/.vnc/xstartup
 chmod +x ~/.vnc/xstartup
 
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/APT/LXDE/vncserver-start -O /usr/local/bin/vncserver-start
