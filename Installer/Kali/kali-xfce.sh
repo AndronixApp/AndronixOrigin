@@ -33,7 +33,6 @@ if [ "$first" != 1 ];then
 		else
 			wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Kali/${archurl}/kali-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
 		fi
-
 	fi
 	cur=`pwd`
 	mkdir -p "$folder"
