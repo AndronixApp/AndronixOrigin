@@ -31,8 +31,8 @@ echo "#!/bin/bash
 export PULSE_SERVER=127.0.0.1
 export DISPLAY=:1
 export ~/.Xauthority
-dbus-launch i3 &
-dbus-launch cairo-dock &
+dbus-launch i3
+dbus-launch cairo-dock
 feh --bg-fill /usr/share/wallpaper.jpg " > ~/.vnc/xstartup
 chmod +x ~/.vnc/xstartup
 
