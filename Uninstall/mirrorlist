@@ -7,4 +7,4 @@
 	## Location  : Germany
 	## Time      : 99.99
 	## Last Sync :
-	Server = http://manjaro-arm.moson.eu/arm-stable/$repo/$arch/
+	Server = https://mirrors.dotsrc.org/manjaro-arm/stable/$repo/$arch
