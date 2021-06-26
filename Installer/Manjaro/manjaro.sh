@@ -79,7 +79,7 @@ cat >$folder/etc/pacman.d/mirrorlist <<'EOL'
 Server = https://mirrors.dotsrc.org/manjaro-arm/stable/$repo/$arch
 EOL
 rm -rf $folder/etc/resolv.conf && echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
-echo "pacman-mirrors -g -c  Japan && pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm" > $folder/usr/local/bin/fix-repo
+echo "pacman -Syyuu --noconfirm && pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm" > $folder/usr/local/bin/fix-repo
 chmod +x $folder/usr/local/bin/fix-repo
 rm -rf $folder/root/.bash_profile && echo "pacman-key --init && pacman-key --populate && pacman -Syu --noconfirm && rm -rf ~/.bash_profile" > $folder/root/.bash_profile
 rm -rf manjaro.partaa manjaro.partab manjaro.partac manjaro.tar.xz manjaro.sh
