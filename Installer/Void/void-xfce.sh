@@ -98,6 +98,7 @@ clear
 echo "Setting up the installation of XFCE VNC"
 
 echo "#!/bin/bash
+xbps-install -u xbps -y
 xbps-install -Su -y && xbps-install -S xfce4 tigervnc wget sudo -y 
 if [ ! -f /root/xfce4_de.sh ]; then
     wget --tries=20 $dlink/XFCE4/xfce4_de.sh -O /root/xfce4_de.sh > /dev/null

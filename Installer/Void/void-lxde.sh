@@ -104,7 +104,8 @@ echo "Setting up the installation of LXDE VNC"
 
 echo "#!/bin/bash
 clear
- echo 'Installing LXDE... This might take some time depending upon your Internet'
+echo 'Installing LXDE... This might take some time depending upon your Internet'
+xbps-install -u xbps -y
 xbps-install -Su -y > /dev/null 
 xbps-install -S lxde tigervnc wget sudo -y 
 clear
