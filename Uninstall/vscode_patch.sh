@@ -22,11 +22,13 @@ esac
 
 echo -e "${green}Detected architecture: $ARCH${ncolor}"
 
+echo "Removing old VSCode/Headmelted repository..."
+rm -rf /etc/apt/sources.list.d/headmelted_vscode.list
+
 echo "Verifying dependencies..."
 apt update -y
 apt install sudo -y
 sudo apt install wget tar -y
-
 
 if [ -d "/opt" ]
 then
@@ -38,9 +40,9 @@ else
     wget $url${ARCH}.tar.gz -O /opt/vscode.tar.gz
 fi
 
-mkdir /opt/vscode
-tar xf /opt/vscode.tar.gz -C /opt/vscode --strip-components=1
-rm -rf /opt/vscode.tar.gz
+sudo mkdir /opt/vscode
+sudo tar xf /opt/vscode.tar.gz -C /opt/vscode --strip-components=1
+sudo rm -rf /opt/vscode.tar.gz
 
 echo -e "alias code='/opt/vscode/code --no-sandbox'" >> ~/.bashrc
 
