@@ -1,5 +1,5 @@
 #!/bin/bash 
-echo "Uninstalling Manjaro Modded OS"
+echo "Uninstalling Manjaro, Please be patient!"
 chmod 777 -R manjaro-fs
 rm -rf manjaro-fs
 rm -rf manjaro-binds
