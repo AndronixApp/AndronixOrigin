@@ -27,12 +27,8 @@ if [ "$first" != 1 ];then
 		*)
 			echo "unknown architecture"; exit 1 ;;
 		esac
-
-		if [ $archurl == "arm64" ]; then
-			wget "https://github.com/AndronixApp/AndronixOrigin/releases/download/kali-arm64-tarball/kali-rootfs-arm64.tar.xz" -O $tarball
-		else
-			wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Kali/${archurl}/kali-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
-		fi
+                wget "https://github.com/Techriz/AndronixOrigin/blob/master/Rootfs/Kali/${archurl}/kali-rootfs-${archurl}.tar.xz?raw=true" -O $tarball
+           fi
 	fi
 	cur=`pwd`
 	mkdir -p "$folder"
@@ -125,7 +121,7 @@ if [ ! -f /usr/bin/vncserver ]; then
 fi
 clear 
 echo 'Installing browser'
-apt install firefox-esr -y
+apt install firefox -y
 clear 
 echo 'Welcome to Andronix | Kali'
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
