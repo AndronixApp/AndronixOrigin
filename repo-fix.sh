@@ -1,2 +1,2 @@
-#!/bin/bash
-echo "deb https://grimler.se/termux-packages-24 stable InRelease" > $PREFIX/etc/apt/sources.list
+#Remove everything as a temporary patch
+#TODO: Update installation commands to remove repo-fix.sh
