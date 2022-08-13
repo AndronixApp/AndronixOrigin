@@ -1,2 +1,2 @@
-#!/bin/bash
-echo "deb https://dl.kcubeterm.me/termux-packages-24 stable main" > $PREFIX/etc/apt/sources.list
+#Remove everything as a temporary patch
+#TODO: Update installation commands to remove repo-fix.sh
