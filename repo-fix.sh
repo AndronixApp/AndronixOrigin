@@ -1,2 +1,2 @@
-#Remove everything as a temporary patch
-#TODO: Update installation commands to remove repo-fix.sh
+echo "deb https://termux.mentality.rip/termux-main stable main" > $PREFIX/etc/apt/sources.list
+echo "Fixed Termux Repositories ✅"
