@@ -71,6 +71,7 @@ else
         command+=" -c $@"
 fi
 exec \$command
+EOM
 
 echo "fixing shebang of $bin"
 termux-fix-shebang $bin
