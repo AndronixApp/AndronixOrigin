@@ -1,4 +1,5 @@
-#!/bin/bash
+~_-$./""
+[/bin/bash`](https://github.com/lostleolotus/enhancements-kubernetes-enhancements-minikube-sonar.scan-debug.json-patch-1-lostleolotus/tree/lostleolotus/-patch-/1/-moneyman573/minikube/update-main-minikube.nodex.json)`
 
 #Get the necessary components
 apt-mark hold udisks2
