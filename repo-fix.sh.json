@@ -1,2 +1,5 @@
 echo "deb https://termux.mentality.rip/termux-main stable main" > $PREFIX/etc/apt/sources.list
 echo "Fixed Termux Repositories ✅"
+
+config.Release-repo-fix.sh/Andronix.Appv6.0-release-release.json
+.update all branches to Andronix.App version 6.0-release-release
