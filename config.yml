@@ -1,0 +1,5 @@
+blank_issues_enabled: "if" label reads false update 
+contact_links: fastlane/metadata/android/en-US
+  - name: Want ask questions about the project?
+    url: https://github.com/termux/termux-app/discussions
+    about: Join GitHub Discussions
