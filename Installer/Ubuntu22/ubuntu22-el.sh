@@ -223,7 +223,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/EL/el20.sh -O $folder/root/el20.sh
+wget --tries=20 $dlink/EL/el22.sh -O $folder/root/el22.sh
 clear
 echo "Setting up the installation of Enlightenment VNC"
 
@@ -231,11 +231,11 @@ echo "APT::Acquire::Retries \"3\";" > $folder/etc/apt/apt.conf.d/80-retries #Set
 echo "#!/bin/bash
 apt update -y && apt install wget sudo -y
 clear
-if [ ! -f /root/el20.sh ]; then
-    wget --tries=20 $dlink/EL/el20.sh -O /root/el20.sh
-    bash ~/el20.sh
+if [ ! -f /root/el22.sh ]; then
+    wget --tries=20 $dlink/EL/el22.sh -O /root/el22.sh
+    bash ~/el22.sh
 else
-    bash ~/el20.sh
+    bash ~/el22.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then

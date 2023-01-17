@@ -219,14 +219,11 @@ EOM
 mkdir -p ubuntu22-fs/var/tmp
 rm -rf ubuntu22-fs/usr/local/bin/*
 echo "127.0.0.1 localhost localhost" > $folder/etc/hosts
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ubuntu22-fs/root/.profile.1 > /dev/null
-cat $folder/root/.profile.1 >> $folder/root/.profile && rm -rf $folder/root/.profile.1
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ubuntu22-fs/usr/local/bin > /dev/null
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ubuntu22-fs/usr/local/bin > /dev/null
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ubuntu22-fs/usr/local/bin > /dev/null
 wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-start -P ubuntu22-fs/usr/local/bin > /dev/null
 
-chmod +x ubuntu22-fs/root/.profile
 chmod +x ubuntu22-fs/usr/local/bin/vnc
 chmod +x ubuntu22-fs/usr/local/bin/vncpasswd
 chmod +x ubuntu22-fs/usr/local/bin/vncserver-start
@@ -241,7 +238,7 @@ rm $tarball
 
 #DE installation addition
 
-wget --tries=20 $dlink/LXDE/lxde19.sh -O $folder/root/lxde19.sh
+wget --tries=20 $dlink/LXDE/lxde22.sh -O $folder/root/lxde22.sh
 clear
 echo "Setting up the installation of LXDE VNC"
 
@@ -255,11 +252,11 @@ nameserver 1.1.1.1' > /etc/resolv.conf
 mkdir -p ~/.vnc
 apt update -y && apt install sudo wget -y > /dev/null
 clear
-if [ ! -f /root/lxde19.sh ]; then
-    wget --tries=20 $dlink/LXDE/lxde19.sh -O /root/lxde19.sh
-    bash ~/lxde19.sh
+if [ ! -f /root/lxde22.sh ]; then
+    wget --tries=20 $dlink/LXDE/lxde22.sh -O /root/lxde22.sh
+    bash ~/lxde22.sh
 else
-    bash ~/lxde19.sh
+    bash ~/lxde22.sh
 fi
 clear
 if [ ! -f /usr/local/bin/vncserver-start ]; then
@@ -271,7 +268,7 @@ fi
 if [ ! -f /usr/bin/vncserver ]; then
     apt install tigervnc-standalone-server -y
 fi
-rm -rf /root/lxde19.sh
+rm -rf /root/lxde22.sh
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
 clear
 bash $bin

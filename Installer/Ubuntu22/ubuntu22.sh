@@ -217,22 +217,7 @@ else
 fi
 EOM
 
-mkdir -p ubuntu22-fs/var/tmp
-rm -rf ubuntu22-fs/usr/local/bin/*
-
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/.profile -O ubuntu22-fs/root/.profile.1
-cat $folder/root/.profile.1 >> $folder/root/.profile && rm -rf $folder/root/.profile.1
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vnc -P ubuntu22-fs/usr/local/bin
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncpasswd -P ubuntu22-fs/usr/local/bin
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-stop -P ubuntu22-fs/usr/local/bin
-wget -q https://raw.githubusercontent.com/AndronixApp/AndronixOrigin/master/Rootfs/Ubuntu19/vncserver-start -P ubuntu22-fs/usr/local/bin
-
 chmod +x ubuntu22-fs/root/.bash_profile
-chmod +x ubuntu22-fs/root/.profile
-chmod +x ubuntu22-fs/usr/local/bin/vnc
-chmod +x ubuntu22-fs/usr/local/bin/vncpasswd
-chmod +x ubuntu22-fs/usr/local/bin/vncserver-start
-chmod +x ubuntu22-fs/usr/local/bin/vncserver-stop
 touch $folder/root/.hushlogin
 echo "127.0.0.1 localhost localhost" > $folder/etc/hosts
 echo "nameserver 1.1.1.1" > $folder/etc/resolv.conf
@@ -244,6 +229,6 @@ chmod +x $bin
 echo "removing image for some space"
 rm $tarball
 clear
-echo "You can now launch Ubuntu with the ./${bin} script form next time"
+echo "You can now launch Ubuntu with the ./${bin} script from next time"
 bash $bin
 
