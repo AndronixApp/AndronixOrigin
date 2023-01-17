@@ -9,7 +9,7 @@ sudo apt-mark hold udisks2
 sudo apt-get install keyboard-configuration -y
 sudo apt-get install tzdata -y
 sudo apt-get install sudo wget nano inetutils-tools dialog -y
-sudo apt-get install xfce4 xfce4-goodies xfce4-terminal exo-utils tigervnc-standalone-server tigervnc-common tigervnc-tools dbus-x11 --no-install-recommends -y
+sudo apt-get install xfce4 xfce4-goodies xfce4-terminal exo-utils tigervnc-standalone-server tigervnc-common dbus-x11 --no-install-recommends -y
 sudo apt-get clean
 mkdir -p ~/.vnc
 wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/APT/XFCE4/xstartup -P ~/.vnc/
@@ -18,6 +18,16 @@ wget https://raw.githubusercontent.com/Techriz/AndronixOrigin/master/APT/XFCE4/v
 chmod +x /usr/local/bin/vncserver-start
 chmod +x /usr/local/bin/vncserver-stop
 chmod +x ~/.vnc/xstartup
+
+echo '#!/bin/bash
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
+export PULSE_SERVER=127.0.0.1
+XAUTHORITY=$HOME/.Xauthority
+export XAUTHORITY                                                         
+LANG=en_US.UTF-8
+export LANG
+echo $$ > /tmp/xsession.pid
+dbus-launch --exit-with-session startxfce4 &' > ~/.vnc/xstartup
 
 echo " "
 

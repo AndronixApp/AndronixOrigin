@@ -6,20 +6,22 @@ sudo apt-get update -y
 sudo apt-get install keyboard-configuration -y
 sudo apt-get install tzdata -y
 sudo apt-get install sudo wget nano inetutils-tools dialog -y
-sudo apt-get install lxqt-core lxqt-config qterminal tigervnc-standalone-server tigervnc-tools dbus-x11 openbox -y
+sudo apt-get install lxqt-core lxqt-config qterminal tigervnc-standalone-server dbus-x11 openbox -y
 sudo apt-get install xfe -y
 sudo apt-get clean
 
 #Setup the necessary files
 mkdir -p ~/.vnc
 echo "#!/bin/bash
+[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 export PULSE_SERVER=127.0.0.1
+XAUTHORITY=$HOME/.Xauthority
+export XAUTHORITY                                                         
 LANG=en_US.UTF-8
 export LANG
-[ -x /etc/vnc/xstartup ] && exec /etc/vnc/xstartup
-[ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 echo $$ > /tmp/xsession.pid
-dbus-launch --exit-with-session /usr/bin/startxfce4 &"  > ~/.vnc/xstartup
+dbus-launch --exit-with-session startlxqt &" > ~/.vnc/xstartup
+
 echo " "
 
 echo "Running browser patch"
