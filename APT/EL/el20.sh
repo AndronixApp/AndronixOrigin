@@ -18,7 +18,7 @@ echo '#!/bin/bash
 [ -r $HOME/.Xresources ] && xrdb $HOME/.Xresources
 XAUTHORITY=$HOME/.Xauthority
 export XAUTHORITY                                                         
-dbus-launch --exit-with-session enlightenment_start' > ~/.vnc/xstartup
+dbus-launch --exit-with-session enlightenment_start &' > ~/.vnc/xstartup
 
 apt install epiphany-browser -y 
 
