@@ -109,7 +109,7 @@ if [ ! -f /usr/bin/vncserver ]; then
 fi
 clear
 echo 'Installing Browser'
-apt install firefox-esr -y 
+apt install firefox -y 
 clear
 echo ' Welcome to Andronix | Debian '
 rm -rf ~/.bash_profile" > $folder/root/.bash_profile 
