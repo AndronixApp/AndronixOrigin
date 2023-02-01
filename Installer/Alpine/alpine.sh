@@ -3,6 +3,7 @@ pkg install wget pv proot tar -y
 #Variables we need. Script is modular, change below variables to install different distro's
 name="Alpine"
 distro=alpine
+version=3.14.2
 folder=$distro-fs
 tarball="alpine-rootfs.tar.gz"
 echo " "
@@ -63,7 +64,7 @@ else
 	*)
 		echo "unknown architecture"; exit 1 ;;
 	esac
-	url=https://github.com/AndronixApp/AndronixOrigin/blob/master/Rootfs/Alpine/${archurl}/alpine-minirootfs-3.10.3-${archurl}.tar.gz?raw=true
+	url=https://dl-cdn.alpinelinux.org/alpine/latest-stable/releases/$archurl/alpine-minirootfs-$version-$archurl.tar.gz?raw=true
 	echo "Downloading and extracting $name"
 	echo "Extraction happens in parallel"
 	echo ""
