@@ -250,6 +250,6 @@ chmod +x $bin
 echo "removing image for some space"
 rm $tarball
 clear
-echo "You can now launch Ubuntu with the ./${bin} script form next time"
+echo "You can now launch Ubuntu with the ./${bin} script from next time"
 bash $bin
 
