@@ -51,7 +51,8 @@ echo " "
 echo "You can connect to this address with a VNC Viewer you prefer"
 echo ""
 echo ""
-echo ""
+echo ""tab
+
 echo "Running vncserver-start"
 echo ""
 echo ""
