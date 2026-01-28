@@ -1,0 +1,413 @@
+Acceder
+
+<code>&lt;!DOCTYPE html&gt; &lt;html lang="es"&gt; &lt;head&gt; &lt;meta charset="UTF-8"&gt; &lt;meta name="viewport" content="wi...
+Pregunta de la clase:
+Obteniendo datos del usuario
+
+JUAN CARLOS ARCADIPANE
+
+Pregunta
+student
+•
+hace 7 años
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calculador de Peso</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+        <h1 class="h-1 mt-5 pt-5" >Tu peso en otro planeta</h1>
+        <p>en la tierra pesas menos que en marte o jupiter</p>
+        <button type="button" class="btn btn-outline-primary">Peso Final</button>
+        <button type="button" class="btn btn-outline-danger"> 
+      
+
+    <script>
+         
+      var g_tierra = 9.8;
+      var g_marte = 3.7;
+      var g_jupiter = 24.8;
+      var peso = 90;
+      var peso_final;
+      peso_final = peso * g_marte / g_tierra;
+      peso_final = parseInt(peso_final);
+      document.write(peso_final);
+      
+        
+    </script>
+</body>
+</html>
+
+0
+101 respuestas
+
+Escribe tu comentario
+
+Jonathan Alexander Morales Cadena
+
+student
+•
+hace 7 años
+Sigue trabajando, vas por buen camino!
+
+
+0
+
+Natalia Pavez Figueroa
+
+student
+•
+hace 2 años
+Me encantó llegar a esta pàgina, tiene info didactica y un gran equipo! Saludos
+
+
+0
+
+Juan Pinzón
+
+student
+•
+hace 2 años
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formato de Solicitud y Checklist</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    table, th, td {
+      border: 1px solid black;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Formato de Solicitud de Herramientas:</h2>
+<table>
+  <tr>
+    <td>Nombre del Solicitante:</td>
+    <td colspan="2"><input type="text"></td>
+  </tr>
+  <tr>
+    <td>Departamento:</td>
+    <td colspan="2"><input type="text"></td>
+  </tr>
+  <!-- Otros campos... -->
+</table>
+
+<h2>Checklist para Análisis y Estado de Equipos de Cómputo:</h2>
+<table>
+  <!-- Encabezados de la tabla -->
+  <tr>
+    <th>Campo</th>
+    <th>Descripción</th>
+  </tr>
+  <!-- Filas de la tabla -->
+  <tr>
+    <td>Equipo Número:</td>
+    <td><input type="text"></td>
+  </tr>
+  <!-- Otros campos del checklist... -->
+</table>
+
+</body>
+</html>
+
+`<code>
+
+0
+
+Terabyte Laptops
+
+student
+•
+hace 2 años
+<!DOCTYPE html> <html lang="es"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Document</title> </head> <body>
+
+<div class="container is-fluid">
+    <div class="columns is-flex is-justify-content-center">
+        <figure class="image is-128x128">
+            <?php
+            if (is_file("./app/views/fotos/" . $_SESSION['foto'])) {
+                echo '<img class="is-rounded" src="' . APP_URL . 'app/views/fotos/' . $_SESSION['foto'] . '">';
+            } else {
+                echo '<img class="is-rounded" src="' . APP_URL . 'app/views/fotos/default.png">';
+            }
+            ?>
+        </figure>
+    </div>
+    <div class="columns is-flex is-justify-content-center">
+        <h2 class="subtitle">¡Bienvenido <?php echo $_SESSION['nombre'] . " " . $_SESSION['apellido']; ?>!</h2>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div class="container is-fluid mb-6">
+    <div class="container pb-6 pt-6">
+        <?php
+
+        use app\controllers\productController;
+
+        $insProducto = new productController();
+
+        if (!isset($_SESSION[$url[0]]) && empty($_SESSION[$url[0]])) {
+        ?>
+            <div class="columns">
+                <div class="column">
+
+
+                    <form class="FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off">
+
+
+                        <input type="hidden" name="modulo_buscador" value="buscar">
+                        <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>">
+
+
+
+                        <div class="field is-grouped">
+                            <p class="control is-expanded">
+                                <input class="input is-rounded" type="text" name="txt_buscador" placeholder="¿Qué estás buscando?" pattern="[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ ]{1,30}" maxlength="30" required>
+
+                            </p>
+                            <p class="control">
+                                <button class="button is-info" type="submit">Buscar</button>
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        <?php } else { ?>
+            <div class="columns">
+                <div class="column">
+
+                    <form class="has-text-centered mt-6 mb-6 FormularioAjax" action="<?php echo APP_URL; ?>app/ajax/buscadorAjax.php" method="POST" autocomplete="off">
+                        <input type="hidden" name="modulo_buscador" value="eliminar">
+                        <input type="hidden" name="modulo_url" value="<?php echo $url[0]; ?>">
+                        <p><i class="fas fa-search fa-fw"></i> &nbsp; Estas Buscando <strong>“<?php echo $_SESSION[$url[0]]; ?>”</strong></p>
+                        <br>
+                        <button type="submit" class="button is-danger is-rounded"><i class="fas fa-trash-restore"></i> &nbsp; Eliminar Busqueda</button>
+                    </form>
+                </div>
+            </div>
+        <?php
+            echo $insProducto->listarProductoControlador($url[1], 50, $url[0], $_SESSION[$url[0]], 0);
+        }
+        ?>
+    </div>
+
+0
+
+Weymar Sempertegui
+
+student
+•
+hace 2 años
+<!DOCTYPE html> <html lang="en"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>XOXO Game</title> <style> body { font-family: Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f0f0f0; } .game { display: grid;
+
+0
+
+Weymar Sempertegui
+
+student
+•
+hace 2 años
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOXO Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game {
+            display: grid;
+_++****++_
+<code>
+
+0
+
+Weymar Sempertegui
+
+student
+•
+hace 2 años
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOXO Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game {
+            display: grid;
+_++****++_
+<code>
+
+0
+
+Weymar Sempertegui
+
+student
+•
+hace 2 años
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOXO Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game {
+            display: grid;
+_++****++_
+<code>
+
+0
+
+Weymar Sempertegui
+
+student
+•
+hace 2 años
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOXO Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game {
+            display: grid;
+_++****++_
+<code>
+
+0
+
+Weymar Sempertegui
+
+student
+•
+hace 2 años
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XOXO Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .game {
+            display: grid;
+_++****++_
+<code>
+
+0
+
+Ver 91 respuestas más
+
+Curso Gratis de Programación Básica
+
+
+Curso Gratis de Programación Básica
+Programa desde cero, domina Javascript, entiende HTML y aprende de algoritmos. <strong>Sí, desde cero</strong>. Entenderás la lógica del código, cómo piensan los programadores y cómo programar juegos, proyectos y hasta robots y electrónica. Aprender a programar no es fácil, pero Platzi lo hace efectivo.
+
+Ir al curso
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Calculador de Peso</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+</head>
+<body>
+        <h1 class="h-1 mt-5 pt-5" >Tu peso en otro planeta</h1>
+        <p>en la tierra pesas menos que en marte o jupiter</p>
+        <button type="button" class="btn btn-outline-primary">Peso Final</button>
+        <button type="button" class="btn btn-outline-danger"> 
+      
+
+    <script>
+         
+      var g_tierra = 9.8;
+      var g_marte = 3.7;
+      var g_jupiter = 24.8;
+      var peso = 90;
+      var peso_final;
+      peso_final = peso * g_marte / g_tierra;
+      peso_final = parseInt(peso_final);
+      document.write(peso_final);
+      
+        
+    </script>
+</body>
+</html>
