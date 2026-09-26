@@ -239,8 +239,12 @@ func TestPreUpgrade(t *testing.T) {
 	if !strings.Contains(u.PreUpgrade, "coreutils-from-gnu coreutils-from-uutils-") || !strings.Contains(u.PreUpgrade, "--allow-remove-essential") {
 		t.Errorf("ubuntu PreUpgrade: %q", u.PreUpgrade)
 	}
+	k, _ := LoadDistro("kali")
+	if !strings.Contains(k.PreUpgrade, "systemd-standalone-tmpfiles") || !strings.Contains(k.PreUpgrade, "install ok installed") {
+		t.Errorf("kali PreUpgrade: %q", k.PreUpgrade)
+	}
 	for _, id := range DistroIDs() {
-		if d, _ := LoadDistro(id); id != "ubuntu" && d.PreUpgrade != "" {
+		if d, _ := LoadDistro(id); id != "ubuntu" && id != "kali" && d.PreUpgrade != "" {
 			t.Errorf("%s: unexpected PreUpgrade %q", id, d.PreUpgrade)
 		}
 	}

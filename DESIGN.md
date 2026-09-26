@@ -313,3 +313,89 @@ The gate fails on any `aid_*` entry, so this can't be skipped. `tests/check-imag
 - **Layered, not edited.** Light writes only under `/etc/xdg/andronix-light`, and `xstartup` puts that folder first in `XDG_CONFIG_DIRS`. Nothing the distro or Modded edition ships is modified, and balanced just removes the folder.
 - **VNC.** Light also means 16-bit colour, and 1280x720 as the default screen size.
 - **Automatic.** A desktop install on a phone with less than 3 GB of RAM starts in light. `andronix tune <d>` shows the current profile and the RAM.
+
+## 13. Adaptive compatibility: probe the phone, fixes as data (design, 2.0.1+)
+
+Today's fixes are scattered version checks:
+- `proot.OldKernel` (below 4.8: `PROOT_NO_SECCOMP=1` and a desktop warning);
+- `DISTRO_MAX_KERNEL` with `kernelNewer`;
+- `Family.FchmodatShim`;
+- the Kali systemd swap.
+
+They guess from version numbers. The replacement **measures what this phone does** and applies **fixes listed as data** in the binary, so a fix is a one-line change.
+
+### Probe (measure, cached)
+
+- **When:** at the first install on a phone, after the rootfs is unpacked and before any package step. It runs again when the cache key changes, and `andronix doctor --probe` forces it.
+- **Cache key:** kernel release + Android SDK + Termux version + probe version. The result is kept in `~/.andronix/probe.json`.
+- **Inside proot:** one proot run of the in-distro binary, `andronix __probe`. Each syscall runs in its own child process, so a seccomp kill (SIGSYS) only loses that child and is recorded as `SIGSYS`. The syscalls tested:
+  - statx, openat2, faccessat2, fchmodat2, close_range;
+  - open_tree, name_to_handle_at, memfd_create;
+  - clone3, called with invalid arguments so it never forks;
+  - seccomp (`GET_ACTION_AVAIL`).
+
+  Each result is one of: `ok`, `ENOSYS`, `EPERM`, `EUNATCH`, `EINVAL`, `SIGSYS`, or another errno name. About 1–2 s in total.
+- **Host side, without proot:**
+  - kernel release;
+  - SDK;
+  - ROM family: `lineage`, `miui`/`hyperos`, `oneui`, `stock`, or `other`, taken from getprop. The raw fingerprint is never recorded;
+  - the phantom-process setting (`/system/bin/settings get global settings_enable_monitor_phantom_procs` where Termux may read it, else inferred from the SDK: on for 31 and newer);
+  - RAM and free space;
+  - Termux version and source (`TERMUX_APK_RELEASE`: F-Droid, GitHub or Play).
+- **Fixtures:** recorded probes live in `internal/compat/testdata/*.json`: the emulators a9, a11, a12, a16 and a17, plus the Redmi Note 7 Pro on kernel 4.14.
+
+### Rules (fixes as data)
+
+- **Where they live:** `compat.json`, embedded in the binary. Each rule has an `id`, a `when` and a `do`. A rule applies when every condition in `when` holds.
+  - Conditions:
+    - `kernel_lt` and `kernel_ge` (major.minor);
+    - `sdk_lt` and `sdk_ge`;
+    - `probe` (syscall to the results that match, e.g. `{"fchmodat2": ["ENOSYS", "EPERM", "SIGSYS"]}`);
+    - `distro`, `family`, `de`, `termux`, `rom`;
+    - `ram_mb_lt`, `phantom` (true/false).
+  - Actions:
+    - `env`: variables for proot, e.g. `PROOT_NO_SECCOMP=1`;
+    - `preload`: a shim from `guest/preload/` (fchmodat2, later faccessat2);
+    - `pre_script`: shell run as root after the refresh, before any package step (e.g. the machine-id and systemctl shim, the Kali systemd swap);
+    - `apt_pin` and `hold`: package preferences;
+    - `skip_optional`: heavy optional packages;
+    - `warn`: a message shown before the install, such as the phantom-process advice or the old-kernel desktop warning;
+    - `refuse`: a friendly stop, which replaces `DISTRO_MAX_KERNEL`.
+- **Examples:**
+  ```json
+  {"id": "old-syscall-order", "when": {"kernel_lt": "4.8"}, "do": {"env": {"PROOT_NO_SECCOMP": "1"}, "warn": "old_kernel_desktop"}}
+  {"id": "fchmodat2-shim", "when": {"probe": {"fchmodat2": ["ENOSYS", "EPERM", "SIGSYS"]}, "family": ["xbps"]}, "do": {"preload": "fchmodat"}}
+  {"id": "systemd-eunatch", "when": {"probe": {"open_tree": ["EUNATCH"]}, "family": ["apt"]}, "do": {"pre_script": "systemd-standalone"}}
+  ```
+- **Named scripts:** `pre_script`, `warn`, `refuse` and `preload` refer to names shipped in the binary (`internal/compat/scripts/*.sh`, the message catalogue, `guest/preload`). The table is checked on load, and a test fails on an unknown name.
+- **The Kali systemd fix:** stays unconditional in `kali.conf` for 2.0.1, since it's cheap and safe. Once the Redmi fixture shows which syscall fails, it can become a probe rule.
+- **Reporting:** `andronix doctor` prints the probe and the rules that apply. The applied rule ids are saved in `install.conf` (`COMPAT=`).
+
+### Updates
+
+- **Shipping:** the table ships only in the binary. A new or changed rule reaches users with the next installer release: `get.sh` fetches `bin/latest`, and `andronix update` updates the installer itself.
+- **Nothing from the server:** there is no server-side table and no signing (dropped by the owner, Sept 26).
+
+### Telemetry (existing opt-out)
+
+- **A `compat` event after each probe:** the probe as a compact string (e.g. `openat2:ENOSYS,clone3:SIGSYS`), kernel major.minor, SDK, ROM family, Termux source, a RAM bucket, and the rule ids applied.
+- **`install_result`** also gets `compat_rules` and the failing step, which it has already.
+- **Never sent:** the full kernel string, build fingerprint, device model, or anything that identifies a person.
+
+### Tests
+
+- **Unit:** the rule engine run over each fixture, with the expected rule ids (for example, the Redmi 4.14 fixture gets `systemd-eunatch` and `old-syscall-order` doesn't apply).
+- **Table checks:**
+  - the embedded table parses;
+  - every `pre_script` and `warn` name exists;
+- **Emulator matrix:** `andronix doctor --probe` on a9, a11, a16 and a17 (app context), saved as fixtures.
+- **Redmi:** the lead's device agent records its probe.
+
+### Migration
+
+Rules take over the existing checks:
+- `proot.OldKernel` and `oldSyscallOrder` become `old-syscall-order`;
+- `DISTRO_MAX_KERNEL` becomes `refuse` rules;
+- `Family.FchmodatShim` becomes `fchmodat2-shim`.
+
+The old code stays as a fallback when the probe can't run (no rootfs yet, or the probe failed), so behaviour never gets worse than 2.0.0.

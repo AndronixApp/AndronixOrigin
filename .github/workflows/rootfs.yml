@@ -1,5 +1,7 @@
-# Draft (never run). Builds clean rootfs tarballs and publishes them to the
-# Andronix R2 bucket, the installer's default source (DESIGN.md section 2):
+# Manual only; publish after the emulator smoke test. Future: scheduled
+# build to a candidate/ prefix + emulator gate + owner promote.
+# Builds clean rootfs tarballs and publishes them to the Andronix R2
+# bucket, the installer's default source (DESIGN.md section 2):
 #   rootfs/<id>/<version>/<id>-<version>-<arch>.tar.xz (+ .sha256, .meta)
 #
 # Target: the PUBLIC bucket andronix-dl (https://dl.andronix.app), fixed in
@@ -16,15 +18,13 @@ on:
       distro:
         description: distro id (distros/<id>.conf)
         default: debian
-  schedule:
-    - cron: "0 3 * * 1"   # weekly rebuild picks up security updates
 
 jobs:
   build:
     runs-on: ubuntu-24.04-arm
     strategy:
       matrix:
-        distro: ${{ github.event_name == 'schedule' && fromJSON('["debian","ubuntu","ubuntu24"]') || fromJSON(format('["{0}"]', inputs.distro)) }}
+        distro: ${{ fromJSON(format('["{0}"]', inputs.distro)) }}
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3

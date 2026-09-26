@@ -9,6 +9,7 @@ Changes to the `andronix` installer and the free distro images it installs. The 
 - **Beta channel for Premium:** `andronix update --channel beta --token '<token from the app>'`. `andronix update --channel stable` goes back to the release.
 - **Early-access Modded editions.** Premium and Modded Pass owners can install them before everyone else. Anyone else sees "Early access: Premium" instead of a download error.
 - **Modded downloads are checked too:** the installer fetches the edition's sha256 from the Andronix API, behind the same purchase token, and verifies the download.
+- **Kali on older kernels:** Kali's systemd 261 failed to configure under proot on older phone kernels ("Failed to enable units: Protocol driver not attached", seen on a Redmi Note 7 Pro with 4.14), which left sudo, dbus and the desktop unconfigured. Kali now uses the standalone tmpfiles and sysusers instead of the full systemd, and `andronix update` repairs installs where this already happened.
 - The unused TigerVNC wrapper path was removed; the VNC desktop starts the same way on every distro.
 
 ## 2.0.0 (2026-09-26)

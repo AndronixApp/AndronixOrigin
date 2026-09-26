@@ -1,8 +1,12 @@
-# Draft (never run). Builds the andronix binaries and publishes them to R2:
+# Builds the andronix binaries on a v* tag and, after the owner approves,
+# publishes them to R2:
 #   bin/<version>/andronix-{android,linux}-<arch>, andronix-<arch> (old
 #   name of the android build) + SHA256SUMS   (kept)
 #   bin/latest/...                               (what get.sh downloads)
 # Public bucket andronix-dl only, through ci/publish-r2.sh (guarded).
+# The publish job runs in the "release" environment, which needs the
+# owner's approval (Settings > Environments > release > Required
+# reviewers), so a stray tag builds but can't publish.
 # Same scoped R2 secrets as rootfs.yml.
 name: binaries
 on:
@@ -20,6 +24,23 @@ jobs:
       - run: go vet ./... && go test ./...
       # The runner image has the NDK (arm, i686, x86_64 android builds use cgo).
       - run: ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME" VERSION="${GITHUB_REF_NAME#v}" ci/build-go.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bin
+          path: |
+            dist/andronix-*
+            dist/SHA256SUMS
+
+  publish:
+    needs: build
+    runs-on: ubuntu-24.04
+    environment: release   # waits for the owner's approval
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: bin
+          path: dist
       - name: Publish to R2 (public bucket, guarded)
         env:
           R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
@@ -28,4 +49,5 @@ jobs:
           AWS_DEFAULT_REGION: auto
         run: |
           bash tests/publish-guard.sh
+          chmod +x dist/andronix-*
           ci/publish-r2.sh bin "${GITHUB_REF_NAME#v}"

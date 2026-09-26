@@ -24,7 +24,7 @@ func TestNoBareExec(t *testing.T) {
 			// This package wraps os/exec; the syscall probe calls it on
 			// purpose; the rest aren't Go code of ours.
 			switch rel {
-			case "internal/sys", "tests/emulator/syscall-probe", ".git", "dist", "node_modules":
+			case "internal/sys", "tests/emulator/syscall-probe", ".git", "dist", "cache", "node_modules":
 				return filepath.SkipDir
 			}
 			return nil
