@@ -1,0 +1,38 @@
+# andronix install ubuntu --de mate  (2026-09-25T22:37Z, 289s, exit 0)
+
+  ▄▀█ █▄ █ █▀▄ █▀█ █▀█ █▄ █ █ ▀▄▀ 
+  █▀█ █ ▀█ █▄▀ █▀▄ █▄█ █ ▀█ █ █ █ ▄
+  Linux on Android · installer v0.1.0
+
+  ╭─ Ubuntu 26.04 · MATE ─────────────────────────────────╮
+  │ CPU       ARM 64-bit                                  │
+  │ Desktop   MATE                                        │
+  │ Location  ~/.andronix/distros/ubuntu                  │
+  ╰───────────────────────────────────────────────────────╯
+
+    Keep Termux open while this runs. It can take 10 to 30
+    minutes on a phone.
+
+  ✓ Checking your phone · ARM 64-bit                    <1s
+  ✓ Finding the best download · local file              <1s
+  ✓ Checking the download · sha256                       1s
+  ✓ Unpacking files                                      5s
+  ✓ Setting up Ubuntu 26.04                             <1s
+  ✓ Refreshing package lists                            35s
+  ✓ Updating Ubuntu 26.04 · 1 packages                  18s
+  ✓ Installing MATE desktop · 459 packages            3m23s
+  ✓ Setting up VNC                                      <1s
+  ✓ Writing start-ubuntu26.sh                           <1s
+
+  ╭─ Ubuntu 26.04 is ready ───────────────────────────────╮
+  │ Start     ./start-ubuntu26.sh                         │
+  │ Desktop   vncserver-start                             │
+  │ Connect   localhost:1 in a VNC viewer                 │
+  │ Stop      vncserver-stop                              │
+  │ Remove    andronix remove ubuntu                      │
+  ╰───────────────────────────────────────────────────────╯
+
+  Need a hand?
+  Discord  https://chat.andronix.app
+  Docs     https://docs.andronix.app
+  Email    support@andronix.app

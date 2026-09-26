@@ -1,0 +1,43 @@
+# Draft (never run). Builds clean rootfs tarballs and publishes them to the
+# Andronix R2 bucket, the installer's default source (DESIGN.md section 2):
+#   rootfs/<id>/<version>/<id>-<version>-<arch>.tar.xz (+ .sha256, .meta)
+#
+# Target: the PUBLIC bucket andronix-dl (https://dl.andronix.app), fixed in
+# ci/publish-r2.sh, which refuses any paid/modded path. Paid Modded images
+# never go to the public bucket; they have their own pipeline.
+#
+# Secrets (set by a maintainer, not by agents):
+#   R2_ACCESS_KEY_ID / R2_SECRET_ACCESS_KEY: an R2 API token with
+#     "Object Read & Write" on andronix-dl only.
+name: rootfs
+on:
+  workflow_dispatch:
+    inputs:
+      distro:
+        description: distro id (distros/<id>.conf)
+        default: debian
+  schedule:
+    - cron: "0 3 * * 1"   # weekly rebuild picks up security updates
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        distro: ${{ github.event_name == 'schedule' && fromJSON('["debian","ubuntu","ubuntu24"]') || fromJSON(format('["{0}"]', inputs.distro)) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - name: Test box (used by the hygiene gate)
+        run: docker build -q -t andronix-test -f tests/Dockerfile tests
+      - name: Build, clean and check
+        run: ci/build-rootfs.sh "${{ matrix.distro }}"    # fails on a dirty image
+      - name: Publish to R2 (public bucket, guarded)
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+        run: |
+          bash tests/publish-guard.sh
+          ci/publish-r2.sh rootfs "${{ matrix.distro }}"

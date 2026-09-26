@@ -1,0 +1,40 @@
+run: [1/11] Checking your phone
+ok: Checking your phone (<1s) ARM 64-bit
+run: [2/11] Finding the best download
+ok: Finding the best download (<1s) local file
+run: [3/11] Downloading Debian 13
+skip: Downloading Debian 13 (nothing to download)
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (3s)
+run: [5/11] Setting up Debian 13
+ok: Setting up Debian 13 (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (11s)
+run: [7/11] Updating Debian 13
+skip: Updating Debian 13 (already up to date)
+run: [8/11] Installing MATE desktop
+  Installing MATE desktop 25%
+  Installing MATE desktop 50%
+  Installing MATE desktop 75%
+ok: Installing MATE desktop (1m45s) 458 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (14s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-debian.sh
+ok: Writing start-debian.sh (<1s)
+
+Debian 13 is ready
+  Start     ./start-debian.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove debian
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

@@ -1,0 +1,40 @@
+ok: Finding the best download (<1s) local file
+run: [3/11] Downloading Arch Linux rolling
+skip: Downloading Arch Linux rolling (nothing to download)
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (17s)
+run: [5/11] Setting up Arch Linux rolling
+ok: Setting up Arch Linux rolling (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (8s)
+run: [7/11] Updating Arch Linux rolling
+  Updating Arch Linux rolling 25%
+  Updating Arch Linux rolling 50%
+  Updating Arch Linux rolling 75%
+ok: Updating Arch Linux rolling (39s) 51 packages
+run: [8/11] Installing MATE desktop
+  Installing MATE desktop 25%
+  Installing MATE desktop 50%
+  Installing MATE desktop 75%
+ok: Installing MATE desktop (3m01s) 289 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (16s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (1s)
+run: [11/11] Writing start-arch.sh
+ok: Writing start-arch.sh (<1s)
+
+Arch Linux rolling is ready
+  Start     ./start-arch.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove arch
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

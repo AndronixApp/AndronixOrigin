@@ -1,0 +1,40 @@
+  Downloading Fedora 44 50%
+  Downloading Fedora 44 75%
+ok: Downloading Fedora 44 (48s) digests checked
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (1s)
+run: [5/11] Setting up Fedora 44
+ok: Setting up Fedora 44 (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (1m03s)
+run: [7/11] Updating Fedora 44
+  Updating Fedora 44 25%
+  Updating Fedora 44 50%
+  Updating Fedora 44 75%
+ok: Updating Fedora 44 (40s) 30 packages
+run: [8/11] Installing XFCE desktop
+  Installing XFCE desktop 25%
+  Installing XFCE desktop 50%
+  Installing XFCE desktop 75%
+ok: Installing XFCE desktop (1m23s) 324 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (1m10s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-fedora.sh
+ok: Writing start-fedora.sh (<1s)
+
+Fedora 44 is ready
+  Start     ./start-fedora.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove fedora
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

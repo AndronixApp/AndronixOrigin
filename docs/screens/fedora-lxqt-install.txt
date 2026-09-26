@@ -1,0 +1,38 @@
+# andronix install fedora --de lxqt  (2026-09-25T21:51Z, 254s, exit 0)
+
+  ▄▀█ █▄ █ █▀▄ █▀█ █▀█ █▄ █ █ ▀▄▀ 
+  █▀█ █ ▀█ █▄▀ █▀▄ █▄█ █ ▀█ █ █ █ ▄
+  Linux on Android · installer v0.1.0
+
+  ╭─ Fedora 44 · LXQt ────────────────────────────────────╮
+  │ CPU       ARM 64-bit                                  │
+  │ Desktop   LXQt                                        │
+  │ Location  ~/.andronix/distros/fedora                  │
+  ╰───────────────────────────────────────────────────────╯
+
+    Keep Termux open while this runs. It can take 10 to 30
+    minutes on a phone.
+
+  ✓ Checking your phone · ARM 64-bit                    <1s
+  ✓ Finding the best download · local file              <1s
+  ✓ Checking the download · sha256                      <1s
+  ✓ Unpacking files                                      8s
+  ✓ Setting up Fedora 44                                <1s
+  ✓ Refreshing package lists                            46s
+  ✓ Updating Fedora 44 · 27 packages                    48s
+  ✓ Installing LXQt desktop · 419 packages            2m27s
+  ✓ Setting up VNC                                      <1s
+  ✓ Writing start-fedora.sh                             <1s
+
+  ╭─ Fedora 44 is ready ──────────────────────────────────╮
+  │ Start     ./start-fedora.sh                           │
+  │ Desktop   vncserver-start                             │
+  │ Connect   localhost:1 in a VNC viewer                 │
+  │ Stop      vncserver-stop                              │
+  │ Remove    andronix remove fedora                      │
+  ╰───────────────────────────────────────────────────────╯
+
+  Need a hand?
+  Discord  https://chat.andronix.app
+  Docs     https://docs.andronix.app
+  Email    support@andronix.app

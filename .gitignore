@@ -1,0 +1,10 @@
+/cache/
+/.test/
+*.tar.xz
+*.tar.gz
+.DS_Store
+/dist/
+/mods/.run-verify-*.sh
+/tests/emulator/results/
+.venv/
+/selfbin/*.gz

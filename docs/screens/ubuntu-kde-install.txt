@@ -1,0 +1,40 @@
+ok: Finding the best download (<1s) local file
+run: [3/11] Downloading Ubuntu 26.04
+skip: Downloading Ubuntu 26.04 (nothing to download)
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (5s)
+run: [5/11] Setting up Ubuntu 26.04
+ok: Setting up Ubuntu 26.04 (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (20s)
+run: [7/11] Updating Ubuntu 26.04
+  Updating Ubuntu 26.04 25%
+  Updating Ubuntu 26.04 50%
+ok: Updating Ubuntu 26.04 (10s) 1 packages
+run: [8/11] Installing KDE Plasma desktop
+  Installing KDE Plasma desktop 25%
+  Installing KDE Plasma desktop 50%
+  Installing KDE Plasma desktop 75%
+ok: Installing KDE Plasma desktop (3m20s) 814 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (25s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-ubuntu26.sh
+ok: Writing start-ubuntu26.sh (<1s)
+! KDE Plasma needs about 4000 MB of RAM; this phone has 3904 MB. It may be slow or close apps; XFCE is lighter.
+
+Ubuntu 26.04 is ready
+  Start     ./start-ubuntu26.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove ubuntu
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

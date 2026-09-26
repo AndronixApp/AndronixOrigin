@@ -1,0 +1,110 @@
+diff --git a/src/syscall/enter.c b/src/syscall/enter.c
+index 6bfdd56..996d115 100644
+--- a/src/syscall/enter.c
++++ b/src/syscall/enter.c
+@@ -2538,6 +2538,21 @@ int translate_syscall_enter(Tracee *tracee)
+ 			status = translate_path2(tracee, dirfd, path, SYSARG_2, REGULAR);
+ 		break;
+ 
++	case PR_fchmodat2:
++		/* Like fchmodat, plus a flags argument (Linux 6.6+). */
++		flags = peek_reg(tracee, CURRENT, SYSARG_4);
++		dirfd = peek_reg(tracee, CURRENT, SYSARG_1);
++
++		status = get_sysarg_path(tracee, path, SYSARG_2);
++		if (status < 0)
++			break;
++
++		if ((flags & AT_SYMLINK_NOFOLLOW) != 0)
++			status = translate_path2(tracee, dirfd, path, SYSARG_2, SYMLINK);
++		else
++			status = translate_path2(tracee, dirfd, path, SYSARG_2, REGULAR);
++		break;
++
+ 	case PR_fchmodat:
+ 	case PR_faccessat:
+ 	case PR_faccessat2:
+diff --git a/src/syscall/seccomp.c b/src/syscall/seccomp.c
+index 198a2d1..1406e3a 100644
+--- a/src/syscall/seccomp.c
++++ b/src/syscall/seccomp.c
+@@ -356,6 +356,7 @@ static FilteredSysnum proot_sysnums[] = {
+ 	{ PR_faccessat2,	FILTER_SYSEXIT },
+ 	{ PR_fchdir,		FILTER_SYSEXIT },
+ 	{ PR_fchmodat,		0 },
++	{ PR_fchmodat2,		0 },
+ 	{ PR_fchownat,		0 },
+ 	{ PR_fstatat64,		0 },
+ 	{ PR_futimesat,		0 },
+diff --git a/src/syscall/sysnums-arm.h b/src/syscall/sysnums-arm.h
+index 3d05974..e3f6f6b 100644
+--- a/src/syscall/sysnums-arm.h
++++ b/src/syscall/sysnums-arm.h
+@@ -359,4 +359,5 @@ static const Sysnum sysnums_arm[] = {
+ 	[ 439 ] = PR_faccessat2,
+ 	[ 435 ] = PR_clone3,
+ 	[ 437 ] = PR_openat2,
++	[ 452 ] = PR_fchmodat2,
+ };
+diff --git a/src/syscall/sysnums-arm64.h b/src/syscall/sysnums-arm64.h
+index 15cfe4f..b257339 100644
+--- a/src/syscall/sysnums-arm64.h
++++ b/src/syscall/sysnums-arm64.h
+@@ -281,4 +281,5 @@ static const Sysnum sysnums_arm64[] = {
+ 	[ 435 ] = PR_clone3,
+ 	[ 437 ] = PR_openat2,
+ 	[ 439 ] = PR_faccessat2,
++	[ 452 ] = PR_fchmodat2,
+ };
+diff --git a/src/syscall/sysnums-i386.h b/src/syscall/sysnums-i386.h
+index 2dfee95..f30f969 100644
+--- a/src/syscall/sysnums-i386.h
++++ b/src/syscall/sysnums-i386.h
+@@ -384,4 +384,5 @@ static const Sysnum sysnums_i386[] = {
+ 	[ 435 ] = PR_clone3,
+ 	[ 437 ] = PR_openat2,
+ 	[ 439 ] = PR_faccessat2,
++	[ 452 ] = PR_fchmodat2,
+ };
+diff --git a/src/syscall/sysnums-sh4.h b/src/syscall/sysnums-sh4.h
+index 5081c8a..4b2a927 100644
+--- a/src/syscall/sysnums-sh4.h
++++ b/src/syscall/sysnums-sh4.h
+@@ -342,4 +342,5 @@ static const Sysnum sysnums_sh4[] = {
+ 	[ 435 ] = PR_clone3,
+ 	[ 437 ] = PR_openat2,
+ 	[ 439 ] = PR_faccessat2,
++	[ 452 ] = PR_fchmodat2,
+ };
+diff --git a/src/syscall/sysnums-x32.h b/src/syscall/sysnums-x32.h
+index 524b7c0..a1fafc5 100644
+--- a/src/syscall/sysnums-x32.h
++++ b/src/syscall/sysnums-x32.h
+@@ -306,4 +306,5 @@ static const Sysnum sysnums_x32[] = {
+ 	[ 540 ] = PR_process_vm_writev,
+ 	[ 541 ] = PR_setsockopt,
+ 	[ 542 ] = PR_getsockopt,
++	[ 452 ] = PR_fchmodat2,
+ };
+diff --git a/src/syscall/sysnums-x86_64.h b/src/syscall/sysnums-x86_64.h
+index b4601c1..5bec0e0 100644
+--- a/src/syscall/sysnums-x86_64.h
++++ b/src/syscall/sysnums-x86_64.h
+@@ -337,4 +337,5 @@ static const Sysnum sysnums_x86_64[] = {
+         [ 435 ] = PR_clone3,
+ 	[ 437 ] = PR_openat2,
+ 	[ 439 ] = PR_faccessat2,
++	[ 452 ] = PR_fchmodat2,
+ };
+diff --git a/src/syscall/sysnums.list b/src/syscall/sysnums.list
+index d99e231..c221ddd 100644
+--- a/src/syscall/sysnums.list
++++ b/src/syscall/sysnums.list
+@@ -72,6 +72,7 @@ SYSNUM(fanotify_mark)
+ SYSNUM(fchdir)
+ SYSNUM(fchmod)
+ SYSNUM(fchmodat)
++SYSNUM(fchmodat2)
+ SYSNUM(fchown)
+ SYSNUM(fchown32)
+ SYSNUM(fchownat)

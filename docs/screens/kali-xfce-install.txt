@@ -1,0 +1,40 @@
+  Downloading Kali Linux rolling 25%
+  Downloading Kali Linux rolling 50%
+  Downloading Kali Linux rolling 75%
+ok: Downloading Kali Linux rolling (4s) digests checked
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (<1s)
+run: [5/11] Setting up Kali Linux rolling
+ok: Setting up Kali Linux rolling (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (14s)
+run: [7/11] Updating Kali Linux rolling
+  Updating Kali Linux rolling 25%
+  Updating Kali Linux rolling 50%
+ok: Updating Kali Linux rolling (5s) 1 packages
+run: [8/11] Installing XFCE desktop
+  Installing XFCE desktop 25%
+  Installing XFCE desktop 50%
+  Installing XFCE desktop 75%
+ok: Installing XFCE desktop (1m45s) 259 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (14s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-kali.sh
+ok: Writing start-kali.sh (<1s)
+
+Kali Linux rolling is ready
+  Start     ./start-kali.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove kali
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

@@ -1,0 +1,34 @@
+# andronix install kali --de none  (2026-09-25T21:29Z, 33s, exit 0)
+
+  ▄▀█ █▄ █ █▀▄ █▀█ █▀█ █▄ █ █ ▀▄▀ 
+  █▀█ █ ▀█ █▄▀ █▀▄ █▄█ █ ▀█ █ █ █ ▄
+  Linux on Android · installer v0.1.0
+
+  ╭─ Kali Linux rolling · Command line ───────────────────╮
+  │ CPU       ARM 64-bit                                  │
+  │ Desktop   Command line                                │
+  │ Location  ~/.andronix/distros/kali                    │
+  ╰───────────────────────────────────────────────────────╯
+
+    Keep Termux open while this runs. It can take 10 to 30
+    minutes on a phone.
+
+  ✓ Checking your phone · ARM 64-bit                    <1s
+  ✓ Finding the best download · local file              <1s
+  ✓ Checking the download · sha256                      <1s
+  ✓ Unpacking files                                      3s
+  ✓ Setting up Kali Linux rolling                        1s
+  ✓ Refreshing package lists                            12s
+  ✓ Updating Kali Linux rolling · 1 packages             3s
+  ✓ Installing the basics · 16 packages                  8s
+  ✓ Writing start-kali.sh                               <1s
+
+  ╭─ Kali Linux rolling is ready ─────────────────────────╮
+  │ Start     ./start-kali.sh                             │
+  │ Remove    andronix remove kali                        │
+  ╰───────────────────────────────────────────────────────╯
+
+  Need a hand?
+  Discord  https://chat.andronix.app
+  Docs     https://docs.andronix.app
+  Email    support@andronix.app

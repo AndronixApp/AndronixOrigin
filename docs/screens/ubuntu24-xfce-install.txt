@@ -1,0 +1,40 @@
+  Downloading Ubuntu 24.04 50%
+  Downloading Ubuntu 24.04 75%
+ok: Downloading Ubuntu 24.04 (3s) digests checked
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (1s)
+run: [5/11] Setting up Ubuntu 24.04
+ok: Setting up Ubuntu 24.04 (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (5s)
+run: [7/11] Updating Ubuntu 24.04
+  Updating Ubuntu 24.04 25%
+  Updating Ubuntu 24.04 50%
+  Updating Ubuntu 24.04 75%
+ok: Updating Ubuntu 24.04 (7s) 3 packages
+run: [8/11] Installing XFCE desktop
+  Installing XFCE desktop 25%
+  Installing XFCE desktop 50%
+  Installing XFCE desktop 75%
+ok: Installing XFCE desktop (1m30s) 238 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (34s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-ubuntu.sh
+ok: Writing start-ubuntu.sh (<1s)
+
+Ubuntu 24.04 is ready
+  Start     ./start-ubuntu.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove ubuntu24
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

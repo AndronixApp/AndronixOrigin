@@ -1,0 +1,14 @@
+#!/data/data/com.termux/files/usr/bin/bash
+# This installer now uses the Andronix CLI: https://github.com/AndronixApp/andronix-distros
+# It installs @DISTRO@ with the @DE@ desktop. Old installs are left untouched.
+get="${PREFIX:-/data/data/com.termux/files/usr}/tmp/andronix-get.sh"
+mkdir -p "$(dirname "$get")"
+if curl -fsSL --retry 4 --connect-timeout 20 "@GET_URL@" -o "$get"; then
+    exec bash "$get" install @DISTRO@ --de @DE@ "$@"
+fi
+echo
+echo "  ✗ Couldn't download the Andronix installer."
+echo "    Check your internet connection, then run the same command again."
+echo "    Help: https://chat.andronix.app · https://docs.andronix.app · support@andronix.app"
+echo
+exit 1

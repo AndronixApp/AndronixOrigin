@@ -1,0 +1,40 @@
+ok: Finding the best download (<1s) local file
+run: [3/11] Downloading Void rolling
+skip: Downloading Void rolling (nothing to download)
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (2s)
+run: [5/11] Setting up Void rolling
+ok: Setting up Void rolling (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (6s)
+run: [7/11] Updating Void rolling
+  Updating Void rolling 25%
+  Updating Void rolling 50%
+  Updating Void rolling 75%
+ok: Updating Void rolling (8s) 3 packages
+run: [8/11] Installing XFCE desktop
+  Installing XFCE desktop 25%
+  Installing XFCE desktop 50%
+  Installing XFCE desktop 75%
+ok: Installing XFCE desktop (1m45s) 268 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (14s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-void.sh
+ok: Writing start-void.sh (<1s)
+
+Void rolling is ready
+  Start     ./start-void.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove void
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

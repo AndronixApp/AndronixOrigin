@@ -1,0 +1,34 @@
+# andronix install fedora --de none  (2026-09-25T21:31Z, 141s, exit 0)
+
+  ▄▀█ █▄ █ █▀▄ █▀█ █▀█ █▄ █ █ ▀▄▀ 
+  █▀█ █ ▀█ █▄▀ █▀▄ █▄█ █ ▀█ █ █ █ ▄
+  Linux on Android · installer v0.1.0
+
+  ╭─ Fedora 44 · Command line ────────────────────────────╮
+  │ CPU       ARM 64-bit                                  │
+  │ Desktop   Command line                                │
+  │ Location  ~/.andronix/distros/fedora                  │
+  ╰───────────────────────────────────────────────────────╯
+
+    Keep Termux open while this runs. It can take 10 to 30
+    minutes on a phone.
+
+  ✓ Checking your phone · ARM 64-bit                    <1s
+  ✓ Finding the best download · local file              <1s
+  ✓ Checking the download · sha256                      <1s
+  ✓ Unpacking files                                      4s
+  ✓ Setting up Fedora 44                                <1s
+  ✓ Refreshing package lists                            42s
+  ✓ Updating Fedora 44 · 27 packages                  1m11s
+  ✓ Installing the basics · 15 packages                 20s
+  ✓ Writing start-fedora.sh                             <1s
+
+  ╭─ Fedora 44 is ready ──────────────────────────────────╮
+  │ Start     ./start-fedora.sh                           │
+  │ Remove    andronix remove fedora                      │
+  ╰───────────────────────────────────────────────────────╯
+
+  Need a hand?
+  Discord  https://chat.andronix.app
+  Docs     https://docs.andronix.app
+  Email    support@andronix.app

@@ -1,0 +1,77 @@
+#!/bin/sh
+# andronix-postgres: run PostgreSQL inside an Andronix distro (proot has no
+# systemd). Installed by the "db" dev pack.
+#
+#   sudo andronix-postgres start|stop|status|check
+#
+# First start: a cluster in /var/lib/andronix-postgres, listening on the
+# local socket and 127.0.0.1 only, with a superuser role and a database
+# named after your user, so plain `psql` works.
+set -eu
+data=/var/lib/andronix-postgres
+sock=/run/postgresql
+log=/var/log/andronix-postgres.log
+
+[ "$(id -u)" = 0 ] || { echo "Run it with sudo: sudo andronix-postgres ${1:-start}" >&2; exit 1; }
+bin=$(dirname "$(ls /usr/lib/postgresql/*/bin/pg_ctl 2>/dev/null | sort -V | tail -1)")
+[ -x "$bin/pg_ctl" ] || bin=$(dirname "$(command -v pg_ctl || echo /usr/bin/pg_ctl)")
+[ -x "$bin/pg_ctl" ] || { echo "PostgreSQL isn't installed: andronix pack add db" >&2; exit 1; }
+id postgres >/dev/null 2>&1 || { echo "No postgres user: reinstall the db pack" >&2; exit 1; }
+# Whose database: the sudo caller, else the first-boot user, else the first normal user.
+user=${SUDO_USER:-}
+[ -n "$user" ] && [ "$user" != root ] || user=$(cat /etc/andronix/user 2>/dev/null || true)
+[ -n "$user" ] || user=$(awk -F: '$3 >= 1000 && $3 < 60000 { print $1; exit }' /etc/passwd)
+
+as_pg() { su postgres -s /bin/sh -c "$*"; }
+# PostgreSQL always makes a small System V shared memory segment. Under
+# proot that goes to proot's --sysvipc helper, which deadlocks with initdb
+# on newer Android; this library keeps it in files instead (the andronix
+# installer puts it there). Only the server processes use it.
+shm=/usr/local/lib/andronix/libandronix-shm.so
+pre=""; [ -f "$shm" ] && pre="LD_PRELOAD=$shm "
+# A cluster is ready once its config has our lines, which are written
+# after initdb succeeds.
+ready() { grep -q "^dynamic_shared_memory_type = mmap" "$data/postgresql.conf" 2>/dev/null; }
+running() { as_pg "'$bin/pg_ctl' -D '$data' status" >/dev/null 2>&1; }
+
+case ${1:-start} in
+    start)
+        mkdir -p "$sock" && chown postgres "$sock"
+        touch "$log" && chown postgres "$log"
+        if ! ready; then
+            # An initdb that was stopped part way leaves a cluster that
+            # can't start: keep it aside, never delete data.
+            if [ -e "$data" ]; then
+                mv "$data" "$data.broken-$(date +%Y%m%d%H%M%S)"
+                echo "An unfinished database cluster was moved aside to $data.broken-*." >&2
+            fi
+            # Initialise next to it and move it in place only when complete.
+            rm -rf "$data.new"
+            mkdir -p "$data.new" && chown postgres "$data.new" && chmod 700 "$data.new"
+            as_pg "$pre'$bin/initdb' -D '$data.new' --auth-local=peer --auth-host=scram-sha-256 -E UTF8 >/dev/null"
+            {
+                echo "listen_addresses = 'localhost'"
+                echo "unix_socket_directories = '$sock'"
+                # proot: no POSIX shared memory guarantees; mmap works everywhere.
+                echo "dynamic_shared_memory_type = mmap"
+            } >>"$data.new/postgresql.conf"
+            mv "$data.new" "$data"
+            fresh=1
+        fi
+        running || as_pg "$pre'$bin/pg_ctl' -D '$data' -l '$log' -w start" >/dev/null
+        if [ -n "${fresh:-}" ] && [ -n "$user" ]; then
+            as_pg "'$bin/psql' -h '$sock' -qc \"CREATE ROLE \\\"$user\\\" SUPERUSER LOGIN\"" >/dev/null 2>&1 || true
+            as_pg "'$bin/createdb' -h '$sock' -O '$user' '$user'" >/dev/null 2>&1 || true
+        fi
+        echo "PostgreSQL is running. Connect with: psql  (as $user). Stop it with: sudo andronix-postgres stop"
+        ;;
+    stop) ! running || as_pg "$pre'$bin/pg_ctl' -D '$data' -m fast -w stop" >/dev/null; echo "PostgreSQL stopped." ;;
+    status) if running; then echo "running"; else echo "stopped"; exit 3; fi ;;
+    check) # start, query as the user, stop: used by the pack test
+        "$0" start >/dev/null
+        su "$user" -s /bin/sh -c "psql -h '$sock' -tAc 'select 42'" | grep -qx 42
+        "$0" stop >/dev/null
+        echo "PostgreSQL ok (as $user)"
+        ;;
+    *) echo "usage: sudo andronix-postgres start|stop|status" >&2; exit 2 ;;
+esac

@@ -1,0 +1,40 @@
+run: [1/11] Checking your phone
+ok: Checking your phone (<1s) ARM 64-bit
+run: [2/11] Finding the best download
+ok: Finding the best download (<1s) local file
+run: [3/11] Downloading Debian 13
+skip: Downloading Debian 13 (nothing to download)
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (10s)
+run: [5/11] Setting up Debian 13
+ok: Setting up Debian 13 (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (26s)
+run: [7/11] Updating Debian 13
+skip: Updating Debian 13 (already up to date)
+run: [8/11] Installing XFCE desktop
+  Installing XFCE desktop 25%
+  Installing XFCE desktop 50%
+  Installing XFCE desktop 75%
+ok: Installing XFCE desktop (2m30s) 251 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (24s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (2s)
+run: [11/11] Writing start-debian.sh
+ok: Writing start-debian.sh (<1s)
+
+Debian 13 is ready
+  Desktop   andronix desktop debian
+    in Termux; it opens in the Termux:X11 app
+  Terminal  ./start-debian.sh
+  Or VNC    vncserver-start inside Debian, then localhost:1 in a VNC viewer
+  Remove    andronix remove debian
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

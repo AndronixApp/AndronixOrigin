@@ -1,0 +1,38 @@
+# andronix install kali --de mate  (2026-09-25T22:38Z, 360s, exit 0)
+
+  ▄▀█ █▄ █ █▀▄ █▀█ █▀█ █▄ █ █ ▀▄▀ 
+  █▀█ █ ▀█ █▄▀ █▀▄ █▄█ █ ▀█ █ █ █ ▄
+  Linux on Android · installer v0.1.0
+
+  ╭─ Kali Linux rolling · MATE ───────────────────────────╮
+  │ CPU       ARM 64-bit                                  │
+  │ Desktop   MATE                                        │
+  │ Location  ~/.andronix/distros/kali                    │
+  ╰───────────────────────────────────────────────────────╯
+
+    Keep Termux open while this runs. It can take 10 to 30
+    minutes on a phone.
+
+  ✓ Checking your phone · ARM 64-bit                    <1s
+  ✓ Finding the best download · local file              <1s
+  ✓ Checking the download · sha256                      <1s
+  ✓ Unpacking files                                      6s
+  ✓ Setting up Kali Linux rolling                       <1s
+  ✓ Refreshing package lists                            28s
+  ✓ Updating Kali Linux rolling · 1 packages             6s
+  ✓ Installing MATE desktop · 473 packages            4m44s
+  ✓ Setting up VNC                                      <1s
+  ✓ Writing start-kali.sh                               <1s
+
+  ╭─ Kali Linux rolling is ready ─────────────────────────╮
+  │ Start     ./start-kali.sh                             │
+  │ Desktop   vncserver-start                             │
+  │ Connect   localhost:1 in a VNC viewer                 │
+  │ Stop      vncserver-stop                              │
+  │ Remove    andronix remove kali                        │
+  ╰───────────────────────────────────────────────────────╯
+
+  Need a hand?
+  Discord  https://chat.andronix.app
+  Docs     https://docs.andronix.app
+  Email    support@andronix.app

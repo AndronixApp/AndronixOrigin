@@ -1,0 +1,2 @@
+# Config variables are shared across sourced files; guest paths exist only inside the distro.
+disable=SC2034,SC1091,SC2153,SC2012

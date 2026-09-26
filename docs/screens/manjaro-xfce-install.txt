@@ -1,0 +1,40 @@
+run: [1/11] Checking your phone
+ok: Checking your phone (<1s) ARM 64-bit
+run: [2/11] Finding the best download
+ok: Finding the best download (<1s) local file
+run: [3/11] Downloading Manjaro stable
+skip: Downloading Manjaro stable (nothing to download)
+run: [4/11] Unpacking files
+  Unpacking files 25%
+  Unpacking files 50%
+  Unpacking files 75%
+ok: Unpacking files (27s)
+run: [5/11] Setting up Manjaro stable
+ok: Setting up Manjaro stable (<1s)
+run: [6/11] Refreshing package lists
+ok: Refreshing package lists (50s)
+run: [7/11] Updating Manjaro stable
+skip: Updating Manjaro stable (already up to date)
+run: [8/11] Installing XFCE desktop
+  Installing XFCE desktop 25%
+  Installing XFCE desktop 50%
+  Installing XFCE desktop 75%
+ok: Installing XFCE desktop (1m38s) 219 packages
+run: [9/11] Installing a web browser
+  Installing Firefox 25%
+  Installing Firefox 50%
+  Installing Firefox 75%
+ok: Installing Firefox (15s)
+run: [10/11] Setting up the desktop
+ok: Setting up the desktop (<1s)
+run: [11/11] Writing start-manjaro.sh
+ok: Writing start-manjaro.sh (<1s)
+
+Manjaro stable is ready
+  Start     ./start-manjaro.sh
+  Desktop   vncserver-start
+  Connect   localhost:1 in a VNC viewer
+  Stop      vncserver-stop
+  Remove    andronix remove manjaro
+
+help: https://chat.andronix.app  https://docs.andronix.app  support@andronix.app

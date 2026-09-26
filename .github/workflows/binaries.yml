@@ -1,0 +1,31 @@
+# Draft (never run). Builds the andronix binaries and publishes them to R2:
+#   bin/<version>/andronix-{android,linux}-<arch>, andronix-<arch> (old
+#   name of the android build) + SHA256SUMS   (kept)
+#   bin/latest/...                               (what get.sh downloads)
+# Public bucket andronix-dl only, through ci/publish-r2.sh (guarded).
+# Same scoped R2 secrets as rootfs.yml.
+name: binaries
+on:
+  push:
+    tags: ["v*"]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+      - run: go vet ./... && go test ./...
+      # The runner image has the NDK (arm, i686, x86_64 android builds use cgo).
+      - run: ANDROID_NDK_HOME="$ANDROID_NDK_LATEST_HOME" VERSION="${GITHUB_REF_NAME#v}" ci/build-go.sh
+      - name: Publish to R2 (public bucket, guarded)
+        env:
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: auto
+        run: |
+          bash tests/publish-guard.sh
+          ci/publish-r2.sh bin "${GITHUB_REF_NAME#v}"
