@@ -17,6 +17,12 @@ import (
 // WallpaperPath is where the default Andronix background lives.
 const WallpaperPath = "/usr/share/backgrounds/andronix/andronix.png"
 
+// PlasmaWallpaper is the same background as a Plasma wallpaper package:
+// landscape and portrait (9:20, like the Modded editions') images, and
+// Plasma shows the one closest to the screen's shape, also after the
+// phone rotates.
+const PlasmaWallpaper = "/usr/share/wallpapers/Andronix"
+
 // xstartup starts the desktop inside VNC. @SESSION@ is the DE's command.
 const xstartup = `#!/bin/sh
 # Andronix VNC session: starts @NAME@. Output goes to the session log.
@@ -27,8 +33,16 @@ echo $$ >"/tmp/andronix-session-$(id -u).pid"
 unset SESSION_MANAGER
 unset DBUS_SESSION_BUS_ADDRESS
 export PULSE_SERVER=127.0.0.1
-# Firefox's content sandbox can't start under proot (pages render no text).
-export MOZ_DISABLE_CONTENT_SANDBOX=1
+# Firefox's sandboxes can't start under proot: without these, pages render
+# no text (content) and no audio plays at all, AAC, Opus or MP3 (the RDD
+# and utility decoder processes), so YouTube is silent or won't start.
+export MOZ_DISABLE_CONTENT_SANDBOX=1 MOZ_DISABLE_RDD_SANDBOX=1 MOZ_DISABLE_UTILITY_SANDBOX=1
+# Firefox's shared memory without memfd seals: on some phones its content
+# processes all died otherwise ("Shared memory PlatformHandle is not safe to
+# map": Firefox 156 on Ubuntu, and Firefox ESR from 153 on).
+export MOZ_SHM_NO_SEALS=1
+# No crash-reporter helper process (Android's phantom process killer).
+export MOZ_CRASHREPORTER_DISABLE=1
 export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/tmp/runtime-$(id -u)}"
 mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
 # Performance profile (andronix tune): the light layer goes first.
@@ -91,10 +105,16 @@ func setupDesktop(ctx context.Context, in *Inst, de *conf.Desktop, t *proot.Targ
 				[]byte("[Desktop Entry]\nType=Application\nName="+n+"\nExec=true\nHidden=true\n"), 0o644)
 		}
 	}
+	phoneDefaults(root)
 	// Modded editions bring their own look; don't overwrite it.
 	if !moddedImage(in) {
 		if err := rootfs.Wallpaper(filepath.Join(root, WallpaperPath), 1920, 1080); err != nil {
 			return err
+		}
+		if de.ID == "kde" {
+			if err := plasmaWallpaper(root); err != nil {
+				return err
+			}
 		}
 		if err := setWallpaper(ctx, root, de.ID, t); err != nil {
 			return err
@@ -268,7 +288,9 @@ func setWallpaper(ctx context.Context, root, de string, t *proot.Target) error {
 </channel>
 `)
 	case "lxqt":
-		return w("etc/xdg/pcmanfm-qt/lxqt/settings.conf", "[Desktop]\nWallpaper="+WallpaperPath+"\nWallpaperMode=zoom\n")
+		// Fitted on its own base colour: zoom cropped the wordmark on a
+		// portrait phone (pcmanfm-qt has one wallpaper for any shape).
+		return w("etc/xdg/pcmanfm-qt/lxqt/settings.conf", "[Desktop]\nWallpaper="+WallpaperPath+"\nWallpaperMode=fit\nBgColor=#15110e\n")
 	case "lxde":
 		return w("etc/xdg/pcmanfm/LXDE/desktop-items-0.conf", "[*]\nwallpaper_mode=crop\nwallpaper_common=1\nwallpaper="+WallpaperPath+"\n")
 	case "mate":
@@ -283,14 +305,103 @@ func setWallpaper(ctx context.Context, root, de string, t *proot.Target) error {
 		// plasma-apply-wallpaperimage before plasmashell was on D-Bus and
 		// left Plasma's default wallpaper.
 		os.Remove(filepath.Join(root, "etc/xdg/autostart/andronix-wallpaper.desktop"))
-		return w("usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/andronix-wallpaper.js",
-			"// Andronix: the Andronix wallpaper on every desktop, once per user.\n"+
-				"desktops().forEach(function (d) {\n"+
-				"    d.wallpaperPlugin = \"org.kde.image\";\n"+
-				"    d.currentConfigGroup = [\"Wallpaper\", \"org.kde.image\", \"General\"];\n"+
-				"    d.writeConfig(\"Image\", \"file://"+WallpaperPath+"\");\n"+
-				"    d.writeConfig(\"FillMode\", 2);\n"+
-				"});\n")
+		updates := "usr/share/plasma/shells/org.kde.plasma.desktop/contents/updates/"
+		set := "    d.wallpaperPlugin = \"org.kde.image\";\n" +
+			"    d.currentConfigGroup = [\"Wallpaper\", \"org.kde.image\", \"General\"];\n" +
+			"    d.writeConfig(\"Image\", \"file://" + PlasmaWallpaper + "/\");\n" +
+			"    d.writeConfig(\"FillMode\", 2);\n"
+		if err := w(updates+"andronix-wallpaper.js", "// Andronix: the Andronix wallpaper on every desktop, once per user.\n"+
+			"desktops().forEach(function (d) {\n"+set+"});\n"); err != nil {
+			return err
+		}
+		// Users who already ran the one above had the flat 16:9 image
+		// (cropped on a portrait phone): move them to the package. Runs
+		// before it for new users, and then changes nothing.
+		return w(updates+"andronix-wallpaper-2.js", "// Andronix: the portrait-aware wallpaper for users still on the old one.\n"+
+			"desktops().forEach(function (d) {\n"+
+			"    d.currentConfigGroup = [\"Wallpaper\", \"org.kde.image\", \"General\"];\n"+
+			"    if (d.readConfig(\"Image\", \"\") != \"file://"+WallpaperPath+"\") return;\n"+set+"});\n")
 	}
 	return nil
+}
+
+// refreshWallpaper brings an existing free LXQt or KDE install to the
+// portrait-safe wallpaper (andronix update). Modded editions keep theirs;
+// a wallpaper the user picked is left alone.
+func refreshWallpaper(ctx context.Context, root string, de *conf.Desktop) {
+	if hasAny(root, "usr/share/andronix/modded") || !hasAny(root, strings.TrimPrefix(WallpaperPath, "/")) {
+		return
+	}
+	switch de.ID {
+	case "kde":
+		plasmaWallpaper(root)
+		setWallpaper(ctx, root, de.ID, nil)
+	case "lxqt":
+		setWallpaper(ctx, root, de.ID, nil)
+		homes, _ := filepath.Glob(filepath.Join(root, "home/*"))
+		for _, h := range append(homes, filepath.Join(root, "root")) {
+			p := filepath.Join(h, ".config/pcmanfm-qt/lxqt/settings.conf")
+			b, err := os.ReadFile(p)
+			if err != nil || !strings.Contains(string(b), "Wallpaper="+WallpaperPath+"\n") || !strings.Contains(string(b), "WallpaperMode=zoom") {
+				continue
+			}
+			s := iniSet(string(b), "Desktop", "WallpaperMode", "fit")
+			os.WriteFile(p, []byte(iniSet(s, "Desktop", "BgColor", "#15110e")), 0o644)
+		}
+	}
+}
+
+// plasmaWallpaper writes the Plasma package (PlasmaWallpaper).
+func plasmaWallpaper(root string) error {
+	dir := filepath.Join(root, PlasmaWallpaper)
+	for _, s := range [][2]int{{1920, 1080}, {1440, 3200}} {
+		if err := rootfs.Wallpaper(filepath.Join(dir, "contents/images", fmt.Sprintf("%dx%d.png", s[0], s[1])), s[0], s[1]); err != nil {
+			return err
+		}
+	}
+	return os.WriteFile(filepath.Join(dir, "metadata.json"), []byte(`{
+    "KPlugin": {
+        "Id": "Andronix",
+        "Name": "Andronix",
+        "License": "CC-BY-SA-4.0"
+    }
+}
+`), 0o644)
+}
+
+// firefoxPrefs keep Firefox to a few processes. Android's phantom process
+// killer stops Termux, and the whole desktop with it, once the app has
+// more than 32 processes (Redmi, Android 16: a desktop and Firefox with a
+// few tabs). Site isolation (fission) stays on, as Firefox ships it: at
+// most one content process per site (webIsolated), and few other
+// processes. Defaults only; a user can change them in about:config.
+const firefoxPrefs = `// Andronix: fewer Firefox processes, for Android's phantom process killer.
+pref("dom.ipc.processCount", 2);
+pref("dom.ipc.processCount.webIsolated", 1);
+pref("dom.ipc.processPrelaunch.enabled", false);
+pref("browser.preferences.defaultPerformanceSettings.enabled", false);
+pref("network.process.enabled", false);
+pref("layers.gpu-process.enabled", false);
+// Media needs its decoder processes: without RDD every video fails
+// (NotSupportedError) and without the utility process AAC audio never
+// plays, on Debian's ESR 140, Ubuntu and Kali. They only run while media
+// plays. Set true to repair files from 2.0.1-rc1, which turned them off.
+pref("media.rdd-process.enabled", true);
+pref("media.utility-process.enabled", true);
+`
+
+// phoneDefaults writes the settings that keep a desktop's process count
+// down: Firefox's (in every Firefox's defaults/pref, which package
+// upgrades leave alone) and no PulseAudio of the distro's own (sound goes
+// to Termux's, through PULSE_SERVER).
+func phoneDefaults(root string) {
+	dirs, _ := filepath.Glob(filepath.Join(root, "usr/lib*/firefox*/defaults/pref"))
+	for _, d := range dirs {
+		os.WriteFile(filepath.Join(d, "andronix-phone.js"), []byte(firefoxPrefs), 0o644)
+	}
+	d := filepath.Join(root, "etc/pulse/client.conf.d")
+	if _, err := os.Stat(filepath.Join(root, "etc/pulse")); err == nil {
+		os.MkdirAll(d, 0o755)
+		os.WriteFile(filepath.Join(d, "00-andronix.conf"), []byte("# Andronix: sound goes to Termux's PulseAudio (PULSE_SERVER); never start one in the distro.\nautospawn = no\n"), 0o644)
+	}
 }

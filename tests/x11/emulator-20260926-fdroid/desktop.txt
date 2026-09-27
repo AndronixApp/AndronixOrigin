@@ -1,0 +1,16 @@
+
+run: [1/1] Setting up sound (PulseAudio)
+ok: Setting up sound (PulseAudio) (9s) installed PulseAudio, started PulseAudio, enabled sound for distros
+run: [1/2] Installing Termux:X11 (termux-x11-nightly)
+ok: Installing Termux:X11 (termux-x11-nightly) (6s)
+run: [2/2] Starting Termux:X11
+ok: Starting Termux:X11 (<1s) display :0
+
+Desktop is running
+  Desktop   XFCE on Termux:X11
+  User      alex
+  Switch to the Termux:X11 app to use it. If it didn't open, open Termux:X11 from your app drawer.
+  Keep this Termux session open while you use the desktop.
+  Stop      log out, press Ctrl-C here,
+            or run: andronix desktop stop
+

@@ -12,10 +12,15 @@
 #   --modded DIR           test Modded images: installs DIR/<distro>-*-<desktop>-modded-aarch64.tar.xz
 #   --app-context          run andronix inside the Termux app process (its seccomp filter and
 #                          SELinux domain, like a user), not via run-as; see app-context.sh
+#   (one of --port or --serial is required; real devices also need ALLOW_REAL_DEVICE=1)
 #   --port N               emulator console port (5554, 5556, ...): boots the avd there and
 #                          only ever touches that emulator, so other emulators keep running
 #   --reinstall-termux     uninstall Termux first and install $TERMUX_APK (to switch between
 #                          the GitHub and the Play Store build, which share com.termux)
+#   --serial SERIAL        a device that's already running (a phone, or an emulator you
+#                          booted): nothing is booted or killed, and on a real phone
+#                          nothing is wiped (--reinstall-termux and --fresh-termux refuse)
+#                          and no device setting is changed
 #   --x11                  for desktops, also run `andronix desktop` on Termux:X11 (installs
 #                          $X11_APK, the termux-x11 app) and check the phone's screen
 #
@@ -48,7 +53,7 @@ T_PREFIX=/data/data/com.termux/files/usr
 VNC_PASS=andro123
 INSTALL_TIMEOUT=${INSTALL_TIMEOUT:-2400}   # seconds per install
 
-avds="andronix-a16"; distros=""; des="xfce none"; fresh=0; keep=0; src="$repo"; modded_dir=""; app=0; port=""; reinstall=0; x11=0
+avds="andronix-a16"; distros=""; des="xfce none"; fresh=0; keep=0; src="$repo"; modded_dir=""; app=0; port=""; reinstall=0; x11=0; serial=""
 while [ $# -gt 0 ]; do
     case $1 in
         --avd) avds=$2; shift ;;
@@ -61,6 +66,7 @@ while [ $# -gt 0 ]; do
         --port) port=$2; shift ;;
         --reinstall-termux) reinstall=1 ;;
         --x11) x11=1 ;;
+        --serial) serial=$2; shift ;;
         --src) src=$(cd "$2" && pwd); shift ;;
         -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
@@ -69,6 +75,10 @@ while [ $# -gt 0 ]; do
 done
 # With --port, every adb call goes to that one emulator.
 [ -n "$port" ] && export ANDROID_SERIAL="emulator-$port"
+if [ -n "$serial" ]; then
+    [ -z "$port" ] || { echo "--serial and --port don't go together" >&2; exit 2; }
+    export ANDROID_SERIAL=$serial avds=$serial
+fi
 vnc_local=$((5901 + ${port:-5554} - 5554))   # host port for VNC, per emulator
 [ -n "$distros" ] || distros=$(cd "$src/distros" && ls *.conf | sed 's/\.conf$//' | tr '\n' ' ')
 
@@ -106,6 +116,8 @@ tsh() {
 # --app-context: the same, inside the Termux app process (tsh_app).
 # shellcheck source=app-context.sh
 . "$here/app-context.sh"
+[ -n "${ANDROID_SERIAL:-}" ] || { echo "refusing: pass --port N (an emulator this run boots) or --serial SERIAL" >&2; exit 2; }
+ac_guard_serial
 TSH=tsh
 [ "$app" = 1 ] && TSH=tsh_app
 
@@ -125,8 +137,19 @@ dialog_watcher() {
     done
 }
 
+# An emulator, not someone's phone.
+is_emulator() {
+    [ "$("$ADB" shell getprop ro.kernel.qemu 2>/dev/null | tr -d '\r')" = 1 ] ||
+        [ "$("$ADB" shell getprop ro.boot.qemu 2>/dev/null | tr -d '\r')" = 1 ]
+}
+
 boot_avd() {
     local avd=$1 gpu try
+    if [ -n "$serial" ]; then
+        "$ADB" get-state >/dev/null 2>&1 || { log "$serial isn't attached"; return 1; }
+        log "$serial: Android $("$ADB" shell getprop ro.build.version.release | tr -d '\r')$(is_emulator || echo ' (real device: no wipes, no setting changes)')"
+        return 0
+    fi
     if [ -n "$port" ]; then
         "$ADB" devices | grep -q "^$ANDROID_SERIAL" && "$ADB" emu kill >/dev/null 2>&1
         for _ in $(seq 1 30); do pgrep -f "qemu-system.*-port $port" >/dev/null || break; sleep 1; done
@@ -138,7 +161,9 @@ boot_avd() {
         # second try: software rendering, which avoids GPU-related boot hangs
         gpu=auto; [ $try = 2 ] && gpu=swiftshader_indirect
         log "booting $avd (gpu=$gpu)"
-        "$EMULATOR" -avd "$avd" ${port:+-port $port} -no-snapshot-save -no-boot-anim -gpu $gpu -dns-server 8.8.8.8,1.1.1.1 \
+        # EMULATOR_OPTS: extra flags, e.g. "-memory 2048 -no-window -no-audio" on a busy host
+        # shellcheck disable=SC2086
+        "$EMULATOR" -avd "$avd" ${port:+-port $port} -no-snapshot-save -no-boot-anim -gpu $gpu -dns-server 8.8.8.8,1.1.1.1 ${EMULATOR_OPTS:-} \
             >"$out/emulator-$avd.log" 2>&1 &
         local booted=0
         for _ in $(seq 1 100); do
@@ -156,6 +181,12 @@ boot_avd() {
 }
 
 ensure_termux() {
+    local real=0
+    is_emulator || real=1
+    if [ $real = 1 ] && [ "$reinstall" = 1 -o "$fresh" = 1 ]; then
+        log "refusing --reinstall-termux/--fresh-termux on a real device: they delete everything in Termux"
+        return 1
+    fi
     if [ "$reinstall" = 1 ]; then
         [ -n "$TERMUX_APK" ] || { log "--reinstall-termux needs TERMUX_APK"; return 1; }
         "$ADB" uninstall "$TERMUX_PKG" >/dev/null 2>&1
@@ -164,9 +195,11 @@ ensure_termux() {
     fi
     if [ "$x11" = 1 ]; then
         [ -n "$X11_APK" ] || { log "--x11 needs X11_APK (termux-x11-universal-debug.apk)"; return 1; }
+        # Fresh, like a user's first time: never opened, default settings.
+        [ "$reinstall" = 1 ] && "$ADB" uninstall com.termux.x11 >/dev/null 2>&1
         "$ADB" install -r "$X11_APK" >/dev/null || { log "couldn't install $X11_APK"; return 1; }
     fi
-    if ! "$ADB" shell pm list packages | grep -q "package:$TERMUX_PKG"; then
+    if ! "$ADB" shell pm list packages | tr -d '\r' | grep -qx "package:$TERMUX_PKG"; then
         [ -n "$TERMUX_APK" ] || { log "Termux missing and TERMUX_APK not set"; return 1; }
         "$ADB" install -r "$TERMUX_APK" >/dev/null
     elif [ "$fresh" = 1 ]; then
@@ -174,7 +207,7 @@ ensure_termux() {
         "$ADB" shell pm clear "$TERMUX_PKG" >/dev/null
     fi
     # exempt Termux from battery optimisation so termux-wake-lock never pops a dialog
-    "$ADB" shell dumpsys deviceidle whitelist +$TERMUX_PKG >/dev/null 2>&1
+    [ $real = 0 ] && "$ADB" shell dumpsys deviceidle whitelist +$TERMUX_PKG >/dev/null 2>&1
 
     # Launch Termux exactly once and wait for its first-run bootstrap to finish.
     # Two launches in a row start two bootstraps that break each other.
@@ -197,6 +230,7 @@ ensure_termux() {
             sleep 3
         done
         [ $ok = 1 ] && "$ADB" shell "run-as $TERMUX_PKG ls $T_PREFIX/bin/bash" >/dev/null 2>&1 && break
+        [ $real = 1 ] && { log "Termux bootstrap didn't finish (real device: not clearing it)"; return 1; }
         log "Termux bootstrap didn't finish (try $try); restarting it"
         "$ADB" shell am force-stop "$TERMUX_PKG"
         "$ADB" shell pm clear "$TERMUX_PKG" >/dev/null
@@ -206,9 +240,11 @@ ensure_termux() {
     if [ "$app" = 1 ]; then
         # The Play Store build (targetSdk 29+) can't run its own files
         # outside the app, so set up through the agent too.
-        "$ADB" shell device_config set_sync_disabled_for_tests persistent >/dev/null 2>&1
-        "$ADB" shell device_config put activity_manager max_phantom_processes 2147483647 >/dev/null 2>&1
-        "$ADB" shell settings put global settings_enable_monitor_phantom_procs false >/dev/null 2>&1
+        if [ $real = 0 ]; then
+            "$ADB" shell device_config set_sync_disabled_for_tests persistent >/dev/null 2>&1
+            "$ADB" shell device_config put activity_manager max_phantom_processes 2147483647 >/dev/null 2>&1
+            "$ADB" shell settings put global settings_enable_monitor_phantom_procs false >/dev/null 2>&1
+        fi
         ac_ensure || { log "app-context: no agent in the Termux app"; return 1; }
         "$ADB" shell "run-as $TERMUX_PKG cat $T_HOME/.ac/agent.ctx" >"$out/app-context-$1.txt" 2>&1
     fi
@@ -332,6 +368,12 @@ run_combo() {
                 screen_ok "$dir/x11.png" >"$dir/x11-screen-check.txt" && { xshot=1; break; }
         done
         sleep 5; "$ADB" exec-out screencap -p >"$dir/x11.png"
+        # The first desktop hides Termux:X11's extra-keys bar (it covers the
+        # bottom panel); it must stick even when this run installed the app.
+        printf 'termux-x11-preference list | grep additionalKbdVisible; ls ~/.andronix/x11-extra-keys-hidden\n' |
+            with_timeout 60 $TSH >"$dir/x11-extra-keys.txt" 2>&1
+        grep -q '"additionalKbdVisible"="false"' "$dir/x11-extra-keys.txt" ||
+            { res=FAIL; note="${note:+$note; }extra-keys bar not hidden ($(head -1 "$dir/x11-extra-keys.txt"))"; }
         printf 'andronix desktop stop\n' | with_timeout 120 $TSH >"$dir/x11-stop.log" 2>&1
         for _ in $(seq 1 30); do kill -0 "$x11_session" 2>/dev/null || break; sleep 2; done
         kill "$x11_session" 2>/dev/null; wait "$x11_session" 2>/dev/null
@@ -340,6 +382,18 @@ run_combo() {
         "$ADB" shell am start -n "$TERMUX_PKG/.app.TermuxActivity" >/dev/null 2>&1
     fi
     "$ADB" exec-out screencap -p >"$dir/android.png"
+
+    # Firefox in the distro: a real page's web content processes, video and
+    # audio (Ubuntu's Firefox 156 crashed every content process under proot).
+    if [ $res = PASS ] && [ "$de" != none ]; then
+        printf 'R=$HOME/.andronix/distros/%s/rootfs; cp /data/local/tmp/ff-check.sh $R/tmp/ff-check.sh; chmod 644 $R/tmp/ff-check.sh; andronix start %s -- sh /tmp/ff-check.sh %s\n' "$d" "$d" "$ff_port" |
+            with_timeout 180 $TSH >"$dir/firefox.txt" 2>&1
+        if grep -q '^RESULT no-browser' "$dir/firefox.txt"; then
+            note="${note:+$note; }no browser"
+        elif ! grep -q '^RESULT done' "$dir/firefox.txt" || grep -q '=ERR\|=TIMEOUT' "$dir/firefox.txt" || ! grep -q '^CRASHES 0' "$dir/firefox.txt"; then
+            res=FAIL; note="${note:+$note; }Firefox: $(grep -o '^RESULT [^ ]*=\(ERR\|TIMEOUT\)[^ ]*\|^CRASH.*' "$dir/firefox.txt" | head -3 | tr '\n' ' ')$(grep -q '^RESULT done' "$dir/firefox.txt" || echo 'page never finished')"
+        fi
+    fi
 
     # Guest-side desktop logs, before anything is removed
     if [ "$de" != none ]; then
@@ -373,10 +427,18 @@ EOF
     echo "|---|---|---|---|---|---|---|"
 } >"$summary"
 
+# The Firefox check's page and media, served to the emulator over adb reverse.
+ff_port=$((8900 + ${ANDROID_SERIAL##*-} % 100))
+while lsof -iTCP:"$ff_port" -sTCP:LISTEN >/dev/null 2>&1; do ff_port=$((ff_port + 100)); done
+(cd "$here/firefox" && exec python3 -m http.server "$ff_port" --bind 127.0.0.1 >"$out/ff-http.log" 2>&1) & ff_http=$!
+trap 'kill $ff_http 2>/dev/null' EXIT
+
 for avd in ${avds//,/ }; do
     boot_avd "$avd" || { log "skipping $avd (no boot)"; continue; }
     ensure_termux "$avd" || { log "skipping $avd"; continue; }
     push_installer
+    "$ADB" reverse "tcp:$ff_port" "tcp:$ff_port" >/dev/null
+    "$ADB" push "$here/firefox/ff-check.sh" /data/local/tmp/ff-check.sh >/dev/null && "$ADB" shell chmod 644 /data/local/tmp/ff-check.sh
     dialog_watcher & watcher=$!
     for d in $distros; do
         for de in $des; do

@@ -54,6 +54,7 @@ func VNCStart(args []string, lan bool) error {
 		return ui.Errorf("VNC isn't installed", "This distro has no desktop yet.",
 			"In Termux, run: andronix install "+guestRelease().Get("ANDRONIX_DISTRO")+" --de xfce")
 	}
+	desktopNote()
 	if pidAlive(fmt.Sprintf("/tmp/.X%d-lock", num)) {
 		ui.OK(fmt.Sprintf("The desktop is already running on :%d.", num))
 		ui.Note(fmt.Sprintf("Connect your VNC viewer to localhost:%d. To stop it: vncserver-stop", num))

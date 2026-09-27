@@ -48,6 +48,9 @@ func Start(name string, asRoot bool, cmd []string) error {
 
 // Remove is `andronix remove <distro> [--yes] [--legacy]`.
 func Remove(ctx context.Context, name string, legacy bool) error {
+	if ed, err := conf.ResolveEdition(name); err == nil {
+		return removeEdition(ctx, ed, legacy)
+	}
 	d, err := resolveDistro(name, "remove")
 	if err != nil {
 		return err
@@ -61,6 +64,9 @@ func Remove(ctx context.Context, name string, legacy bool) error {
 	if statErr != nil && len(old) == 0 {
 		fmt.Println()
 		ui.OK(d.Label() + " isn't installed, so there's nothing to remove.")
+		if freed := removeCache(cacheEntries(GetPaths().Cache, d.ID)); freed > 0 {
+			ui.Note("Deleted " + ui.Bytes(freed) + " of " + d.Name + " downloads from an earlier install.")
+		}
 		if l := in.Legacy(); len(l) > 0 {
 			ui.Note("An older " + d.Name + " from the previous installer is at " + ui.Tilde(l[0]) + ". Remove it with: andronix remove " + d.ID + " --legacy")
 		}
@@ -69,10 +75,16 @@ func Remove(ctx context.Context, name string, legacy bool) error {
 	}
 	lines := []string{}
 	if statErr == nil {
-		lines = append(lines, "Deletes "+d.Label()+" and everything inside it.", ui.KV("Folder", ui.Tilde(in.Dir)), ui.KV("Launcher", "~/"+d.MainStart()))
+		lines = append(lines, "Deletes "+d.Label()+" and everything inside it.", ui.KV("Folder", ui.Tilde(in.Dir)+" ("+ui.Bytes(diskSize(in.Dir))+")"), ui.KV("Launcher", "~/"+d.MainStart()))
+		if have := installedEdition(in); have != "" {
+			lines = append(lines, "", "It's "+editionLabel(d, have)+".")
+		}
+		if n := cacheSize(cacheEntries(GetPaths().Cache, d.ID)); n > 0 {
+			lines = append(lines, ui.KV("Downloads", ui.Bytes(n)+" in "+ui.Tilde(GetPaths().Cache)))
+		}
 	}
 	for _, l := range old {
-		lines = append(lines, "", "Also deletes the older install:", ui.KV("Folder", ui.Tilde(l)))
+		lines = append(lines, "", "Also deletes the older install:", ui.KV("Folder", ui.Tilde(l)+" ("+ui.Bytes(diskSize(l))+")"))
 	}
 	lines = append(lines, "", "Files in /sdcard are not touched.")
 	fmt.Println()
@@ -95,6 +107,7 @@ func Remove(ctx context.Context, name string, legacy bool) error {
 				return ui.Errorf("Couldn't remove everything", err.Error(), "Exit every "+d.Name+" session (and vncserver-stop), then try again.")
 			}
 			RemoveLaunchers(d)
+			removeCache(cacheEntries(GetPaths().Cache, d.ID))
 			return nil
 		}})
 	}

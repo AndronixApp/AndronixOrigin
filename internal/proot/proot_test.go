@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 	"testing"
+	"time"
 )
 
 // TmpDir's cleanup must keep every file of a live proot (another session
@@ -50,5 +51,23 @@ func TestOldSyscallOrder(t *testing.T) {
 		if got := oldSyscallOrder(rel); got != want {
 			t.Errorf("oldSyscallOrder(%q) = %v", rel, got)
 		}
+	}
+}
+
+// The env hook may call SetEnv itself (the app's compat code does): no
+// deadlock, and its value is used.
+func TestCompatEnvHookReentrant(t *testing.T) {
+	defer func() { EnvHook, envSet, extra = nil, false, nil }()
+	envSet, extra = false, nil
+	EnvHook = func() []string { SetEnv([]string{"A=1"}); return []string{"A=1"} }
+	done := make(chan []string)
+	go func() { done <- compatEnv() }()
+	select {
+	case env := <-done:
+		if len(env) != 1 || env[0] != "A=1" {
+			t.Errorf("env %v", env)
+		}
+	case <-time.After(3 * time.Second):
+		t.Fatal("compatEnv deadlocked")
 	}
 }

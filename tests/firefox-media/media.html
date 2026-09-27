@@ -1,0 +1,12 @@
+<html><body><canvas id=c width=64 height=64></canvas><script>
+const r=[];
+function tryMedia(tag,src){return new Promise(res=>{const m=document.createElement(tag);m.muted=true;m.src=src;
+ m.play().then(()=>setTimeout(()=>res(src+'=ok:'+m.currentTime.toFixed(1)),2000)).catch(e=>res(src+'=ERR:'+e.name));});}
+(async()=>{
+ for (const [t,s] of [['video','t.mp4'],['video','t.webm'],['audio','a.m4a'],['audio','a.opus.webm'],['audio','a.mp3']]) {const x=await tryMedia(t,s); r.push(x); fetch("/step?"+x);}
+ const x=document.getElementById('c').getContext('2d'); x.fillStyle='red'; x.fillRect(0,0,8,8);
+ r.push('canvas2d='+(x.getImageData(1,1,1,1).data[0]==255?'ok':'ERR'));
+ const g=document.createElement('canvas').getContext('webgl'); r.push('webgl='+(g?'ok':'none'));
+ fetch('/result?'+r.join('&'));
+})();
+</script></body></html>

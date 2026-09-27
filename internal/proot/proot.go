@@ -312,10 +312,62 @@ func hostEnv() []string {
 		}
 	}
 	out = append(out, "PROOT_TMP_DIR="+TmpDir())
-	if os.Getenv("PROOT_NO_SECCOMP") == "" && oldSyscallOrder(sys.KernelRelease()) {
+	// The compat rules' env (e.g. PROOT_NO_SECCOMP on old kernels); the
+	// user's own settings win.
+	for _, e := range compatEnv() {
+		if k, _, _ := strings.Cut(e, "="); os.Getenv(k) == "" {
+			out = append(out, e)
+		}
+	}
+	// Fallback when the rules couldn't load.
+	if os.Getenv("PROOT_NO_SECCOMP") == "" && oldSyscallOrder(sys.KernelRelease()) && !hasKey(compatEnv(), "PROOT_NO_SECCOMP") {
 		out = append(out, "PROOT_NO_SECCOMP=1")
 	}
 	return out
+}
+
+// EnvHook returns environment for every proot run (the compat rules, set
+// by the app). Called once, lazily.
+var (
+	EnvHook func() []string
+	envMu   sync.Mutex
+	envSet  bool
+	extra   []string
+)
+
+// compatEnv is the compat env: set by SetEnv, else from EnvHook once. The
+// hook runs without the lock held, since it may call SetEnv itself.
+func compatEnv() []string {
+	envMu.Lock()
+	set, env := envSet, extra
+	envMu.Unlock()
+	if set || EnvHook == nil {
+		return env
+	}
+	env = EnvHook()
+	envMu.Lock()
+	if !envSet {
+		envSet, extra = true, env
+	}
+	env = extra
+	envMu.Unlock()
+	return env
+}
+
+// SetEnv replaces the compat env (the installer, once it has probed).
+func SetEnv(env []string) {
+	envMu.Lock()
+	envSet, extra = true, env
+	envMu.Unlock()
+}
+
+func hasKey(env []string, key string) bool {
+	for _, e := range env {
+		if k, _, _ := strings.Cut(e, "="); k == key {
+			return true
+		}
+	}
+	return false
 }
 
 // OldKernel reports whether this phone's kernel is older than 4.8, where

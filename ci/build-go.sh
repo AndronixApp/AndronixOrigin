@@ -20,6 +20,14 @@
 #   ci/build-go.sh android-cgo      only the NDK builds (the container runs this)
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# Builds come from a clean tree (committed code, a version label without
+# -dirty), so a binary on a phone is always one we can find again.
+# ALLOW_DIRTY=1 for a quick local try (the label then ends in -dirty).
+if git rev-parse --git-dir >/dev/null 2>&1 && [ -n "$(git status --porcelain --untracked-files=no)" ] && [ "${ALLOW_DIRTY:-}" != 1 ]; then
+    echo "build-go.sh: the tree has uncommitted changes; commit them (or ALLOW_DIRTY=1 for a local try)" >&2
+    git status --short --untracked-files=no >&2
+    exit 1
+fi
 version=${VERSION:-$(git describe --tags --always --dirty 2>/dev/null || echo dev)}
 ldflags="-s -w -X github.com/AndronixApp/andronix-distros/internal/app.Version=$version"
 api=24 # Android 7, the oldest Termux supports

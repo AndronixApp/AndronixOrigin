@@ -92,13 +92,16 @@ func colorFromEnv() termenv.Profile {
 	return termenv.ANSI
 }
 
-// Cols is the terminal width.
+// Cols is the terminal width: the terminal's own size first. A COLUMNS
+// that a shell exported once goes stale (80 in a 56-column Termux made
+// every step line wrap and the live view repeat itself); it's only used
+// when stdout isn't a terminal.
 func Cols() int {
-	if c, err := strconv.Atoi(os.Getenv("COLUMNS")); err == nil && c > 0 {
-		return c
-	}
 	if w, _, err := term.GetSize(int(os.Stdout.Fd())); err == nil && w > 0 {
 		return w
+	}
+	if c, err := strconv.Atoi(os.Getenv("COLUMNS")); err == nil && c > 0 {
+		return c
 	}
 	return 80
 }

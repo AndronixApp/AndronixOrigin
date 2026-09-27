@@ -1,23 +1,31 @@
 #!/usr/bin/env bash
 # The app's first command on a FRESH Termux, inside the Termux app process
 # (app-context.sh), exactly as a user pastes it. --command fast (default,
-# the app's template from android d58e439): upgrade Termux only if curl
-# can't fetch get.sh, and install proot only if it's missing:
+# the app's template from android c579e30, apt-get only: pkg itself needs a
+# working curl): upgrade Termux only if curl can't fetch get.sh, install
+# proot only if it's missing:
 #
-#   (curl -fsSL <get.sh> -o $PREFIX/tmp/get.sh || (DEBIAN_FRONTEND=noninteractive
-#     pkg upgrade -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold &&
-#     pkg install -y curl && curl -fsSL <get.sh> -o $PREFIX/tmp/get.sh)) &&
-#   (command -v proot >/dev/null 2>&1 || pkg install -y proot) &&
+#   (curl -fsSL <get.sh> -o $PREFIX/tmp/get.sh || (apt-get update &&
+#     apt-get -y -o ...confdef -o ...confold full-upgrade && apt-get -y ... install curl &&
+#     curl -fsSL <get.sh> -o $PREFIX/tmp/get.sh)) &&
+#   (command -v proot >/dev/null 2>&1 || (apt-get update && apt-get -y ... install proot)) &&
 #   sh $PREFIX/tmp/get.sh install debian --de none --yes --no-start
 #
 # --command upgrade: the earlier template, pkg upgrade first, always.
+# --command noproot: the fast template without its proot step, so the
+# installer must install proot itself (andronix 2.0.0).
 #
-#   TERMUX_APK=<apk> tests/emulator/first-run.sh -s emulator-5564 [--distro debian] [--edited]
-#       [--command fast|upgrade]
+#   ALLOW_WIPE=1 TERMUX_APK=<apk> tests/emulator/first-run.sh -s emulator-5564 [--distro debian] [--edited]
+#       [--command fast|upgrade|noproot] [--half-upgraded]
+#   (emulators only: it uninstalls Termux; ALLOW_WIPE=1 says that's intended)
+#
+# --half-upgraded: first run 'pkg update -y && pkg install -y curl' on the
+# old bootstrap, as the old Andronix commands did; that leaves curl unable
+# to link (new libcurl, old OpenSSL), the case the fallback must repair.
 #
 # --edited: before the command, edit $PREFIX/etc/bash.bashrc and choose a
-# mirror the way termux-change-repo does ($PREFIX/etc/termux/chosen_mirrors;
-# pkg rewrites sources.list from it on every run), or mark the apt source
+# mirror the way termux-change-repo does ($PREFIX/etc/termux/chosen_mirrors
+# and sources.list), or mark the apt source
 # on builds without mirror lists (Play: termux.sources), then check both
 # survive.
 #
@@ -29,14 +37,15 @@
 set -uo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../.." && pwd)
-distro=debian edited=0 command=fast
+distro=debian edited=0 command=fast half=0
 while [ $# -gt 0 ]; do
     case $1 in
         -s) export ANDROID_SERIAL=$2; shift ;;
         --distro) distro=$2; shift ;;
         --edited) edited=1 ;;
         --command) command=$2; shift ;;
-        -h|--help) sed -n '2,31p' "$0"; exit 0 ;;
+        --half-upgraded) half=1 ;;
+        -h|--help) sed -n '2,37p' "$0"; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
     esac
     shift
@@ -51,12 +60,16 @@ mkdir -p "$out"
 log() { printf '%s  %s\n' "$(date +%H:%M:%S)" "$*" | tee -a "$out/run.log"; }
 # shellcheck source=app-context.sh
 . "$here/app-context.sh"
+ac_guard_serial
+ac_require_wipe_ok   # uninstalls Termux below
 P=/data/data/com.termux/files/usr
 
 # The mirror: bin/latest/ from this checkout's dist/, on a host port.
 mirror=${ANDRONIX_MIRROR:-}
 if [ -z "$mirror" ]; then
-    port=$((8700 + ${ANDROID_SERIAL##*-} % 100))
+    port=${HOST_PORT:-$(ac_port 8700)}
+# A server left by an interrupted run would answer 404 from a deleted folder.
+while lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; do port=$((port + 100)); done
     www=$(mktemp -d)
     mkdir -p "$www/bin/latest"
     cp "$repo"/dist/andronix-android-aarch64 "$repo"/dist/andronix-linux-aarch64 "$repo"/dist/SHA256SUMS "$repo/get.sh" "$www/bin/latest/"
@@ -96,7 +109,10 @@ echo '# andronix-test: user edit' >>$PREFIX/etc/bash.bashrc
 m=$(find $PREFIX/etc/termux/mirrors/europe -type f 2>/dev/null | sort | head -1)
 if [ -n "$m" ]; then
     ln -sfn "$m" $PREFIX/etc/termux/chosen_mirrors
-    echo "chosen: $(grep -m1 '^MAIN=' "$m" | sed 's/^MAIN=//; s/"//g')"
+    main=$(grep -m1 '^MAIN=' "$m" | sed 's/^MAIN=//; s/"//g')
+    # termux-change-repo also writes sources.list with the chosen mirror.
+    echo "deb $main stable main" >$PREFIX/etc/apt/sources.list
+    echo "chosen: $main"
 else
     # Play builds: one deb822 file (termux.net), no mirror rotation.
     f=$(ls $PREFIX/etc/apt/sources.list.d/*.sources $PREFIX/etc/apt/sources.list 2>/dev/null | head -1)
@@ -108,11 +124,22 @@ EDIT
     log "edited bash.bashrc; mirror: $chosen"
 fi
 
+# 0b. --half-upgraded: what the old Andronix commands left behind.
+if [ $half = 1 ]; then
+    tsh_app >"$out/half.log" 2>&1 <<'HALF'
+pkg update -y && pkg install -y curl
+curl --version >/dev/null 2>&1 && echo "curl still works" || echo "curl broken"
+HALF
+    log "half-upgraded Termux: $(tail -1 "$out/half.log" | tr -d '\r')"
+fi
+
 # 1. The app's command, first thing, nothing else run before it.
 log "running the app's first command ($command)"
 g=$mirror/bin/latest/get.sh
+line_noproot="(curl -fsSL $g -o \$PREFIX/tmp/get.sh || (DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold full-upgrade && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold install curl && curl -fsSL $g -o \$PREFIX/tmp/get.sh)) && sh \$PREFIX/tmp/get.sh install $distro --de none --yes --no-start"
 case $command in
-fast) line="(curl -fsSL $g -o \$PREFIX/tmp/get.sh || (DEBIAN_FRONTEND=noninteractive pkg upgrade -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold && pkg install -y curl && curl -fsSL $g -o \$PREFIX/tmp/get.sh)) && (command -v proot >/dev/null 2>&1 || pkg install -y proot) && sh \$PREFIX/tmp/get.sh install $distro --de none --yes --no-start" ;;
+fast) line="(curl -fsSL $g -o \$PREFIX/tmp/get.sh || (DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold full-upgrade && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold install curl && curl -fsSL $g -o \$PREFIX/tmp/get.sh)) && (command -v proot >/dev/null 2>&1 || (DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold install proot)) && sh \$PREFIX/tmp/get.sh install $distro --de none --yes --no-start" ;;
+noproot) line="${line_noproot:-}" ;;
 *) line="DEBIAN_FRONTEND=noninteractive pkg upgrade -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold && pkg install -y curl proot && curl -fsSL $g -o \$PREFIX/tmp/get.sh && sh \$PREFIX/tmp/get.sh install $distro --de none --yes --no-start" ;;
 esac
 echo "$line" >"$out/command.txt"

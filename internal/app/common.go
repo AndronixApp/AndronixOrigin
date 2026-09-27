@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"time"
@@ -178,15 +179,32 @@ func NewLog(name string) *Logger {
 		return &Logger{Logger: log.New(os.Stderr)}
 	}
 	lg := log.NewWithOptions(f, log.Options{ReportTimestamp: true, TimeFormat: time.TimeOnly})
-	// Only the per-run logs (name-YYYYMMDD-HHMMSS.log) rotate; running
-	// logs like termux.log and termux-x11.log stay.
-	old, _ := filepath.Glob(filepath.Join(p.Logs, "*-[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9].log"))
-	sort.Strings(old)
-	for len(old) > 10 {
-		os.Remove(old[0])
-		old = old[1:]
-	}
+	rotateLogs(p.Logs, 10, path)
 	return &Logger{Logger: lg, Path: path, f: f}
+}
+
+var runLog = regexp.MustCompile(`^(.+)-(\d{8}-\d{6})\.log$`)
+
+// rotateLogs keeps the newest keep per-run logs (name-YYYYMMDD-HHMMSS.log)
+// of each kind (install-debian, remove-kali, x11, ...), by their time
+// stamp, and never removes current. Running logs like termux.log stay.
+func rotateLogs(dir string, keep int, current string) {
+	entries, _ := os.ReadDir(dir)
+	kinds := map[string][]string{} // kind -> "stamp name"
+	for _, e := range entries {
+		if m := runLog.FindStringSubmatch(e.Name()); m != nil {
+			kinds[m[1]] = append(kinds[m[1]], m[2]+" "+e.Name())
+		}
+	}
+	for _, list := range kinds {
+		sort.Strings(list) // oldest first
+		for i := 0; i < len(list)-keep; i++ {
+			name := list[i][strings.IndexByte(list[i], ' ')+1:]
+			if p := filepath.Join(dir, name); p != current {
+				os.Remove(p)
+			}
+		}
+	}
 }
 
 // WriteLaunchers writes ~/start-<distro>.sh wrappers. An old installer's
@@ -249,6 +267,13 @@ func resolveDistro(name, cmd string) (*conf.Distro, error) {
 			"Run 'andronix list' to see them, e.g. andronix "+cmd+" debian")
 	}
 	d, err := conf.ResolveDistro(name)
+	if err != nil && cmd != "install" {
+		// An edition id (the app's name for a Modded or Classic install):
+		// its distro, if that edition is the one installed.
+		if ed, eerr := conf.ResolveEdition(name); eerr == nil {
+			return editionDistro(ed, cmd)
+		}
+	}
 	if err != nil {
 		return nil, ui.Errorf("Unknown distro '"+name+"'", "Andronix doesn't have a distro called '"+name+"' yet.",
 			"Run 'andronix list' to see the ones you can install.")

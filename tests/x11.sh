@@ -6,6 +6,7 @@
 #   tests/x11.sh                     errors and messages, then XFCE on :0
 #   DESKTOPS="xfce lxqt mate kde" tests/x11.sh   each desktop in turn
 #   DISTRO=ubuntu tests/x11.sh       another distro (dist/<tarball> if any)
+#   X11_SIZE=1080x2400 tests/x11.sh  a portrait phone's screen (default 1280x720)
 #
 # Screenshots go to dist/x11-<distro>-<desktop>.png. The Termux:X11 app
 # itself and PulseAudio need a phone (tests/emulator).
@@ -40,6 +41,7 @@ NO_NDK=1 ci/build-go.sh >/dev/null || { echo "build failed"; exit 1; }
 A="\$HOME/.local/bin/andronix"
 echo "andronix Termux:X11 test ($distro, ${tarball:-registry fallback})"
 
+[ -n "${X11_SIZE:-}" ] && run "echo $X11_SIZE > ~/.fake-x11-size"
 check "get.sh installs the binary" "ANDRONIX_SRC=/src sh /src/get.sh && $A version"
 check "help lists andronix desktop" "COLUMNS=40 $A help | grep -q 'andronix desktop'"
 check "desktop with nothing installed explains" "out=\$($A desktop 2>&1); [ \$? = 1 ] && echo \"\$out\" | grep -q 'No desktop installed yet'"
@@ -77,8 +79,8 @@ for de in ${DESKTOPS:-xfce}; do
     check "the screen isn't black (after a second session started)" "for i in \$(seq 45); do m=\$(DISPLAY=:0 xwd -root -silent | xwdtopnm 2>/dev/null | ppmtopgm | pamsumm -mean -brief); [ \"\${m%%.*}\" -ge 8 ] && break; sleep 2; done; echo mean=\$m; [ \"\${m%%.*}\" -ge 8 ]"
     sleep 5
     run "DISPLAY=:0 xwd -root -silent | xwdtopnm 2>/dev/null | pnmtopng > /tmp/x11.png"
-    mkdir -p dist && docker exec "$box" cat /tmp/x11.png >"dist/x11-$distro-$de.png" 2>/dev/null &&
-        [ -s "dist/x11-$distro-$de.png" ] && ok "screenshot dist/x11-$distro-$de.png" || bad "screenshot"
+    mkdir -p dist && docker exec "$box" cat /tmp/x11.png >"dist/x11-$distro-$de${X11_SIZE:+-$X11_SIZE}.png" 2>/dev/null &&
+        [ -s "dist/x11-$distro-$de${X11_SIZE:+-$X11_SIZE}.png" ] && ok "screenshot dist/x11-$distro-$de${X11_SIZE:+-$X11_SIZE}.png" || bad "screenshot"
     # Programs that exist but couldn't be run (optional ones that aren't
     # installed, like gnome-keyring-daemon, don't count).
     check "no failed launches in the session log" "R=~/.andronix/distros/$distro/rootfs; bad=; for n in \$(grep -ho 'Failed to execute child process “[^”]*”' \$R/tmp/andronix-session-*.log | sed 's/.*“//; s/”//' | sort -u); do case \$n in /*) p=\$R\$n ;; *) p=\$R/usr/bin/\$n ;; esac; [ -e \"\$p\" ] && bad=\"\$bad \$n\"; done; echo \"exists but failed:\$bad\"; [ -z \"\$bad\" ]"

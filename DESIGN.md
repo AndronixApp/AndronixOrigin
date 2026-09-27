@@ -97,7 +97,7 @@ andronix setup-user                  (first-boot user setup)
 | Package | Job |
 |---|---|
 | `internal/ui` | Charm UI, described in the next table. |
-| `internal/conf` | Reads `distros/*.conf` and `desktops/*.conf`. Optional keys: `DISTRO_MIRROR_REWRITE="<from> <to>"` (a literal replace in the package sources; Kali uses it to reach `kali.download`), `DISTRO_BROWSER_REPO`, `DISTRO_BROWSER_ARCHES`, `DISTRO_NO_SNAP`, and `DE_AUTOSTART_HIDE` (autostart entries that fail under proot, hidden for every user). From port-b:
+| `internal/conf` | Reads `distros/*.conf` and `desktops/*.conf`. Optional keys: `DISTRO_MIRROR_REWRITE="<from> <to>"` (a literal replace in the package sources; Kali uses it to reach `kali.download`), `DISTRO_BROWSER_REPO`, `DISTRO_BROWSER_ARCHES`, `DISTRO_BROWSER_CODECS` (installed with the browser, optional: H.264 for YouTube), `DISTRO_NO_SNAP`, and `DE_AUTOSTART_HIDE` (autostart entries that fail under proot, hidden for every user). From port-b:
   - `DISTRO_UPSTREAM_TARBALL_<arch>` + `DISTRO_UPSTREAM_REMOVE`: Arch Linux ARM has no OCI image. CI imports the upstream tarball, strips kernel and firmware packages, and cleans it. The installer's last-resort fallback downloads it directly and runs the same strip and clean (`rootfs.CleanScript`).
   - `DISTRO_MIRROR_<arch>` (Manjaro's pacman mirror) and `DISTRO_LANG`.
   - `DE_DESKTOP_EDITS`: patched `.desktop` copies in `/usr/local/share/applications`. MATE uses it to run `caja --force-desktop` in the Panel phase; otherwise the desktop is black under proot.
@@ -389,7 +389,7 @@ They guess from version numbers. The replacement **measures what this phone does
   - the embedded table parses;
   - every `pre_script` and `warn` name exists;
 - **Emulator matrix:** `andronix doctor --probe` on a9, a11, a16 and a17 (app context), saved as fixtures.
-- **Redmi:** the lead's device agent records its probe.
+- **Redmi:** a test device records its probe.
 
 ### Migration
 

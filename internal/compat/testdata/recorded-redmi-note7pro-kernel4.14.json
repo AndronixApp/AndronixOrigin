@@ -1,0 +1,35 @@
+{
+ "source": "recorded 2026-09-26 on a test device with 'andronix doctor' (feat-compat 2f71d91) on a Redmi Note 7 Pro (LineageOS, Android 16, kernel 4.14.356+9-perf), Kali: tests/emulator/results/redmi-20260926/kali-compat/probe-2f71d91-lineage.json.",
+ "distro": "kali",
+ "family": "apt",
+ "de": "xfce",
+ "probe": {
+  "probe_version": 2,
+  "time": "2026-09-26T21:38:17Z",
+  "kernel": "4.14.356+9-perf",
+  "sdk": 36,
+  "rom": "lineage",
+  "phantom": "on",
+  "ram_mb": 5620,
+  "free_mb": 45558,
+  "termux": "github",
+  "termux_version": "0.118.3",
+  "syscalls": {
+   "clone3": "ENOSYS",
+   "close_range": "ENOSYS",
+   "faccessat2": "ENOSYS",
+   "fchmodat2": "ENOSYS",
+   "memfd_create": "ok",
+   "name_to_handle_at": "ENOSYS",
+   "open_tree": "ENOSYS",
+   "openat2": "ok",
+   "seccomp": "ok",
+   "statx": "ok",
+   "statx_mnt_id": "missing"
+  }
+ },
+ "expect": [
+  "mount-id-shim",
+  "phantom-process"
+ ]
+}

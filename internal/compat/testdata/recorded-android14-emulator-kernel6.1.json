@@ -1,0 +1,33 @@
+{
+ "source": "recorded 2026-09-26 on emulator andronix-test (Android 14, kernel 6.1, GitHub Termux 0.118.3), app context, andronix doctor --probe",
+ "distro": "debian",
+ "family": "apt",
+ "de": "none",
+ "probe": {
+  "probe_version": 1,
+  "time": "2026-09-26T18:12:08Z",
+  "kernel": "6.1.23-android14-4-00257-g7e35917775b8-ab9964412",
+  "sdk": 34,
+  "rom": "emulator",
+  "phantom": "on",
+  "ram_mb": 3922,
+  "free_mb": 12014,
+  "termux": "github",
+  "termux_version": "0.118.3",
+  "syscalls": {
+   "clone3": "ENOSYS",
+   "close_range": "ok",
+   "faccessat2": "ENOSYS",
+   "fchmodat2": "ENOSYS",
+   "memfd_create": "ok",
+   "name_to_handle_at": "ENOSYS",
+   "open_tree": "ENOSYS",
+   "openat2": "ok",
+   "seccomp": "ok",
+   "statx": "ok"
+  }
+ },
+ "expect": [
+  "phantom-process"
+ ]
+}

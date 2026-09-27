@@ -61,8 +61,11 @@ type Distro struct {
 	// MirrorRewrite is DISTRO_MIRROR_REWRITE="<from> <to>": a literal
 	// replace in the image's package sources (Kali's redirector sends
 	// downloads to https mirrors before a CA store exists).
-	MirrorRewrite      [2]string
-	BrowserArches      []string
+	MirrorRewrite [2]string
+	BrowserArches []string
+	// BrowserCodecs are DISTRO_BROWSER_CODECS: libraries the browser loads
+	// for H.264 (YouTube falls back to it on phones), installed with it.
+	BrowserCodecs      []string
 	NoSnap             bool
 	DownloadMB, DiskMB int
 	BindsDir           string
@@ -239,7 +242,8 @@ func LoadDistro(id string) (*Distro, error) {
 		StartScripts: v.List("DISTRO_START_SCRIPTS"), LegacyFS: v.List("DISTRO_LEGACY_FS"),
 		Aliases: v.List("DISTRO_ALIASES"), Browser: v.Get("DISTRO_BROWSER"),
 		BrowserRepo: v.Get("DISTRO_BROWSER_REPO"), BrowserArches: v.List("DISTRO_BROWSER_ARCHES"),
-		NoSnap: v.Bool("DISTRO_NO_SNAP"), DownloadMB: v.Int("DISTRO_DOWNLOAD_MB"), DiskMB: v.Int("DISTRO_DISK_MB"),
+		BrowserCodecs: v.List("DISTRO_BROWSER_CODECS"),
+		NoSnap:        v.Bool("DISTRO_NO_SNAP"), DownloadMB: v.Int("DISTRO_DOWNLOAD_MB"), DiskMB: v.Int("DISTRO_DISK_MB"),
 		BindsDir: v.Get("DISTRO_BINDS_DIR"), Lang: v.Get("DISTRO_LANG"), Sudo: v.Get("DISTRO_SUDO"),
 		PreUpgrade: v.Get("DISTRO_PRE_UPGRADE"),
 		MaxKernel:  v.Get("DISTRO_MAX_KERNEL"), raw: v,

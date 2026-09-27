@@ -1,0 +1,6 @@
+{"source": "synthetic (andronix-a16 AVD, Void: fchmodat2 passes proot untranslated; replace with a recording)",
+ "distro": "void", "family": "xbps", "de": "xfce",
+ "probe": {"probe_version": 1, "kernel": "6.6.66-android15", "sdk": 36, "rom": "emulator", "phantom": "on", "ram_mb": 4000, "termux": "github", "termux_version": "0.118.3",
+   "syscalls": {"statx": "ok", "openat2": "ok", "faccessat2": "ok", "fchmodat2": "ENOENT", "close_range": "ok", "open_tree": "ok",
+     "name_to_handle_at": "ok", "memfd_create": "ok", "clone3": "ok", "seccomp": "ok"}},
+ "expect": ["fchmodat2-shim", "phantom-process"]}

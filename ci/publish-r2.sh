@@ -5,6 +5,7 @@
 #
 #   ci/publish-r2.sh rootfs <distro>     dist/<id>-<ver>-<arch>.tar.xz(.sha256, .meta)
 #   ci/publish-r2.sh bin <version>       dist/andronix-{android-,linux-,}<arch> + SHA256SUMS -> bin/<version>/ and bin/latest/
+#                                        (NO_LATEST=1: bin/<version>/ only, for a release candidate)
 #   ci/publish-r2.sh getsh [version]     get.sh -> get.sh (short cache; the app and docs fetch it)
 #
 # Env: R2_ACCOUNT_ID, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY (a token
@@ -52,7 +53,9 @@ case "$kind" in
         done
         ;;
     bin)
-        for dest in "$arg" latest; do
+        dests="$arg latest"
+        [ -n "${NO_LATEST:-}" ] && dests=$arg
+        for dest in $dests; do
             # andronix-android-<cpu> (Termux), andronix-linux-<cpu> (inside
             # distros, and off Android), andronix-<cpu> (the android build
             # under the old name, for older get.sh and self-updates).

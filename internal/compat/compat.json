@@ -1,0 +1,99 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "id": "old-syscall-order",
+      "why": "Kernels before 4.8 stop seccomp before ptrace's syscall-enter; proot's seccomp mode aborts (IS_IN_SYSENTER). Android 9 on 4.4.",
+      "when": {
+        "kernel_lt": "4.8"
+      },
+      "do": {
+        "env": {
+          "PROOT_NO_SECCOMP": "1"
+        }
+      }
+    },
+    {
+      "id": "old-kernel-desktop",
+      "why": "Without seccomp acceleration the XFCE desktop stays black on 4.4 (xfwm4 deadlock); the command line works.",
+      "when": {
+        "kernel_lt": "4.8",
+        "desktop": true
+      },
+      "do": {
+        "warn": "old_kernel_desktop"
+      }
+    },
+    {
+      "id": "fchmodat2-shim",
+      "why": "glibc 2.39+ calls fchmodat2, which proot passes untranslated: the guest path doesn't exist on the host (ENOENT). Void.",
+      "when": {
+        "family": [
+          "xbps"
+        ],
+        "probe": {
+          "fchmodat2": [
+            "ENOENT"
+          ]
+        }
+      },
+      "do": {
+        "preload": "fchmodat"
+      }
+    },
+    {
+      "id": "mount-id-shim",
+      "why": "Before Linux 5.8 statx has no mount id, and under proot name_to_handle_at isn't there either: systemd 256+'s chase() fails with EUNATCH ('Protocol driver not attached'), so sysusers/tmpfiles can't read their config and sudo, dbus and the desktop stay unconfigured (Kali on a Redmi Note 7 Pro, 4.14; andronix-a9, 4.4). The shim gives statx a mount id per filesystem.",
+      "when": {
+        "family": [
+          "apt",
+          "dnf",
+          "pacman",
+          "xbps"
+        ],
+        "probe": {
+          "statx_mnt_id": [
+            "missing"
+          ]
+        }
+      },
+      "do": {
+        "preload": "mntid"
+      }
+    },
+    {
+      "id": "fchmodat2-bad-errno",
+      "why": "On some old kernels proot answers fchmodat2 with a wrong errno (ENETDOWN on andronix-a9, 4.4) instead of ENOSYS, so glibc 2.39+ doesn't fall back and every chmod of a symlink fails ('Cannot change mode: Network is down'). The fchmodat shim never calls fchmodat2.",
+      "when": {
+        "family": [
+          "apt",
+          "dnf",
+          "pacman",
+          "xbps"
+        ],
+        "probe": {
+          "fchmodat2": [
+            "ENETDOWN",
+            "EUNATCH",
+            "EIO"
+          ]
+        }
+      },
+      "do": {
+        "preload": "fchmodat"
+      }
+    },
+    {
+      "id": "phantom-process",
+      "why": "Android 12+ kills background processes past 32 (phantom process killer): long installs and desktops die with signal 9.",
+      "when": {
+        "phantom": [
+          "on"
+        ]
+      },
+      "do": {
+        "warn": "phantom_process"
+      }
+    }
+  ]
+}

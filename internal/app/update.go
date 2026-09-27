@@ -10,7 +10,9 @@ import (
 	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"runtime"
+	"strconv"
 	"strings"
 	"time"
 
@@ -57,6 +59,10 @@ func Update(ctx context.Context, o UpdateOpts) (err error) {
 			}
 			in := Open(d)
 			if !in.Installed() {
+				if _, err := os.Stat(in.Rootfs); err == nil {
+					return ui.Errorf(d.Label()+" isn't finished", "The last install stopped part way, so there's nothing to update yet.",
+						"Run: andronix install "+d.ID+" (it picks up where it stopped).")
+				}
 				return ui.Errorf(d.Label()+" isn't installed", "There's nothing to update.", "Install it first: andronix install "+d.ID)
 			}
 			targets = append(targets, in)
@@ -108,7 +114,16 @@ func Update(ctx context.Context, o UpdateOpts) (err error) {
 				if err := t.Run(ctx, fam.Update, nil, func(l string) { r.Line(l) }); err != nil {
 					return pkgErr("Couldn't reach the package servers", err)
 				}
-				// Before the upgrade, also on installs made before it existed.
+				// Before the upgrade, also on installs made before it existed:
+				// the compat rules' scripts (from the cached probe), then the distro's.
+				cr := newCompat(d, in.Get("DE"))
+				if sys.IsTermux() {
+					cr.probe(ctx, t, lg) // measured once per kernel/Android/Termux, then cached
+					cr.apply(in.Rootfs, sys.DetectArch(), lg)
+				}
+				if err := cr.preScripts(ctx, t, r); err != nil {
+					return err
+				}
 				return preUpgrade(ctx, t, d, r)
 			}},
 			ui.Step{Label: "Updating " + d.Label(), Run: func(ctx context.Context, r ui.Reporter) error {
@@ -124,6 +139,19 @@ func Update(ctx context.Context, o UpdateOpts) (err error) {
 				return nil
 			}},
 		)
+		// The browser's video codecs on installs from before they were part
+		// of the browser install (2.0.0 had none: no AAC or H.264).
+		steps = append(steps, ui.Step{Label: "Web browser", Run: func(ctx context.Context, r ui.Reporter) error {
+			b := d.BrowserFor(string(sys.DetectArch()))
+			if b == "" || !hasAny(in.Rootfs, "usr/bin/firefox", "usr/bin/firefox-esr", "usr/lib/firefox", "usr/lib/firefox-esr", "usr/lib64/firefox") {
+				return ui.Skip("no browser")
+			}
+			if !installCodecs(ctx, t, fam, d, r, lg) {
+				return ui.Skip("up to date")
+			}
+			t.Run(ctx, fam.Clean, nil, nil)
+			return nil
+		}})
 		if moddedVersion(in.Rootfs) != "" {
 			steps = append(steps, ui.Step{Label: "Updating the Modded edition", Run: func(ctx context.Context, r ui.Reporter) error {
 				return moddedUpdate(ctx, in, o, r, lg)
@@ -131,8 +159,11 @@ func Update(ctx context.Context, o UpdateOpts) (err error) {
 		}
 		steps = append(steps, ui.Step{Label: "Tidying " + d.Label(), Run: func(ctx context.Context, r ui.Reporter) error {
 			rootfs.EnsureBwrapShim(in.Rootfs)
+			rootfs.RefreshProfile(in.Rootfs) // e.g. Firefox's sandbox switches
 			if de, err := conf.ResolveDesktop(in.Get("DE")); err == nil && !de.None() {
 				writeXstartup(in.Rootfs, de)
+				phoneDefaults(in.Rootfs) // e.g. a Firefox installed or updated since
+				refreshWallpaper(ctx, in.Rootfs, de)
 			}
 			return nil
 		}})
@@ -162,17 +193,17 @@ func selfUpdate(ctx context.Context, r ui.Reporter, lg *Logger, updated *bool, o
 	}
 	arch := sys.DetectArch()
 	var urls []string
-	want := ""
+	want, mirrorVersion := "", ""
 	if beta {
 		res, err := betaResolve(ctx, o.Token)
 		if err != nil {
 			return err
 		}
-		urls, want = res.urls(), res.SHA256
+		urls, want, mirrorVersion = res.urls(), res.SHA256, res.Version
 		lg.Printf("self-update: beta %s (%s)", res.URL, res.Version)
 		r.Label("Updating andronix to beta " + res.Version)
 	} else if res := resolve(ctx, "bin", url.Values{"flavor": {binFlavor()}}); res != nil {
-		urls, want = res.urls(), res.SHA256
+		urls, want, mirrorVersion = res.urls(), res.SHA256, res.Version
 		lg.Printf("self-update: resolved %s (%s)", res.URL, res.Version)
 	} else {
 		// This build's kind: andronix-android-<cpu> in Termux (andronix-<cpu>
@@ -202,6 +233,14 @@ func selfUpdate(ctx context.Context, r ui.Reporter, lg *Logger, updated *bool, o
 	if have, _ := netx.FileSHA256(self); have == want {
 		return ui.Skip("already the latest")
 	}
+	// Only ever move forward: a release candidate or beta must not be
+	// replaced by an older release (2.0.1-rc3 went back to 2.0.0).
+	// 'andronix update --channel stable' may go back on purpose.
+	downgradeOK := o.Channel == "stable"
+	if mirrorVersion != "" && !downgradeOK && versionCmp(mirrorVersion, Version) <= 0 {
+		lg.Printf("self-update: server has %s, this is %s: keeping this one", mirrorVersion, Version)
+		return ui.Skip("this " + VersionLabel() + " is newer than the server's " + mirrorVersion)
+	}
 	tmp := self + ".new"
 	var got string
 	for _, u := range urls {
@@ -220,6 +259,18 @@ func selfUpdate(ctx context.Context, r ui.Reporter, lg *Logger, updated *bool, o
 		return ui.Errorf("Update is damaged", "The downloaded andronix doesn't match its checksum, so it wasn't installed.", "Run andronix update again.")
 	}
 	os.Chmod(tmp, 0o755)
+	if mirrorVersion == "" && !downgradeOK {
+		// The mirror lists no version: ask the download itself.
+		v := binaryVersion(ctx, tmp)
+		lg.Printf("self-update: downloaded %q, this is %s", v, Version)
+		if v == "" || versionCmp(v, Version) <= 0 {
+			os.Remove(tmp)
+			if v == "" {
+				return ui.Skip("couldn't tell the new build's version; kept " + VersionLabel())
+			}
+			return ui.Skip("this " + VersionLabel() + " is newer than the server's " + v)
+		}
+	}
 	if err := os.Rename(tmp, self); err != nil {
 		os.Remove(tmp)
 		return ui.Errorf("Couldn't replace andronix", err.Error(), "Check that Termux can write to "+filepath.Dir(self)+".")
@@ -227,6 +278,94 @@ func selfUpdate(ctx context.Context, r ui.Reporter, lg *Logger, updated *bool, o
 	r.Detail("new version installed")
 	*updated = true
 	return nil
+}
+
+// binaryVersion runs `<bin> version` ("andronix 2.0.1 (go, ...)") and
+// returns the version, or "".
+func binaryVersion(ctx context.Context, bin string) string {
+	ctx, cancel := context.WithTimeout(ctx, 20*time.Second)
+	defer cancel()
+	out, err := sys.CommandContext(ctx, bin, "version").Output()
+	if err != nil {
+		return ""
+	}
+	f := strings.Fields(string(out))
+	if len(f) < 2 || f[0] != "andronix" {
+		return ""
+	}
+	return f[1]
+}
+
+// versionCmp orders installer versions: 2.0.1-beta1 < 2.0.1-rc1 <
+// 2.0.1-rc2 < 2.0.1 < v2.0.1-5-gabc123 (a build 5 commits after it). A
+// leading v is ignored. -1, 0 or 1.
+func versionCmp(a, b string) int {
+	pa, pb := parseVersion(a), parseVersion(b)
+	for i := range pa.num {
+		if pa.num[i] != pb.num[i] {
+			return cmpInt(pa.num[i], pb.num[i])
+		}
+	}
+	if pa.kind != pb.kind {
+		return cmpInt(pa.kind, pb.kind)
+	}
+	switch pa.kind {
+	case 0: // both pre-releases: by name, then number (rc2 < rc10)
+		if pa.pre != pb.pre {
+			return strings.Compare(pa.pre, pb.pre)
+		}
+		return cmpInt(pa.n, pb.n)
+	case 2: // both builds after a release: by commit count
+		return cmpInt(pa.n, pb.n)
+	}
+	return 0
+}
+
+type parsedVersion struct {
+	num  [3]int
+	kind int // 0 pre-release, 1 release, 2 git-describe build after a release
+	pre  string
+	n    int
+}
+
+var (
+	reVersion  = regexp.MustCompile(`^v?(\d+)\.(\d+)\.(\d+)(?:-(.+))?$`)
+	rePre      = regexp.MustCompile(`^([a-z]+)\.?(\d*)$`)
+	reDescribe = regexp.MustCompile(`^(\d+)-g[0-9a-f]+(?:-dirty)?$`)
+)
+
+func parseVersion(v string) parsedVersion {
+	m := reVersion.FindStringSubmatch(strings.TrimSpace(v))
+	if m == nil {
+		return parsedVersion{kind: 0, pre: "~"} // unknown: never newer than a real version
+	}
+	p := parsedVersion{kind: 1}
+	for i := 0; i < 3; i++ {
+		p.num[i], _ = strconv.Atoi(m[i+1])
+	}
+	switch rest := m[4]; {
+	case rest == "":
+	case reDescribe.MatchString(rest):
+		p.kind = 2
+		p.n, _ = strconv.Atoi(reDescribe.FindStringSubmatch(rest)[1])
+	case rePre.MatchString(rest):
+		pm := rePre.FindStringSubmatch(rest)
+		p.kind, p.pre = 0, pm[1]
+		p.n, _ = strconv.Atoi(pm[2])
+	default:
+		p.kind, p.pre = 0, rest // e.g. 2.0.0-dev
+	}
+	return p
+}
+
+func cmpInt(a, b int) int {
+	switch {
+	case a < b:
+		return -1
+	case a > b:
+		return 1
+	}
+	return 0
 }
 
 // sumFor finds name's checksum in a SHA256SUMS file.

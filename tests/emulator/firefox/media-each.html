@@ -1,0 +1,7 @@
+<html><body><script>
+function tryMedia(tag,src){return new Promise(res=>{const m=document.createElement(tag);m.muted=true;m.src=src;
+ const t=setTimeout(()=>res(src+'=TIMEOUT'),8000);
+ m.onerror=()=>{clearTimeout(t);res(src+'=ERR:'+(m.error&&m.error.code))};
+ m.play().then(()=>setTimeout(()=>{clearTimeout(t);res(src+'=ok:'+m.currentTime.toFixed(1))},2000)).catch(e=>{clearTimeout(t);res(src+'=ERR:'+e.name)});});}
+(async()=>{for (const [t,s] of [['video','t.mp4'],['video','t.webm'],['audio','a.m4a'],['audio','a.opus.webm'],['audio','a.mp3']]) dump('RESULT '+await tryMedia(t,s)+'\n'); dump('RESULT done\n'); window.close();})();
+</script></body></html>

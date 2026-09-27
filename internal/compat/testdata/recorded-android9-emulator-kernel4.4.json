@@ -1,0 +1,37 @@
+{
+ "source": "recorded 2026-09-26 on emulator andronix-a9 (Android 9, kernel 4.4.302, GitHub Termux), app context, during andronix install kali (probe version 2)",
+ "distro": "kali",
+ "family": "apt",
+ "de": "xfce",
+ "probe": {
+  "probe_version": 2,
+  "time": "2026-09-26T19:18:00Z",
+  "kernel": "4.4.302-gcc24b0a8f68a",
+  "sdk": 28,
+  "rom": "emulator",
+  "phantom": "off",
+  "ram_mb": 1936,
+  "free_mb": 15232,
+  "termux": "github",
+  "termux_version": "0.118.3",
+  "syscalls": {
+   "clone3": "ENOSYS",
+   "close_range": "ok",
+   "faccessat2": "ENOSYS",
+   "fchmodat2": "ENETDOWN",
+   "memfd_create": "ok",
+   "name_to_handle_at": "ENOSYS",
+   "open_tree": "ENETDOWN",
+   "openat2": "ok",
+   "seccomp": "EINVAL",
+   "statx": "ok",
+   "statx_mnt_id": "missing"
+  }
+ },
+ "expect": [
+  "old-syscall-order",
+  "old-kernel-desktop",
+  "mount-id-shim",
+  "fchmodat2-bad-errno"
+ ]
+}

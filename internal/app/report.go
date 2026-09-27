@@ -1,14 +1,18 @@
 package app
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"regexp"
-	"syscall"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/AndronixApp/andronix-distros/internal/sys"
 	"github.com/AndronixApp/andronix-distros/internal/telemetry"
+	"github.com/AndronixApp/andronix-distros/internal/termux"
+	"github.com/AndronixApp/andronix-distros/internal/ui"
 )
 
 // Install result for the Andronix app (the android contract). The app
@@ -50,9 +54,12 @@ func (r *installReport) amArgs(status string) []string {
 	return append(a, "--es", "version", Version)
 }
 
-// send broadcasts the result once. am runs in its own session under a
-// small sh wrapper that kills it after 5 s, so neither a slow am nor this
-// process exec'ing into the distro shell (or exiting) affects the other.
+// send broadcasts the result once, in the foreground (up to ~12 s per
+// try; Termux's am starts a Java VM, which took over the 5 s the 2.0.0
+// background send allowed on a slow phone, and nothing was logged). It
+// tries Termux's am, then Android's own; every try goes to termux.log
+// (which outlives the per-run logs), and a line tells the user if both
+// failed.
 func (r *installReport) send(status string) {
 	if r == nil || r.sent {
 		return
@@ -64,28 +71,54 @@ func (r *installReport) send(status string) {
 		props["step"], props["error_class"] = r.step, telemetry.ErrorClass(r.err)
 	}
 	telemetry.Send("install_result", props)
+	if id := os.Getenv("ANDRONIX_INSTALL_ID"); id != "" && !installIDRe.MatchString(id) {
+		termux.Logf("install result: ANDRONIX_INSTALL_ID %q isn't 16 hex digits; not sent", id)
+	}
 	args := r.amArgs(status)
 	if args == nil {
 		return
 	}
-	am := filepath.Join(sys.Prefix(), "bin/am")
-	if sys.Prefix() == "" || !fileExists(am) {
-		var err error
-		if am, err = sys.LookPath("am"); err != nil {
-			return // no am (not Termux, or termux-am missing): say nothing
+	var tried []string
+	if sys.Prefix() != "" {
+		tried = append(tried, filepath.Join(sys.Prefix(), "bin/am"))
+	}
+	tried = append(tried, "/system/bin/am")
+	for _, am := range tried {
+		if !fileExists(am) {
+			termux.Logf("install result: %s missing", am)
+			continue
+		}
+		a := args
+		if strings.HasPrefix(am, "/system/") {
+			// Android's am defaults to the current user, which an app may
+			// not name (INTERACT_ACROSS_USERS); its own user it may.
+			a = append([]string{args[0], "--user", strconv.Itoa(os.Getuid() / 100000)}, args[1:]...)
+		}
+		out, err := runAm(am, a)
+		termux.Logf("install result %s via %s: %v %s", status, am, err, strings.Join(strings.Fields(out), " "))
+		if err == nil && amDelivered(out) {
+			return
 		}
 	}
-	sh, err := sys.LookPath("sh")
-	if err != nil {
-		return
+	ui.Note("The Andronix app wasn't told that the install finished; it still works. Details: ~/.andronix/logs/termux.log")
+}
+
+// runAm runs am with a 12 s limit and returns what it printed.
+func runAm(am string, args []string) (string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 12*time.Second)
+	defer cancel()
+	out, err := sys.CommandContext(ctx, am, args...).CombinedOutput()
+	if ctx.Err() != nil {
+		err = ctx.Err()
 	}
-	c := sys.Command(sh, append([]string{"-c",
-		`"$0" "$@" & p=$!; (sleep 5; kill $p) & k=$!; wait $p; kill $k`, am}, args...)...)
-	c.Stdin, c.Stdout, c.Stderr = nil, nil, nil
-	c.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
-	if c.Start() == nil {
-		go c.Wait()
-	}
+	return string(out), err
+}
+
+// amDelivered: am said it sent the broadcast ("Broadcast completed", or
+// Termux's am: "Broadcast sent without waiting for result"), and no error.
+func amDelivered(out string) bool {
+	return (strings.Contains(out, "Broadcast completed") || strings.Contains(out, "Broadcast sent")) &&
+		!strings.Contains(out, "Exception") && !strings.Contains(out, "Error")
 }
 
 func fileExists(p string) bool { _, err := os.Stat(p); return err == nil }

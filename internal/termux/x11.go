@@ -157,6 +157,99 @@ func classifyX11(out string, err error) error {
 	return fmt.Errorf("termux-x11 stopped (%v): %s", err, lastLines(out, 3))
 }
 
+// HideExtraKeysOnce hides Termux:X11's extra-keys bar the first time a
+// desktop starts: it covers the bottom ~130 px, where docks and panels
+// sit. Only once (a marker in ~/.andronix), so a user who brings it back
+// with a three-finger swipe down keeps it. Call it after OpenX11App: on a
+// fresh install the app sets up its preferences when it first starts, and
+// a value written before that is lost (the call still succeeds). So the
+// setting is read back, tried a second time if it didn't stick, and the
+// marker is written only once it reads false. Reports whether it hid it.
+func HideExtraKeysOnce() bool {
+	if !isTermux() {
+		return false
+	}
+	marker := filepath.Join(filepath.Dir(filepath.Dir(logPath())), "x11-extra-keys-hidden")
+	if _, err := os.Stat(marker); err == nil {
+		return false
+	}
+	for try := 1; try <= 2; try++ {
+		time.Sleep(extraKeysWait)
+		// additionalKbdVisible is the bar's current state; a three-finger
+		// swipe down (the default swipeDownAction) toggles it.
+		// showAdditionalKbd would remove the feature, so it's left alone.
+		out, err := sys.Command("termux-x11-preference", "additionalKbdVisible:false").CombinedOutput()
+		if err != nil {
+			Logf("x11: hiding the extra-keys bar failed (try %d): %v: %s", try, err, lastLines(string(out), 2))
+			continue
+		}
+		if v := x11Preference("additionalKbdVisible"); v != "false" {
+			Logf("x11: the extra-keys bar setting didn't stick (try %d): additionalKbdVisible=%q", try, v)
+			continue
+		}
+		os.MkdirAll(filepath.Dir(marker), 0o755)
+		os.WriteFile(marker, []byte(time.Now().Format(time.RFC3339)+"\n"), 0o644)
+		Logf("x11: hid Termux:X11's extra-keys bar (first desktop; a three-finger swipe down brings it back)")
+		return true
+	}
+	Logf("x11: left the extra-keys bar as it is; the next andronix desktop tries again")
+	return false
+}
+
+// extraKeysWait is how long HideExtraKeysOnce gives the app to start
+// before each try.
+var extraKeysWait = 3 * time.Second
+
+// x11Preference reads one Termux:X11 preference ("" if it can't).
+func x11Preference(key string) string {
+	out, err := sys.Command("termux-x11-preference", "list").CombinedOutput()
+	if err != nil {
+		return ""
+	}
+	for _, l := range strings.Split(string(out), "\n") {
+		k, v, ok := strings.Cut(strings.TrimSpace(l), "=")
+		if ok && strings.Trim(k, `"`) == key {
+			return strings.Trim(v, `"`)
+		}
+	}
+	return ""
+}
+
+// PhantomNote is a one-line warning about Android's phantom process
+// killer, which stops a desktop's processes ("signal 9") on Android 12
+// and newer, or "" where it doesn't apply: before Android 12, or Android
+// 14+ with "Disable child process restrictions" turned on (the Developer
+// options switch sets the property read here). Andronix only warns; it
+// never changes the setting.
+func PhantomNote() string {
+	if !isTermux() {
+		return ""
+	}
+	sdk, _ := strconv.Atoi(getprop("ro.build.version.sdk"))
+	return phantomNote(sdk, getprop("persist.sys.fflag.override.settings_enable_monitor_phantom_procs"))
+}
+
+func phantomNote(sdk int, monitor string) string {
+	const page = "https://docs.andronix.app/troubleshooting/signal-9"
+	switch {
+	case sdk < 31:
+		return ""
+	case sdk >= 34 && monitor == "false":
+		return ""
+	case sdk >= 34:
+		return "Android may stop the desktop (\"signal 9\"). To prevent it, turn on Developer options > Disable child process restrictions: " + page + "#android-14-and-newer"
+	}
+	return "Android 12 and 13 may stop the desktop (\"signal 9\"). How to prevent it: " + page
+}
+
+func getprop(key string) string {
+	out, err := sys.Command("getprop", key).Output()
+	if err != nil {
+		return ""
+	}
+	return strings.TrimSpace(string(out))
+}
+
 // OpenX11App brings the Termux:X11 app to the front.
 func OpenX11App() {
 	if !isTermux() {

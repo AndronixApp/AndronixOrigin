@@ -1,6 +1,10 @@
 package app
 
 import (
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -100,5 +104,112 @@ func TestModdedTokenAsIs(t *testing.T) {
 	s, _ := moddedSource(d, de, "arm", Paths{}, "k=K&e=E&h=H&p=modded_pass&v=2", "ubuntu-kde")
 	if !strings.HasSuffix(s.url, "/download/ubuntu-26.04-kde-modded-arm.tar.xz?e=E&h=H&k=K&p=modded_pass&v=2") {
 		t.Errorf("url: %s", s.url)
+	}
+}
+
+// Per-run logs rotate per kind, by time stamp; the log just opened stays
+// even when another kind has many newer-sorting names.
+func TestRotateLogs(t *testing.T) {
+	d := t.TempDir()
+	touch := func(n string) { os.WriteFile(filepath.Join(d, n), nil, 0o644) }
+	for i := 0; i < 12; i++ {
+		touch(fmt.Sprintf("x11-20260926-1200%02d.log", i))
+		touch(fmt.Sprintf("remove-debian-20260926-1300%02d.log", i))
+	}
+	touch("install-kali-20260926-110000.log") // older stamp, sorts first by name
+	touch("termux.log")
+	current := filepath.Join(d, "install-kali-20260926-140000.log")
+	touch(filepath.Base(current))
+	rotateLogs(d, 10, current)
+	has := func(n string) bool { _, err := os.Stat(filepath.Join(d, n)); return err == nil }
+	if !has(filepath.Base(current)) || !has("install-kali-20260926-110000.log") || !has("termux.log") {
+		t.Error("the new install log, an older one of its kind, or a running log was removed")
+	}
+	if has("x11-20260926-120001.log") || !has("x11-20260926-120002.log") || !has("x11-20260926-120011.log") {
+		t.Error("x11: want the newest 10 kept")
+	}
+	if has("remove-debian-20260926-130000.log") || !has("remove-debian-20260926-130011.log") {
+		t.Error("remove-debian: want the newest 10 kept")
+	}
+	rotateLogs(d, 0, current) // even with nothing to keep, the current log stays
+	if !has(filepath.Base(current)) {
+		t.Error("current log removed")
+	}
+}
+
+// A desktop install that stopped part way leaves startxfce4 behind; on
+// resume that mustn't look like a prebuilt image (Kali from 2.0.0 skipped
+// "Installing XFCE" and was left without dbus).
+func TestPrebuilt(t *testing.T) {
+	de, _ := conf.ResolveDesktop("xfce")
+	d := t.TempDir()
+	in := &Inst{Dir: d, Rootfs: filepath.Join(d, "rootfs"), State: filepath.Join(d, "install.conf")}
+	os.MkdirAll(filepath.Join(in.Rootfs, "usr/bin"), 0o755)
+	os.WriteFile(filepath.Join(in.Rootfs, "usr/bin/startxfce4"), nil, 0o755)
+	in.Set("EDITION", "")
+	if prebuilt(in, de) {
+		t.Error("free install from 2.0.0 (no PREBUILT): want not prebuilt")
+	}
+	in.Set("EDITION", "legacy-debian")
+	if !prebuilt(in, de) {
+		t.Error("Classic from 2.0.0: want prebuilt")
+	}
+	in.Set("PREBUILT", "no")
+	if prebuilt(in, de) {
+		t.Error("PREBUILT=no: want not prebuilt")
+	}
+	in.Set("PREBUILT", "yes")
+	if !prebuilt(in, de) {
+		t.Error("PREBUILT=yes: want prebuilt")
+	}
+	os.Remove(filepath.Join(in.Rootfs, "usr/bin/startxfce4"))
+	if prebuilt(in, de) {
+		t.Error("no session binary: want not prebuilt")
+	}
+}
+
+// Self-update only moves forward: 2.0.1-rc3 replaced itself with 2.0.0.
+func TestVersionCmp(t *testing.T) {
+	order := []string{"1.9.9", "2.0.0-beta1", "2.0.0-rc1", "2.0.0-rc2", "2.0.0-rc10", "2.0.0", "v2.0.0-5-gabc123", "v2.0.0-68-g9a0a0b4-dirty",
+		"2.0.1-rc3", "v2.0.1", "2.0.10"}
+	for i := range order {
+		for j := range order {
+			want := cmpInt(i, j)
+			if got := versionCmp(order[i], order[j]); got != want {
+				t.Errorf("versionCmp(%s, %s) = %d, want %d", order[i], order[j], got, want)
+			}
+		}
+	}
+	for _, junk := range []string{"", "dev", "andronix", "2.0"} {
+		if versionCmp(junk, "1.0.0") >= 0 {
+			t.Errorf("%q counts as newer than 1.0.0", junk)
+		}
+	}
+}
+
+func TestBinaryVersion(t *testing.T) {
+	d := t.TempDir()
+	bin := filepath.Join(d, "andronix")
+	os.WriteFile(bin, []byte("#!/bin/sh\necho 'andronix 2.0.0 (go, android/arm64)'\n"), 0o755)
+	if v := binaryVersion(context.Background(), bin); v != "2.0.0" {
+		t.Errorf("got %q", v)
+	}
+	os.WriteFile(bin, []byte("#!/bin/sh\necho garbage\n"), 0o755)
+	if v := binaryVersion(context.Background(), bin); v != "" {
+		t.Errorf("garbage: got %q", v)
+	}
+}
+
+// What Termux's am and Android's am print (a16, Sept 27).
+func TestAmDelivered(t *testing.T) {
+	for out, want := range map[string]bool{
+		"Broadcasting: Intent { act=x (has extras) }\nBroadcast sent without waiting for result": true,
+		"Broadcasting: Intent { act=x }\nBroadcast completed: result=0":                          true,
+		"Broadcasting: Intent { act=x }\nException occurred while executing 'broadcast': java.lang.SecurityException: Permission Denial": false,
+		"": false,
+	} {
+		if got := amDelivered(out); got != want {
+			t.Errorf("%q: got %v", out, got)
+		}
 	}
 }

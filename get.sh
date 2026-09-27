@@ -41,7 +41,15 @@ name="andronix-$os-$arch"
 curl_works() { command -v curl >/dev/null 2>&1 && curl --version >/dev/null 2>&1; }
 wget_works() { command -v wget >/dev/null 2>&1 && wget --version >/dev/null 2>&1; }
 fetch() { # fetch URL FILE: curl, else wget
-    if curl_works && curl -fsSL --retry 4 --retry-delay 3 --connect-timeout 20 -o "$2" "$1"; then return 0; fi
+    # --retry alone skips a connection cut mid-TLS ("unexpected eof",
+    # curl 55/56) on a lossy network; --retry-all-errors (curl 7.71+)
+    # retries that too.
+    ra=""
+    curl --help all 2>/dev/null | grep -q -- --retry-all-errors && ra=--retry-all-errors
+    if curl_works && curl -fsSL --retry 2 $ra --retry-delay 2 --connect-timeout 10 -o "$2" "$1"; then return 0; fi
+    # A network with IPv6 that goes nowhere (seen on an Android 9
+    # emulator) hangs every connect over it: try IPv4 only.
+    if curl_works && curl -4 -fsSL --retry 3 $ra --retry-delay 3 --connect-timeout 20 -o "$2" "$1"; then return 0; fi
     wget_works && wget -q -T 20 -t 4 -O "$2" "$1"
 }
 

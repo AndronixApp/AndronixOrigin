@@ -14,4 +14,6 @@ signature)
 esac
 display=$1
 shift
-exec Xvfb "$display" -screen 0 1280x720x24 -nolisten tcp "$@"
+# ~/.fake-x11-size: the screen, e.g. 1080x2400 for a portrait phone.
+size=$(cat "$HOME/.fake-x11-size" 2>/dev/null || echo 1280x720)
+exec Xvfb "$display" -screen 0 "${size}x24" -nolisten tcp "$@"

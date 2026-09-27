@@ -176,13 +176,7 @@ func install(ctx context.Context, o InstallOpts) error {
 	} else if o.Modded {
 		edition = d.ID + "-" + de.ID
 	}
-	have := in.Get("EDITION")
-	if have == "" && moddedImage(in) { // Modded installs from before EDITION was recorded
-		have = conf.Parse(readFile(filepath.Join(in.Rootfs, "usr/share/andronix/modded/edition"))).Get("EDITION")
-		if have == "" || have == "modded" {
-			have = d.ID + "-" + in.Get("DE")
-		}
-	}
+	have := installedEdition(in)
 	if in.Installed() && !o.Reinstall && have != edition && (o.Modded || have != "") {
 		name := func(e string) string {
 			if e == "" {
@@ -231,10 +225,15 @@ func install(ctx context.Context, o InstallOpts) error {
 		ui.KV("CPU", arch.Label()), ui.KV("Desktop", deLabel), ui.KV("Location", ui.Tilde(in.Dir))))
 	fmt.Println()
 	ui.Note("Keep Termux open while this runs; it takes 5 to 30 minutes on a phone. Android may ask whether Termux can run in the background: tap Allow, so the install isn't stopped.")
-	// Kernels before 4.8 (Android 9 on 4.4): proot runs without seccomp
-	// acceleration and the XFCE desktop stays black (known issue, CHANGELOG.md).
-	if !de.None() && sys.IsTermux() && proot.OldKernel() {
-		ui.Warn("Your phone's kernel is old (" + sys.KernelRelease() + "); desktops may show a black screen. The command line works. Try --de none, or tell us on Discord: https://chat.andronix.app")
+	// This phone's compatibility rules (compat.json): what's known before
+	// the probe (kernel, Android, Termux, a cached probe).
+	cr := newCompat(d, de.ID)
+	shown := map[string]bool{}
+	if sys.IsTermux() {
+		cr.warnings(shown)
+		if err := cr.refuse(d); err != nil {
+			return err
+		}
 	}
 	fmt.Println()
 
@@ -433,11 +432,37 @@ func install(ctx context.Context, o InstallOpts) error {
 					lg.Printf("upstream clean: %v", err)
 				}
 			}
+			// Whether the image itself has the desktop, before any package
+			// run: a desktop install that stopped part way leaves the
+			// session binary too, and mustn't count as prebuilt on resume.
+			pb := "no"
+			if sessionPresent(in, de) {
+				pb = "yes"
+			}
+			in.Set("PREBUILT", pb)
 			return in.Set("STAGE", "extracted")
 		}},
 		{Label: "Setting up " + d.Label(), Run: func(ctx context.Context, r ui.Reporter) error {
+			// Measure this phone inside the rootfs, then apply the fixes
+			// (idempotent: every install and resume runs it).
+			compatFix := func(ctx context.Context) error {
+				if !sys.IsTermux() {
+					return nil
+				}
+				cr.probe(ctx, t, lg)
+				if err := cr.refuse(d); err != nil {
+					return err
+				}
+				cr.apply(in.Rootfs, arch, lg)
+				return in.Set("COMPAT", strings.Join(cr.plan.IDs, " "))
+			}
 			if in.Get("STAGE") != "extracted" && haveRootfs {
 				rootfs.InstallSelf(in.Rootfs) // keep the in-distro helper current
+				// A resumed install (maybe begun by an older andronix) still
+				// gets this phone's fixes before the package steps.
+				if err := compatFix(ctx); err != nil {
+					return err
+				}
 				return ui.Skip("already set up")
 			}
 			edition := "free"
@@ -457,6 +482,9 @@ func install(ctx context.Context, o InstallOpts) error {
 				pkgmgr.NoSnap(in.Rootfs)
 			}
 			pkgmgr.SetMirror(in.Rootfs, d.Family, d.MirrorFor(string(arch)))
+			if err := compatFix(ctx); err != nil {
+				return err
+			}
 			if fam.FchmodatShim {
 				if err := installShim(in.Rootfs, arch); err != nil {
 					lg.Printf("fchmodat shim: %v", err)
@@ -470,6 +498,9 @@ func install(ctx context.Context, o InstallOpts) error {
 		{Label: "Refreshing package lists", Run: func(ctx context.Context, r ui.Reporter) error {
 			if err := run(r, fam.Update); err != nil {
 				return pkgErr("Couldn't reach the package servers", err)
+			}
+			if err := cr.preScripts(ctx, t, r); err != nil {
+				return err
 			}
 			return preUpgrade(ctx, t, d, r)
 		}},
@@ -499,7 +530,13 @@ func install(ctx context.Context, o InstallOpts) error {
 				pkgs = append(pkgs, de.Packages(d.Family)...)
 				pkgs = append(pkgs, fam.VNC...)
 				// Optional packages: only those this distro has.
-				if opt := de.OptionalPackages(d.Family); len(opt) > 0 {
+				var opt []string
+				for _, o := range de.OptionalPackages(d.Family) {
+					if !cr.plan.SkipOptional[o] {
+						opt = append(opt, o)
+					}
+				}
+				if len(opt) > 0 {
 					t.Run(ctx, fam.FilterAvailable(opt), nil, func(l string) {
 						if l = strings.TrimSpace(l); l != "" && !strings.Contains(l, " ") {
 							pkgs = append(pkgs, l)
@@ -528,24 +565,16 @@ func install(ctx context.Context, o InstallOpts) error {
 				return ui.Skip("already in the image")
 			}
 			r.Label("Installing " + strings.Title(strings.TrimSuffix(b, "-esr")))
-			if d.BrowserRepo == "mozilla" {
-				key, _, err := netx.Get(ctx, pkgmgr.MozillaKeyURL, nil)
-				if err == nil {
-					err = pkgmgr.MozillaRepo(in.Rootfs, key)
-				}
-				if err == nil {
-					err = run(r, fam.Update)
-				}
-				if err != nil {
-					lg.Printf("mozilla repo: %v", err)
-					return ui.Skip("couldn't reach Mozilla; install it later")
-				}
+			if err := browserRepo(ctx, d, in.Rootfs, t, fam); err != nil {
+				lg.Printf("mozilla repo: %v", err)
+				return ui.Skip("couldn't reach Mozilla; install it later")
 			}
 			n := count(ctx, t, fam.SimInstall([]string{b}), fam)
 			if err := pkgRun(ctx, t, fam, fam.Install([]string{b}), n, r); err != nil {
 				lg.Printf("browser: %v", err)
 				return ui.Skip("failed; try later: install " + b)
 			}
+			installCodecs(ctx, t, fam, d, r, lg)
 			run(r, fam.Clean)
 			return nil
 		}},
@@ -578,7 +607,9 @@ func install(ctx context.Context, o InstallOpts) error {
 			in.Set("SOURCE", src.kind)
 			in.Set("STAGE", "done")
 			os.RemoveAll(filepath.Join(paths.Cache, "layers-"+d.ID))
-			if src.kind == "tarball" {
+			// The image isn't needed any more (a Modded or Classic one
+			// never stays on the phone longer than the install).
+			if src.kind == "tarball" || src.kind == "modded" || src.kind == "upstream" {
 				os.Remove(src.file)
 			}
 			return nil
@@ -645,10 +676,67 @@ func installShim(root string, arch sys.Arch) error {
 	return os.WriteFile(p, append(cur, []byte(lib+"\n")...), 0o644)
 }
 
+// browserRepo adds the browser's own package repository (Mozilla's) and
+// refreshes the package lists; nothing for distros without one.
+func browserRepo(ctx context.Context, d *conf.Distro, root string, t *proot.Target, fam *pkgmgr.Family) error {
+	if d.BrowserRepo != "mozilla" {
+		return nil
+	}
+	key, _, err := netx.Get(ctx, pkgmgr.MozillaKeyURL, nil)
+	if err == nil {
+		err = pkgmgr.MozillaRepo(root, key)
+	}
+	if err == nil {
+		err = t.Run(ctx, fam.Update, nil, nil)
+	}
+	return err
+}
+
+// installCodecs installs the browser's video codecs (DISTRO_BROWSER_CODECS),
+// if any are missing. Optional: if the set fails, each on its own (Fedora's
+// openh264 comes from Cisco's repo, which may be off). It reports whether
+// it installed anything.
+func installCodecs(ctx context.Context, t *proot.Target, fam *pkgmgr.Family, d *conf.Distro, r ui.Reporter, lg *Logger) bool {
+	cs := d.BrowserCodecs
+	if len(cs) == 0 {
+		return false
+	}
+	n := count(ctx, t, fam.SimInstall(cs), fam)
+	if n == 0 {
+		return false
+	}
+	r.Label("Installing video codecs")
+	if err := pkgRun(ctx, t, fam, fam.Install(cs), n, r); err != nil {
+		lg.Printf("browser codecs: %v", err)
+		for _, c := range cs {
+			if err := t.Run(ctx, fam.Install([]string{c}), nil, func(l string) { r.Line(l) }); err != nil {
+				lg.Printf("browser codec %s: %v", c, err)
+			}
+		}
+	}
+	return true
+}
+
 // prebuilt reports whether the unpacked image already contains this
 // desktop (its session command is installed): a Modded edition or an
 // exported rootfs. Then the package steps are skipped.
 func prebuilt(in *Inst, de *conf.Desktop) bool {
+	if !sessionPresent(in, de) {
+		return false
+	}
+	switch in.Get("PREBUILT") {
+	case "yes":
+		return true
+	case "no":
+		return false
+	}
+	// Unpacked by an andronix before PREBUILT (2.0.0): only a Modded or
+	// Classic image is prebuilt; a free one has its desktop from apt,
+	// maybe half-installed.
+	return moddedImage(in) || in.Get("EDITION") != ""
+}
+
+func sessionPresent(in *Inst, de *conf.Desktop) bool {
 	if de.None() || de.Session == "" {
 		return false
 	}
@@ -837,7 +925,13 @@ func downloadErr(err error) error {
 		return ui.ErrCancelled
 	}
 	var se *netx.StatusError
-	if errors.As(err, &se) && (se.Code == 401 || se.Code == 403) {
+	if errors.As(err, &se) && se.Code == 403 {
+		// products-api: a genuine token for another edition.
+		return &ui.UserError{Title: "That token is for another edition", Class: "token_other_edition",
+			What: "The download token was made for a different Modded edition than this command installs.",
+			Fix:  "Copy the install command for this edition from the Andronix app.", Err: err}
+	}
+	if errors.As(err, &se) && se.Code == 401 {
 		return &ui.UserError{Title: "Download link expired", Class: "token_refused", What: "The download token was refused (it lasts a limited time, and each purchase has a daily limit).",
 			Fix: "Copy a fresh install command from the Andronix app and run it again.", Err: err}
 	}

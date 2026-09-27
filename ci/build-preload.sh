@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the guest preload libraries (fchmodat.c, shm.c) for every CPU
+# Build the guest preload libraries (fchmodat.c, shm.c, mntid.c) for every CPU
 # Andronix ships, in a Debian container with cross compilers. Output:
 # guest/preload/<arch>/libandronix-{fchmodat,shm}.so
 #
@@ -22,6 +22,8 @@ docker run --rm -v "$PWD/guest/preload":/w -w /w debian:13 bash -c '
         # shm.c: no _FILE_OFFSET_BITS (plain symbol names; segments are tiny).
         $cc -shared -fPIC $page -O2 -Wall -Wextra -nostartfiles \
             -Wl,-soname,libandronix-shm.so -o "$a/libandronix-shm.so" shm.c
-        ${t#*:}-strip "$a/libandronix-fchmodat.so" "$a/libandronix-shm.so"
-        echo "$a: $(wc -c <"$a/libandronix-fchmodat.so") + $(wc -c <"$a/libandronix-shm.so") bytes"
+        $cc -shared -fPIC $page -O2 -Wall -Wextra -nostartfiles \
+            -Wl,-soname,libandronix-mntid.so -o "$a/libandronix-mntid.so" mntid.c -ldl
+        ${t#*:}-strip "$a/libandronix-fchmodat.so" "$a/libandronix-shm.so" "$a/libandronix-mntid.so"
+        echo "$a: $(wc -c <"$a/libandronix-fchmodat.so") + $(wc -c <"$a/libandronix-shm.so") + $(wc -c <"$a/libandronix-mntid.so") bytes"
     done'

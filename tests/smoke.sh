@@ -85,6 +85,8 @@ check "pack remove keeps packages another pack uses" "$P remove debian tinya >/d
 check "pack remove takes out what it installed" "$P remove debian tinyb >/dev/null && ~/start-debian.sh 'jq --version' 2>&1 | grep -q 'not found'"
 check "missing package and unknown pack give friendly errors" "out=\$($P add debian tinyc 2>&1); [ \$? = 1 ] && echo \"\$out\" | grep -q \"isn't available\" && ! test -e $S/tinyc && $P add debian nope 2>&1 | grep -q 'Unknown pack'"
 check "backup" "$A backup debian ~/b.tar.gz && test -s ~/b.tar.gz"
+check "remove <edition> keeps the free distro (the app's Modded uninstall)" "out=\$($A remove debian-xfce --legacy --yes 2>&1) && echo \"\$out\" | grep -q \"isn't installed\" && test -d ~/.andronix/distros/debian/rootfs"
+check "start <edition> that isn't installed explains" "out=\$($A start debian-xfce -- true 2>&1); [ \$? = 1 ] && echo \"\$out\" | grep -q 'andronix start debian'"
 check "remove (keeps legacy)" "$A remove debian --yes && ! test -e ~/.andronix/distros/debian && ! test -e ~/start-debian.sh && test -d ~/debian-fs"
 check "restore" "$A restore ~/b.tar.gz --yes && ~/start-debian.sh 'perl -e 1 && command -v less'"
 check "backup is portable: no .l2s files or host-path links" "$A start debian --root -- sh -c 'apt-get install -y -qq perl >/dev/null 2>&1' && find ~/.andronix/distros/debian/rootfs -name '.l2s.*' | grep -q . && $A backup debian ~/p.tar.gz >/dev/null && ! tar -tvzf ~/p.tar.gz | grep -qE '\.l2s\.|-> /home/termux'"

@@ -3,7 +3,8 @@
 # terminal like a user pastes it, so the installer's "Remove it?" question
 # appears and is answered with a key press.
 #
-#   TERMUX_APK=<apk> tests/emulator/uninstall-test.sh -s emulator-5564 --case a|b
+#   ALLOW_WIPE=1 TERMUX_APK=<apk> tests/emulator/uninstall-test.sh -s emulator-5564 --case a|b [--fallback pkg|apt]
+#   (emulators only: it uninstalls Termux; ALLOW_WIPE=1 says that's intended)
 #
 #   a  andronix installed, a distro from the new installer: the command must
 #      take the 'andronix remove <id> --legacy' branch (no pkg upgrade) and
@@ -13,17 +14,23 @@
 #      the fallback branch (fetch get.sh, upgrading Termux if curl fails,
 #      then 'get.sh remove debian --legacy') must clean it up.
 #
+# --fallback: how the command repairs a Termux whose curl can't run. apt
+# (default, the app's template since android c579e30: apt-get only) or pkg
+# (the template before: pkg upgrade, which itself needs curl to pick a
+# mirror, so it can't repair it).
+#
 # get.sh and the binary come from this checkout's dist/, served from the
 # host (adb reverse) in place of https://dl.andronix.app.
 set -uo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 repo=$(cd "$here/../.." && pwd)
-case_=""
+case_="" fallback=apt
 while [ $# -gt 0 ]; do
     case $1 in
         -s) export ANDROID_SERIAL=$2; shift ;;
         --case) case_=$2; shift ;;
-        -h|--help) sed -n '2,19p' "$0"; exit 0 ;;
+        --fallback) fallback=$2; shift ;;
+        -h|--help) sed -n '2,23p' "$0"; exit 0 ;;
         *) echo "unknown option: $1" >&2; exit 2 ;;
     esac
     shift
@@ -34,14 +41,18 @@ for d in "${ANDROID_HOME:-}" "$HOME/Library/Android/sdk" /opt/homebrew/share/and
 done
 export ADB=${ADB:-adb}
 [ -n "${TERMUX_APK:-}" ] || { echo "TERMUX_APK is required" >&2; exit 2; }
-out="$here/results/uninstall-$case_-$(date +%Y%m%d-%H%M%S)"
+out="$here/results/uninstall-$case_-$fallback-$(date +%Y%m%d-%H%M%S)"
 mkdir -p "$out"
 log() { printf '%s  %s\n' "$(date +%H:%M:%S)" "$*" | tee -a "$out/run.log"; }
 # shellcheck source=app-context.sh
 . "$here/app-context.sh"
+ac_guard_serial
+ac_require_wipe_ok   # uninstalls Termux below
 P=/data/data/com.termux/files/usr H=/data/data/com.termux/files/home
 
-port=$((8700 + ${ANDROID_SERIAL##*-} % 100))
+port=${HOST_PORT:-$(ac_port 8700)}
+# A server left by an interrupted run would answer 404 from a deleted folder.
+while lsof -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; do port=$((port + 100)); done
 www=$(mktemp -d)
 mkdir -p "$www/bin/latest"
 cp "$repo"/dist/andronix-android-aarch64 "$repo"/dist/andronix-linux-aarch64 "$repo"/dist/SHA256SUMS "$www/bin/latest/"
@@ -85,7 +96,16 @@ before=$(ac_runas "grep -c '^Commandline:' $P/var/log/apt/history.log 2>/dev/nul
 # The app's command (InstallCatalog.command(), d21e5b1 + d58e439 template),
 # get.sh from the host.
 g="curl -fsSL $mirror/get.sh -o \$PREFIX/tmp/get.sh"
-full="($g || (DEBIAN_FRONTEND=noninteractive pkg upgrade -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold && pkg install -y curl && $g)) && (command -v proot >/dev/null 2>&1 || pkg install -y proot) && sh \$PREFIX/tmp/get.sh remove debian --legacy"
+o="-o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold"
+case $fallback in
+apt) ;;  # the app's template (android c579e30)
+*) echo "--fallback pkg: the template before c579e30" >&2 ;;
+esac
+if [ "$fallback" = apt ]; then
+    full="(curl -fsSL $mirror/get.sh -o \$PREFIX/tmp/get.sh || (DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold full-upgrade && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold install curl && curl -fsSL $mirror/get.sh -o \$PREFIX/tmp/get.sh)) && (command -v proot >/dev/null 2>&1 || (DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=--force-confdef -o Dpkg::Options::=--force-confold install proot)) && sh \$PREFIX/tmp/get.sh remove debian --legacy"
+else
+    full="($g || (DEBIAN_FRONTEND=noninteractive pkg upgrade -y $o && pkg install -y curl && $g)) && (command -v proot >/dev/null 2>&1 || pkg install -y proot) && sh \$PREFIX/tmp/get.sh remove debian --legacy"
+fi
 cmd="if command -v andronix >/dev/null 2>&1; then andronix remove debian --legacy; else $full; fi"
 echo "$cmd" >"$out/command.txt"
 printf 'export ANDRONIX_MIRROR=%s\n%s\necho "UNINSTALL-EXIT=$?" >%s/.ac/uninstall.rc\n' "$mirror" "$cmd" "$H" | ac_put uninstall.sh 700

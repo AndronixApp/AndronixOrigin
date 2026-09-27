@@ -42,6 +42,23 @@ ac_put() { # ac_put REL_PATH MODE
     "$AC_ADB" shell "chmod 644 $stage && run-as $AC_PKG sh -c 'cat $stage > $AC_DIR/$1.part && chmod $2 $AC_DIR/$1.part && mv $AC_DIR/$1.part $AC_DIR/$1'; rm -f $stage" </dev/null >/dev/null 2>&1
 }
 
+# Every harness run names its device: never "whatever adb picks" (a run
+# without a serial once typed into the owner's phone). Emulators only,
+# unless ALLOW_REAL_DEVICE=1.
+ac_guard_serial() {
+    if [ -z "${ANDROID_SERIAL:-}" ]; then
+        echo "refusing: no device given. Pass -s SERIAL (or set ANDROID_SERIAL); the harness never picks a device itself." >&2
+        exit 2
+    fi
+    case $ANDROID_SERIAL in
+        emulator-[0-9]*) ;;
+        *) if [ "${ALLOW_REAL_DEVICE:-}" != 1 ]; then
+               echo "refusing: $ANDROID_SERIAL isn't an emulator. Set ALLOW_REAL_DEVICE=1 to run on a real device." >&2
+               exit 2
+           fi ;;
+    esac
+}
+
 ac_install_agent() {
     ac_runas "mkdir -p $AC_DIR/q $AC_DIR/run $AC_DIR/out"
     ac_put agent 700 <<'AGENT'
@@ -84,6 +101,33 @@ clear
 START
 }
 
+# A host port for this device (adb reverse): emulator-NNNN keeps its
+# console number; any other serial (a phone, ip:port) gets a stable one
+# from its checksum. ANDROID_SERIAL must be set when more than one device
+# is attached.
+ac_port() { # ac_port BASE
+    local s=${ANDROID_SERIAL:-$("$AC_ADB" get-serialno 2>/dev/null </dev/null)} n
+    case ${s##*-} in
+        ''|*[!0-9]*) n=$(printf %s "$s" | cksum | cut -d' ' -f1) ;;
+        *) n=$((10#${s##*-})) ;;
+    esac
+    echo $(( $1 + n % 100 ))
+}
+
+# True on an emulator. A real phone is someone's: no wipes, no settings
+# that outlive the run, no Termux in front of a running desktop.
+ac_is_emulator() {
+    [ "$("$AC_ADB" shell getprop ro.kernel.qemu </dev/null 2>/dev/null | tr -d '\r')" = 1 ] ||
+        [ "$("$AC_ADB" shell getprop ro.boot.qemu </dev/null 2>/dev/null | tr -d '\r')" = 1 ]
+}
+
+# Refuses (exit 2) unless this is an emulator and ALLOW_WIPE=1: for scripts
+# that uninstall Termux, which deletes every distro on the device.
+ac_require_wipe_ok() {
+    ac_is_emulator || { echo "refusing: $(${AC_ADB} get-serialno 2>/dev/null </dev/null) isn't an emulator; this script uninstalls Termux (all its data)" >&2; exit 2; }
+    [ "${ALLOW_WIPE:-}" = 1 ] || { echo "refusing: this uninstalls Termux on the emulator; set ALLOW_WIPE=1" >&2; exit 2; }
+}
+
 # Seconds since the agent last checked in (a large number if never).
 ac_age() {
     local a; a=$(ac_runas "echo \$(( \$(date +%s) - \$(cat $AC_DIR/alive 2>/dev/null || echo 0) ))")
@@ -92,9 +136,15 @@ ac_age() {
 
 # Put TermuxActivity in front with its terminal ready for keys.
 ac_front() {
+    ac_guard_serial
     "$AC_ADB" shell input keyevent KEYCODE_WAKEUP </dev/null
     "$AC_ADB" shell wm dismiss-keyguard >/dev/null 2>&1
-    "$AC_ADB" shell svc power stayon true >/dev/null 2>&1
+    if ac_is_emulator; then
+        "$AC_ADB" shell svc power stayon true >/dev/null 2>&1
+    elif "$AC_ADB" shell dumpsys window </dev/null 2>/dev/null | grep -E 'mCurrentFocus|mFocusedApp' | grep -q com.termux.x11; then
+        echo "not bringing Termux to the front: a desktop is in front on $("$AC_ADB" get-serialno </dev/null)" >&2
+        return 1
+    fi
     "$AC_ADB" shell am start -n "$AC_PKG/.app.TermuxActivity" >/dev/null 2>&1
     local i
     for i in $(seq 1 15); do
@@ -112,6 +162,7 @@ ac_front() {
 
 # Start the agent if it isn't running, and check it runs in the app's context.
 ac_ensure() {
+    ac_guard_serial
     [ "$(ac_age)" -le 10 ] && return 0
     ac_install_agent
     local try
@@ -141,6 +192,7 @@ ac_ensure() {
 
 # tsh_app: like tsh, but inside the Termux app process.
 tsh_app() {
+    ac_guard_serial
     local id rc body
     body=$(cat)  # first: nothing below may read the caller's stdin
     ac_ensure </dev/null || { echo "app-context: no agent in the Termux app" >&2; return 125; }
@@ -178,6 +230,7 @@ if [ "${BASH_SOURCE[0]}" = "$0" ]; then
         esac
         shift
     done
+    ac_guard_serial
     if ! command -v "$AC_ADB" >/dev/null; then
         for d in "${ANDROID_HOME:-}" "$HOME/Library/Android/sdk" /opt/homebrew/share/android-commandlinetools; do
             [ -n "$d" ] && [ -x "$d/platform-tools/adb" ] && { AC_ADB=$d/platform-tools/adb; break; }

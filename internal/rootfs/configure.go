@@ -131,13 +131,22 @@ func SetRelease(root string, kv map[string]string) error {
 	return writeFile(p, strings.Join(out, "\n")+"\n", 0o644)
 }
 
+// RefreshProfile rewrites /etc/profile.d/andronix.sh (andronix update).
+func RefreshProfile(root string) error {
+	return writeFile(filepath.Join(root, "etc/profile.d/andronix.sh"), profileSh, 0o644)
+}
+
 // Login profile: sound to Termux's PulseAudio, GUI apps to the VNC
 // display, and the Andronix greeting (or first-boot setup) once.
 const profileSh = `# /etc/profile.d/andronix.sh - written by the Andronix installer.
 export PULSE_SERVER="${PULSE_SERVER:-127.0.0.1}"
 [ -z "${DISPLAY:-}" ] && export DISPLAY=:1
-# Firefox's content sandbox can't start under proot (pages render no text).
-export MOZ_DISABLE_CONTENT_SANDBOX=1
+# Firefox's sandboxes can't start under proot: no text (content) and no
+# audio (the RDD and utility decoder processes) without these.
+export MOZ_DISABLE_CONTENT_SANDBOX=1 MOZ_DISABLE_RDD_SANDBOX=1 MOZ_DISABLE_UTILITY_SANDBOX=1
+# Shared memory without memfd seals: some phones' content processes all
+# died otherwise ("Shared memory PlatformHandle is not safe to map").
+export MOZ_SHM_NO_SEALS=1
 case $- in
     *i*)
         if [ -z "${ANDRONIX_WELCOMED:-}" ] && [ -x /usr/local/bin/andronix ]; then

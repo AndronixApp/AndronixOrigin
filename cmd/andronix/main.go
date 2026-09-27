@@ -4,7 +4,7 @@
 //	andronix start   <distro> [--root] [-- command...]
 //	andronix start   <distro> --x11 | desktop [distro] | desktop stop
 //	andronix remove  <distro> [--yes] [--legacy]
-//	andronix list | backup <distro> [file] | restore <file> | version | help
+//	andronix list | backup <distro> [file] | restore <file> | clean | version | help
 //
 // Inside a distro: andronix vnc start [WxH] [display] | vnc stop [display]
 // | setup-user | welcome.
@@ -21,6 +21,7 @@ import (
 	"syscall"
 
 	"github.com/AndronixApp/andronix-distros/internal/app"
+	"github.com/AndronixApp/andronix-distros/internal/compat"
 	"github.com/AndronixApp/andronix-distros/internal/sys"
 	"github.com/AndronixApp/andronix-distros/internal/telemetry"
 	"github.com/AndronixApp/andronix-distros/internal/ui"
@@ -103,7 +104,7 @@ func help() {
 	fmt.Println("  " + ui.Bold("Usage"))
 	for _, c := range []string{"andronix install debian --de xfce", "andronix start debian", "andronix desktop debian", "andronix update",
 		"andronix remove debian", "andronix list", "andronix backup debian --to storage", "andronix restore",
-		"andronix tune debian --profile light", "andronix pack add debian python"} {
+		"andronix tune debian --profile light", "andronix pack add debian python", "andronix clean"} {
 		ui.Cmd(c)
 	}
 	ui.Section("Install options")
@@ -136,6 +137,19 @@ func main() {
 	}
 	sys.FixDNS()
 	all := os.Args[1:]
+	// The compat probe, inside a distro (compat.RunAll runs each syscall in
+	// its own child: `__probe one <name>`).
+	if len(all) >= 1 && all[0] == "__probe" {
+		if len(all) == 3 && all[1] == "one" {
+			fmt.Println(compat.RunOne(all[2]))
+			return
+		}
+		self, _ := sys.Executable()
+		for n, r := range compat.RunAll(self) {
+			fmt.Println(n, r)
+		}
+		return
+	}
 	// A detached copy posting one telemetry event (telemetry.Send).
 	if len(all) == 2 && all[0] == "__telemetry" {
 		telemetry.Post(all[1])
@@ -205,6 +219,8 @@ func main() {
 			Manifest: a.flags["manifest"], Token: a.flags["token"], Channel: a.flags["channel"]})
 	case "list", "ls":
 		err = app.List()
+	case "clean":
+		err = app.Clean()
 	case "backup":
 		err = app.Backup(ctx, a.arg(0), a.arg(1), a.flags["to"] == "storage")
 	case "restore":
@@ -228,6 +244,8 @@ func main() {
 		default:
 			err = app.PackList(rest)
 		}
+	case "doctor":
+		err = app.Doctor(ctx, a.arg(0)) // --probe is still accepted: doctor always probes
 	case "telemetry":
 		switch a.arg(0) {
 		case "off":

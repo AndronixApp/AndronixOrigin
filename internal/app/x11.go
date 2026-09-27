@@ -99,6 +99,7 @@ func Desktop(ctx context.Context, name string) error {
 	if err != nil {
 		return err
 	}
+	desktopNote()
 	in := Open(d)
 	if !in.Installed() {
 		return ui.Errorf(d.Label()+" isn't installed", "There's no desktop to show yet.", "Install it first: andronix install "+d.ID+" --de xfce")
@@ -192,6 +193,10 @@ func Desktop(ctx context.Context, name string) error {
 		return x11Error(err, serverLog)
 	}
 	termux.OpenX11App()
+	// After the app is open (see HideExtraKeysOnce); it can take a few
+	// seconds, so the session starts meanwhile.
+	hidden := make(chan bool, 1)
+	go func() { hidden <- termux.HideExtraKeysOnce() }()
 	rootfs.EnsureBwrapShim(in.Rootfs)
 
 	t.Display = fmt.Sprintf(":%d", termux.X11Display)
@@ -216,11 +221,17 @@ func Desktop(ctx context.Context, name string) error {
 		"Switch to the Termux:X11 app to use it. If it didn't open, open Termux:X11 from your app drawer.",
 		"Keep this Termux session open while you use the desktop.", "",
 		ui.KV("Stop", "log out, press Ctrl-C here,"), ui.KV("", "or run: andronix desktop stop")}
+	if <-hidden {
+		lines = append(lines, "", "Termux:X11's extra-keys bar is hidden so the desktop's bottom panel shows. Swipe down with three fingers in Termux:X11 to bring it back.")
+	}
 	if vncNote != "" {
 		lines = append(lines, "", vncNote)
 	}
 	fmt.Println()
 	fmt.Print(ui.Box(ui.BoxOK, "Desktop is running", lines...))
+	if n := termux.PhantomNote(); n != "" {
+		ui.Note(n)
+	}
 	fmt.Println()
 
 	done := make(chan error, 1)

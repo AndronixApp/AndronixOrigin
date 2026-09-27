@@ -189,8 +189,12 @@ func TestModdedChecksum(t *testing.T) {
 	if err := moddedChecksum(context.Background(), &s, lg, nil); err == nil {
 		t.Error("a malformed checksum must be an error")
 	}
-	status = 403
+	status = 401
 	if err := moddedChecksum(context.Background(), &s, lg, nil); err == nil || !strings.Contains(err.Error(), "Download link expired") {
+		t.Errorf("401: %v", err)
+	}
+	status = 403
+	if err := moddedChecksum(context.Background(), &s, lg, nil); err == nil || !strings.Contains(err.Error(), "another edition") {
 		t.Errorf("403: %v", err)
 	}
 }
