@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24"><rect width="24" height="24" rx="7.2" fill="#3A2D24"/><g transform="translate(5.7377 5.7377) scale(0.049178)"><g><defs id="defs0" />
+  <g id="layer0" transform="translate(0,192)">
+    <g id="logo" transform="matrix(4,0,0,4,0,-192)">
+      <path id="rect4138" d="m 0,0 0,64 18,0 0,-46 23,0 0,-18 z" style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path id="rect4140" d="m 22.999999,23 2e-6,41 L 41,64 41,23 Z" style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path id="rect4142" d="M 46,1e-6 46,64 64,64 64,1e-6 Z" style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:3;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    </g>
+  </g>
+</g></g></svg>

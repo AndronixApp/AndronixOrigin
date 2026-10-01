@@ -1,0 +1,13 @@
+# Shown on "New issue". Blank issues stay open so existing links to
+# /issues/new keep working.
+blank_issues_enabled: true
+contact_links:
+  - name: Report a problem with an install
+    url: https://docs.andronix.app/troubleshooting/report-a-problem
+    about: Send a report from the app or with `andronix report`, so we get your phone's details.
+  - name: Ask on Discord
+    url: https://chat.andronix.app
+    about: Questions and help from the community and the team.
+  - name: Read the docs
+    url: https://docs.andronix.app
+    about: Install guides, supported distros and troubleshooting.
